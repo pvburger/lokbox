@@ -1,5 +1,5 @@
 {
-  "name": "test_lb1",
+  "name": "lokbox",
   "version": "1.0.0",
   "main": "index.ts",
   "type": "module",

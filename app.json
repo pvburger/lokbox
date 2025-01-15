@@ -1,7 +1,7 @@
 {
   "expo": {
-    "name": "test_lb1",
-    "slug": "test_lb1",
+    "name": "lokbox",
+    "slug": "lokbox",
     "version": "1.0.0",
     "orientation": "portrait",
     "icon": "./assets/icon.png",
@@ -14,14 +14,14 @@
     },
     "ios": {
       "supportsTablet": true,
-      "bundleIdentifier": "com.pvburger.test-lb1"
+      "bundleIdentifier": "com.pvburger.lokbox"
     },
     "android": {
       "adaptiveIcon": {
         "foregroundImage": "./assets/adaptive-icon.png",
         "backgroundColor": "#ffffff"
       },
-      "package": "com.pvburger.test_lb1"
+      "package": "com.pvburger.lokbox"
     },
     "web": {
       "favicon": "./assets/favicon.png"
@@ -31,7 +31,7 @@
     ],
     "extra": {
       "eas": {
-        "projectId": "cd60a7e3-6c68-423f-ac2d-82831287377f"
+        "projectId": "15e47396-788f-4e5f-b787-a875db00d027"
       }
     }
   }
