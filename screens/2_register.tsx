@@ -2,11 +2,16 @@ import { StyleSheet, View, TextInput, Alert } from 'react-native';
 import { RoundButton } from '../elements/buttons';
 import { inputBox } from '../styles';
 import { addUser, getDataSalt } from '../util/database';
+import { useModContext } from '../context/global';
 
 export default function Register({ changePage, userControl, setWidget }) {
   let username = '';
   let passwordA = '';
   let passwordB = '';
+
+  // bring in global context
+  const scrH = useModContext().screen_h;
+  const dynamicSty = inputBox(scrH);
 
   // updater functions for username and password
   const updUser = (input: string): void => {
@@ -39,18 +44,18 @@ export default function Register({ changePage, userControl, setWidget }) {
     <View style={styles.container}>
       <View>
         <TextInput
-          style={inputBox.inputBox}
+          style={dynamicSty.inpBox}
           onChangeText={(inp) => updUser(inp)}
           placeholder='username'
         />
         <TextInput
-          style={inputBox.inputBox}
+          style={dynamicSty.inpBox}
           onChangeText={(inp) => updPass(inp, 'A')}
           placeholder='password'
           secureTextEntry={true}
         />
         <TextInput
-          style={inputBox.inputBox}
+          style={dynamicSty.inpBox}
           onChangeText={(inp) => updPass(inp, 'B')}
           placeholder='confirm password'
           secureTextEntry={true}
@@ -65,7 +70,7 @@ export default function Register({ changePage, userControl, setWidget }) {
 
 const styles = StyleSheet.create({
   container: {
-    height: '100%',
+    flex: 1,
     width: '100%',
     justifyContent: 'center',
     alignItems: 'center',

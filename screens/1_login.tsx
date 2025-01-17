@@ -1,5 +1,5 @@
 import { StyleSheet, View, TextInput, Alert } from 'react-native';
-import React, { useState, useEffect } from 'react';
+import React from 'react';
 import { RoundButton } from '../elements/buttons';
 import { inputBox } from '../styles';
 import { loginUser, getDataSalt } from '../util/database';
@@ -10,7 +10,8 @@ export default function Login({ changePage, userControl, setWidget }) {
   let password = '';
 
   // bring in global context
-  const globject = useModContext();
+  const scrH = useModContext().screen_h;
+  const dynamicSty = inputBox(scrH);
 
   // updater functions for username and password
   const updUser = (input: string): void => {
@@ -43,34 +44,22 @@ export default function Login({ changePage, userControl, setWidget }) {
     }
   };
 
-  // the following block sets up for using both static and dynamic styling to leverage context
-  const staticStyles = styles;
-  const dynamicStyles = {
-    buttonContainer: {
-      // heigth: 0.12 * globject.screen_h,
-      // minHeight: 0.12 * globject.screen_h,
-    },
-  };
-
   return (
     <View style={styles.container}>
       <View>
         <TextInput
-          style={inputBox.inputBox}
+          style={dynamicSty.inpBox}
           onChangeText={(inp) => updUser(inp)}
           placeholder='username'
         />
         <TextInput
-          style={inputBox.inputBox}
+          style={dynamicSty.inpBox}
           onChangeText={(inp) => updPass(inp)}
           placeholder='password'
           secureTextEntry={true}
         />
       </View>
-      {/* implementing elements of static and dynamic styling */}
-      <View
-        style={[staticStyles.buttonContainer, dynamicStyles.buttonContainer]}
-      >
+      <View style={styles.buttonContainer}>
         <RoundButton onPressFunc={checkCreds} label={'submit'} />
       </View>
     </View>
@@ -79,7 +68,7 @@ export default function Login({ changePage, userControl, setWidget }) {
 
 const styles = StyleSheet.create({
   container: {
-    height: '100%',
+    flex: 1,
     width: '100%',
     justifyContent: 'center',
     alignItems: 'center',

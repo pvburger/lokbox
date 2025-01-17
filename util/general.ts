@@ -49,3 +49,8 @@ export const err2String = (error: unknown): string => {
     return 'An unknown error occurred';
   }
 };
+
+// function returns input (assume to represent a fraction of the screens heigt) as dp, for styling
+// export const per2Dp = (input:number, scrH:number, isCircle:boolean = false): number =>{
+//   return Math.round(input * scrH);
+// }

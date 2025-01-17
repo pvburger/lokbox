@@ -1,15 +1,19 @@
 import { StyleSheet, View, TextInput, Alert } from 'react-native';
 import React, { useState } from 'react';
 import { RoundButton } from '../elements/buttons';
-// import { EntryBox } from '../elements/input';
 import { inputBox } from '../styles';
 import { addData } from '../util/database';
 import { EntryForm, EntryFormKey } from '../types';
+import { useModContext } from '../context/global';
 
 export default function AddInfo({ changePage, userControl, widget }) {
   // sets the subsection of the form
   const [sub, setSub] = useState(0);
   const [userInfo, setUserInfo] = useState(new EntryForm());
+
+  // bring in global context
+  const scrH = useModContext().screen_h;
+  const dynamicSty = inputBox(scrH);
 
   // tool to update single property on userInfo
   const editEntry = (inp: string, kind: EntryFormKey): void => {
@@ -51,7 +55,7 @@ export default function AddInfo({ changePage, userControl, widget }) {
       <View style={styles.inputContainer}>
         {sub === 0 && (
           <TextInput
-            style={inputBox.inputBox}
+            style={dynamicSty.inpBox}
             onChangeText={(inp) => editEntry(inp, 'org')}
             placeholder='organization'
             value={userInfo.org}
@@ -59,7 +63,7 @@ export default function AddInfo({ changePage, userControl, widget }) {
         )}
         {sub === 0 && (
           <TextInput
-            style={inputBox.inputBox}
+            style={dynamicSty.inpBox}
             onChangeText={(inp) => editEntry(inp, 'login')}
             placeholder='username'
             value={userInfo.login}
@@ -67,7 +71,7 @@ export default function AddInfo({ changePage, userControl, widget }) {
         )}
         {sub === 1 && (
           <TextInput
-            style={inputBox.inputBox}
+            style={dynamicSty.inpBox}
             onChangeText={(inp) => editEntry(inp, 'passwordA')}
             placeholder='password'
             value={userInfo.passwordA}
@@ -76,7 +80,7 @@ export default function AddInfo({ changePage, userControl, widget }) {
         )}
         {sub === 1 && (
           <TextInput
-            style={inputBox.inputBox}
+            style={dynamicSty.inpBox}
             onChangeText={(inp) => editEntry(inp, 'passwordB')}
             placeholder='confirm password'
             value={userInfo.passwordB}
@@ -85,7 +89,7 @@ export default function AddInfo({ changePage, userControl, widget }) {
         )}
         {sub === 2 && (
           <TextInput
-            style={inputBox.inputBox}
+            style={dynamicSty.inpBox}
             onChangeText={(inp) => editEntry(inp, 'pinA')}
             placeholder='pin'
             value={userInfo.pinA}
@@ -94,7 +98,7 @@ export default function AddInfo({ changePage, userControl, widget }) {
         )}
         {sub === 2 && (
           <TextInput
-            style={inputBox.inputBox}
+            style={dynamicSty.inpBox}
             onChangeText={(inp) => editEntry(inp, 'pinB')}
             placeholder='confirm pin'
             value={userInfo.pinB}
@@ -103,7 +107,7 @@ export default function AddInfo({ changePage, userControl, widget }) {
         )}
         {sub === 3 && (
           <TextInput
-            style={inputBox.inputBox}
+            style={dynamicSty.inpBox}
             onChangeText={(inp) => editEntry(inp, 'email')}
             placeholder='email'
             value={userInfo.email}
@@ -111,7 +115,7 @@ export default function AddInfo({ changePage, userControl, widget }) {
         )}
         {sub === 3 && (
           <TextInput
-            style={inputBox.inputBox}
+            style={dynamicSty.inpBox}
             onChangeText={(inp) => editEntry(inp, 'url')}
             placeholder='url'
             value={userInfo.url}
@@ -119,7 +123,7 @@ export default function AddInfo({ changePage, userControl, widget }) {
         )}
         {sub === 4 && (
           <TextInput
-            style={inputBox.inputBox}
+            style={dynamicSty.inpBox}
             onChangeText={(inp) => editEntry(inp, 'misc')}
             placeholder='additional info'
             value={userInfo.misc}
@@ -149,7 +153,7 @@ export default function AddInfo({ changePage, userControl, widget }) {
 
 const styles = StyleSheet.create({
   container: {
-    height: '100%',
+    flex: 1,
     width: '100%',
     justifyContent: 'center',
     alignItems: 'center',
@@ -158,6 +162,7 @@ const styles = StyleSheet.create({
     // borderWidth: 4,
   },
   inputContainer: {
+    width: '100%',
     justifyContent: 'center',
     alignItems: 'center',
     // added for development
@@ -166,6 +171,7 @@ const styles = StyleSheet.create({
   },
   buttonContainer: {
     flexDirection: 'row',
+    width: '100%',
     alignItems: 'center',
     justifyContent: 'space-evenly',
     // added for development

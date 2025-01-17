@@ -1,25 +1,19 @@
 import { StatusBar } from 'expo-status-bar';
 import {
   StyleSheet,
-  Text,
   View,
   Image,
-  Pressable,
-  Alert,
   AppState,
-  AppStateStatus,
   Keyboard,
-  KeyboardAvoidingView,
   Dimensions,
 } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
 import React, { useState, useEffect } from 'react';
 import Logo from './assets/logo_transparent.png';
 import Exit from './elements/exit';
-import Status from './elements/status_light';
 import Clean from './elements/clean';
+import Status from './elements/status_light';
 import Tables from './elements/tables';
-// import { printTables } from './util/database';
 import Title from './screens/0_title';
 import Login from './screens/1_login';
 import Register from './screens/2_register';
@@ -40,10 +34,11 @@ export default function App() {
   const [keeboard, setKeeboard] = useState(false);
 
   // globalObj to be used with GlobalContext.provider
-  const globject: ContextObj = {
-    screen_h: Dimensions.get('window').height,
-    screen_w: Dimensions.get('window').width,
-  };
+  const windH = Dimensions.get('window').height;
+  const windW = Dimensions.get('window').width;
+  const scrH = Dimensions.get('screen').height;
+  const scrW = Dimensions.get('screen').width;
+  const globject = new ContextObj(windH, windW, scrH, scrW);
 
   const userControl = {
     get: () => {
@@ -205,29 +200,30 @@ const styles = StyleSheet.create({
   header: {
     flex: 1,
     width: '100%',
-    height: 0.15 * Dimensions.get('window').height,
-    minHeight: 0.15 * Dimensions.get('window').height,
-    maxHeight: 0.15 * Dimensions.get('window').height,
+    height: Math.round(0.18 * Dimensions.get('screen').height),
+    minHeight: Math.round(0.18 * Dimensions.get('screen').height),
+    maxHeight: Math.round(0.18 * Dimensions.get('screen').height),
     alignItems: 'center',
-    justifyContent: 'flex-end',
+    justifyContent: 'center',
     // added for development
     // borderColor: 'blue',
     // borderWidth: 4,
   },
   image: {
     width: '90%',
-    height: '60%',
+    // height: '100%',
     resizeMode: 'contain',
     // added for development
     // borderColor: '#e6e6e6',
     // borderWidth: 4,
   },
   body: {
-    width: '100%',
-    height: '78%',
-    resizeMode: 'contain',
+    flex: 1,
+    // resizeMode: 'contain',
     alignItems: 'center',
     justifyContent: 'center',
+    width: '100%',
+    // height: '40%',
     // added for development
     // borderColor: 'yellow',
     // borderWidth: 4,
@@ -236,8 +232,8 @@ const styles = StyleSheet.create({
     flexDirection: 'row',
     justifyContent: 'space-between',
     alignItems: 'center',
-    width: '95%',
-    height: '5%',
+    width: '100%',
+    marginBottom: Math.round(0.01 * Dimensions.get('screen').height),
     // added for development
     // borderColor: 'blue',
     // borderWidth: 4,
