@@ -49,7 +49,7 @@ export function RoundButton({ onPressFunc, label }) {
       elevation: 0.005 * scrH,
     },
     roundButtonTxt: {
-      fontSize: 0.02 * scrH,
+      fontSize: 0.018 * scrH,
     },
   });
 

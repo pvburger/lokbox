@@ -1,7 +1,7 @@
 import { StyleSheet } from 'react-native';
 
 export const inputBox = (scrH: number) => {
-  return StyleSheet.create({
+  return {
     inpBox: {
       height: 0.08 * scrH,
       width: 0.3 * scrH,
@@ -15,5 +15,5 @@ export const inputBox = (scrH: number) => {
       borderColor: 'black',
       backgroundColor: 'white',
     },
-  });
+  };
 };

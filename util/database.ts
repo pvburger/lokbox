@@ -594,9 +594,7 @@ export const printTables = async (): Promise<void> => {
   } catch (err) {}
 };
 
-export const removeData = async (
-  entryArr: DBEntryColObj[]
-): Promise<void> => {
+export const removeData = async (entryArr: DBEntryColObj[]): Promise<void> => {
   try {
     // added for development
     for (let item of entryArr) {

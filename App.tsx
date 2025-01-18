@@ -9,7 +9,7 @@ import {
 } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
 import React, { useState, useEffect } from 'react';
-import Logo from './assets/logo_transparent.png';
+import Logo from './assets/logo.png';
 import Exit from './elements/exit';
 import Clean from './elements/clean';
 import Status from './elements/status_light';
@@ -200,18 +200,18 @@ const styles = StyleSheet.create({
   header: {
     flex: 1,
     width: '100%',
-    height: Math.round(0.18 * Dimensions.get('screen').height),
-    minHeight: Math.round(0.18 * Dimensions.get('screen').height),
-    maxHeight: Math.round(0.18 * Dimensions.get('screen').height),
+    height: 0.13 * Dimensions.get('screen').height,
+    minHeight: 0.13 * Dimensions.get('screen').height,
+    maxHeight: 0.13 * Dimensions.get('screen').height,
     alignItems: 'center',
-    justifyContent: 'center',
+    justifyContent: 'flex-end',
     // added for development
     // borderColor: 'blue',
     // borderWidth: 4,
   },
   image: {
-    width: '90%',
-    // height: '100%',
+    width: '87%',
+    height: 0.08 * Dimensions.get('screen').height,
     resizeMode: 'contain',
     // added for development
     // borderColor: '#e6e6e6',
@@ -223,7 +223,6 @@ const styles = StyleSheet.create({
     alignItems: 'center',
     justifyContent: 'center',
     width: '100%',
-    // height: '40%',
     // added for development
     // borderColor: 'yellow',
     // borderWidth: 4,
@@ -233,7 +232,7 @@ const styles = StyleSheet.create({
     justifyContent: 'space-between',
     alignItems: 'center',
     width: '100%',
-    marginBottom: Math.round(0.01 * Dimensions.get('screen').height),
+    marginBottom: 0.01 * Dimensions.get('screen').height,
     // added for development
     // borderColor: 'blue',
     // borderWidth: 4,
