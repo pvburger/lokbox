@@ -50,7 +50,7 @@ export const err2String = (error: unknown): string => {
   }
 };
 
-// function returns input (assume to represent a fraction of the screens heigt) as dp, for styling
-// export const per2Dp = (input:number, scrH:number, isCircle:boolean = false): number =>{
-//   return Math.round(input * scrH);
-// }
+// add slight delay; used to allow keyboard listener in <App> sufficient time to update state before isLoading is updated
+export const delay = async (milliS: number): Promise<void> => {
+  return new Promise((res) => setTimeout(res, milliS));
+};

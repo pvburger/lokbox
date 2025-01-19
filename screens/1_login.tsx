@@ -1,17 +1,22 @@
 import { StyleSheet, View, TextInput, Alert } from 'react-native';
 import React, { useState, useEffect } from 'react';
-import { Image } from 'react-native';
+import { Image, Keyboard } from 'react-native';
 import { RoundButton } from '../elements/buttons';
 import { inputBox } from '../styles';
 import { loginUser, getDataSalt } from '../util/database';
 import { useModContext } from '../context/global';
 import Spin from '../assets/spinner.gif';
+import { delay } from '../util/general';
 
-export default function Login({ changePage, userControl, setWidget }) {
-  // let username = '';
-  // let password = '';
+export default function Login({
+  changePage,
+  userControl,
+  setWidget,
+  keeboard,
+}) {
   const [user, setUser] = useState('');
   const [pass, setPass] = useState('');
+  const [isClicked, setIsClicked] = useState(false);
   const [isLoading, setIsLoading] = useState(false);
 
   // bring in global context
@@ -25,23 +30,10 @@ export default function Login({ changePage, userControl, setWidget }) {
   });
   const staticSty = styles;
 
-  /*
-  //updater functions for username and password
-  const updUser = (input: string): void => {
-    username = input;
-  };
-
-  const updPass = (input: string): void => {
-    password = input;
-  };
-  */
-
   // function to check credentials
-  // handled by submit button
   const checkCreds = async (): Promise<void> => {
-    // insert logic to check credentials
     try {
-      setIsLoading(true);
+      // insert logic to check credentials
       const userRow = await loginUser(user, pass);
 
       // retrieve salt and generate key
@@ -49,21 +41,31 @@ export default function Login({ changePage, userControl, setWidget }) {
 
       userControl.set(userRow);
       setWidget(salt);
-      setIsLoading(false);
       Alert.alert('Success!', `${user} has successfully logged in.`);
       changePage(3);
     } catch (error) {
-      setIsLoading(false);
       Alert.alert(
         'Error',
         `There was a problem logging ${user} into the database: ${error}`
       );
+    } finally {
+      setIsClicked(false);
+      setIsLoading(false);
     }
   };
 
+  // function to handle submit click
+  const onClickHandler = () => {
+    Keyboard.dismiss();
+    setIsClicked(true);
+  };
+
   useEffect(() => {
-    // rerender when the state of isLoading changes
-  }, [isLoading]);
+    if (isClicked && !keeboard) {
+      setIsLoading(true);
+      checkCreds();
+    }
+  }, [keeboard]);
 
   if (isLoading) {
     return (
@@ -89,7 +91,7 @@ export default function Login({ changePage, userControl, setWidget }) {
         />
       </View>
       <View style={styles.buttonContainer}>
-        <RoundButton onPressFunc={checkCreds} label={'submit'} />
+        <RoundButton onPressFunc={() => onClickHandler()} label={'submit'} />
       </View>
     </View>
   );

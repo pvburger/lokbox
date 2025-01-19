@@ -63,8 +63,6 @@ export default function App() {
     // console.log(`Running handleUnFocus; appState: ${appState}`);
     if (appState === 'background' || appState === 'inactive') {
       try {
-        // added for development
-        // console.log('running handleUnFocus');
         await reSetWrap();
       } catch (err) {
         throw err;
@@ -72,46 +70,41 @@ export default function App() {
     }
   };
 
-  // useEffect cleans up after app is no longer in foreground
+  // useEffect to establish listeners
   useEffect(() => {
-    // added during development
-    console.log(`useEffect invoked; appState: ${appState}`);
-
-    // add event listener
+    // add AppState event listener
     const myListener = AppState.addEventListener('change', (newAppState) =>
       setAppState(newAppState.toString())
     );
 
-    handleUnFocus();
-
-    // cleanup
-    return () => {
-      myListener.remove();
-    };
-  }, [appState]);
-
-  // useEffect to set keyboard state
-  useEffect(() => {
-    // added during development
-
+    // add Keyboard state event listener
     const keyboardOpenListener = Keyboard.addListener('keyboardDidShow', () => {
+      console.log('keyboard status: open');
       setKeeboard(true);
     });
 
     const keyboardCloseListener = Keyboard.addListener(
       'keyboardDidHide',
       () => {
+        console.log('keyboard status: closed');
         setKeeboard(false);
       }
     );
 
-    console.log(`useEffect invoked; keyboard visible: ${keeboard.toString()}`);
-
     return () => {
+      myListener.remove();
       keyboardOpenListener.remove();
       keyboardCloseListener.remove();
     };
-  }, [keeboard]);
+  }, []);
+
+  // useEffect cleans up after app is no longer in foreground
+  useEffect(() => {
+    // added during development
+    console.log(`useEffect invoked; appState: ${appState}`);
+
+    handleUnFocus();
+  }, [appState]);
 
   return (
     <GlobalContext.Provider value={globject}>
@@ -127,6 +120,7 @@ export default function App() {
               changePage={setPage}
               userControl={userControl}
               setWidget={setWidget}
+              keeboard={keeboard}
             />
           )}
           {page === 2 && (
@@ -134,6 +128,7 @@ export default function App() {
               changePage={setPage}
               userControl={userControl}
               setWidget={setWidget}
+              keeboard={keeboard}
             />
           )}
           {page === 3 && <Menu changePage={setPage} />}
