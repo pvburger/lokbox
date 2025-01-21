@@ -45,6 +45,7 @@ export type EntryFormKey = keyof EntryForm;
 export type DBUser = {
   usr_id: number;
   usr_login: string;
+  usr_email: string | null;
   usr_password: string;
   usr_salt: string;
   usr_created: string;

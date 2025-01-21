@@ -37,10 +37,7 @@ export default function Clean({ changePage, userControl, setWidget }) {
       <Pressable onPress={cleanDB}>
         <Image
           source={ResetIcon}
-          style={[
-            dynamicSty.tinyB,
-            { marginLeft: Math.round(0.01 * globject.screen_h) },
-          ]}
+          style={[dynamicSty.tinyB, { marginLeft: 0.01 * globject.screen_h }]}
         />
       </Pressable>
     </View>

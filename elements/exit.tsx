@@ -31,10 +31,7 @@ export default function Exit({ changePage, userControl, setWidget }) {
       <Pressable onPress={reSetWrap}>
         <Image
           source={ExitIcon}
-          style={[
-            dynamicSty.tinyB,
-            { marginLeft: Math.round(0.01 * globject.screen_h) },
-          ]}
+          style={[dynamicSty.tinyB, { marginLeft: 0.01 * globject.screen_h }]}
         />
       </Pressable>
     </View>

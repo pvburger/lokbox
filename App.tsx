@@ -14,6 +14,8 @@ import Exit from './elements/exit';
 import Clean from './elements/clean';
 import Status from './elements/status_light';
 import Tables from './elements/tables';
+import BackupDB from './elements/backup';
+import RestoreDB from './elements/restore';
 import Title from './screens/0_title';
 import Login from './screens/1_login';
 import Register from './screens/2_register';
@@ -171,7 +173,8 @@ export default function App() {
                   setWidget={setWidget}
                 />
               )}
-              {page === 0 && <Tables />}
+              {page === 0 && <BackupDB />}
+              {page === 0 && <RestoreDB />}
             </View>
             <Status userControl={userControl}></Status>
           </View>

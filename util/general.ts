@@ -40,6 +40,19 @@ export const getTimeString = (): string => {
   );
 };
 
+// conver time string to timestamp for filenames
+// format: YYYY + MM + DD + '_' + HH + MM + SS + MS
+export const getTimeStamp = (input: string): string => {
+  const year = input.slice(0, 4);
+  const month = input.slice(5, 7);
+  const date = input.slice(8, 10);
+  const hour = input.slice(11, 13);
+  const min = input.slice(14, 16);
+  const sec = input.slice(17, 19);
+  const ms = input.slice(20);
+  return year + month + date + '-' + hour + min + sec + ms;
+};
+
 export const err2String = (error: unknown): string => {
   if (error instanceof Error) {
     return error.message;

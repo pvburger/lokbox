@@ -23,19 +23,13 @@ export default function Status({ userControl }) {
       {userControl.get() === 0 && (
         <Image
           source={red_status}
-          style={[
-            dynamicSty.tinyB,
-            { marginRight: Math.round(0.01 * globject.screen_h) },
-          ]}
+          style={[dynamicSty.tinyB, { marginRight: 0.01 * globject.screen_h }]}
         />
       )}
       {userControl.get() !== 0 && (
         <Image
           source={green_status}
-          style={[
-            dynamicSty.tinyB,
-            { marginRight: Math.round(0.01 * globject.screen_h) },
-          ]}
+          style={[dynamicSty.tinyB, { marginRight: 0.01 * globject.screen_h }]}
         />
       )}
     </View>

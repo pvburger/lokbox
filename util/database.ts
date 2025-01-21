@@ -1,4 +1,8 @@
 import * as SQLite from 'expo-sqlite';
+// import * as FileSystemEx from 'expo-file-system';
+import { Dirs, FileSystem } from 'react-native-file-access';
+import { pickSingle } from 'react-native-document-picker';
+
 import {
   getHashEntry,
   getHashInfo,
@@ -7,7 +11,7 @@ import {
   nCrypt,
   dCrypt,
 } from './crypto';
-import { getTimeString } from './general';
+import { getTimeString, getTimeStamp } from './general';
 import {
   EntryForm,
   DBUser,
@@ -40,7 +44,7 @@ export class SQLiteDB {
           PRAGMA foreign_keys = ON;
   
           CREATE TABLE IF NOT EXISTS ${table1} (usr_id INTEGER PRIMARY KEY NOT NULL, 
-          usr_login TEXT NOT NULL COLLATE NOCASE, usr_password TEXT NOT NULL, 
+          usr_login TEXT NOT NULL COLLATE NOCASE, usr_password TEXT NOT NULL, usr_email TEXT, 
           usr_salt TEXT NOT NULL, usr_created TEXT NOT NULL,
           /* usr_logins must all be unique */
           UNIQUE(usr_login));
@@ -617,5 +621,69 @@ export const removeData = async (entryArr: DBEntryColObj[]): Promise<void> => {
     }
   } catch (err) {
     throw new Error(`There was a problem deleting database entries: ${err}`);
+  }
+};
+
+// functionality to backup entire database on device
+export const backup = async (): Promise<void> => {
+  try {
+    const dbFileUri = `${Dirs.DocumentDir}/SQLite/${targetDB}`;
+
+    const backupFileName = `${targetDB}_${getTimeStamp(
+      getTimeString()
+    )}.backup`;
+
+    // check if db file exists; if not, throw error
+    const dbExists = await FileSystem.exists(dbFileUri);
+    if (!dbExists) {
+      throw new Error('Database file does not exist');
+    }
+
+    await FileSystem.cpExternal(dbFileUri, backupFileName, 'downloads');
+
+    console.log(
+      `Successfully backed up database; file location: ${backupFileName}`
+    );
+
+    // copy database file
+  } catch (err) {
+    console.log(`There was a problem backing up the database: ${err}`);
+  }
+};
+
+// functionality to restore saved database to device
+export const restore = async (): Promise<void> => {
+  try {
+    const fileUri = (await pickSingle()).uri;
+
+    // added for development
+    // console.log(`file uri: ${fileUri}`);
+
+    // check if there is currently a database; if so, delete it
+    const dbFileUri = `${Dirs.DocumentDir}/SQLite/${targetDB}`;
+    let dbExists = await FileSystem.exists(dbFileUri);
+    if (dbExists) {
+      console.log('Deleting existing database');
+      await FileSystem.unlink(dbFileUri);
+      dbExists = await FileSystem.exists(dbFileUri);
+      if (dbExists) {
+        throw new Error(`Existing database was not deleted`);
+      } else {
+        console.log('Existing database deleted');
+      }
+    } else {
+      console.log('Nothing to delete');
+    }
+
+    // restore backup file
+    await FileSystem.cp(fileUri, dbFileUri);
+    dbExists = await FileSystem.exists(dbFileUri);
+    if (dbExists) {
+      console.log('Successfully restored database');
+    } else {
+      throw new Error(`Selected database could not be restored`);
+    }
+  } catch (err) {
+    console.log(`There was a problem restoring the database: ${err}`);
   }
 };
