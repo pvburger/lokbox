@@ -12,7 +12,7 @@ export class ContextObj {
     this.screen_h = scrH;
     this.screen_w = scrW;
     this.navBar_h = scrH - windH;
-    this.icon_size = Math.round(0.035 * scrH);
+    this.icon_size = 0.05 * scrH;
   }
 }
 

@@ -222,10 +222,10 @@ export default function Remove({ changePage, userControl, widget }) {
           onPressFunc={() => deleteEntries()}
           label={'delete'}
         ></RoundButton>
-        <RoundButton
+        {/* <RoundButton
           onPressFunc={() => changePage(3)}
           label={'menu'}
-        ></RoundButton>
+        ></RoundButton> */}
       </View>
     </View>
   );

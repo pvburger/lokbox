@@ -10,12 +10,10 @@ import {
 import { SafeAreaView } from 'react-native-safe-area-context';
 import React, { useState, useEffect } from 'react';
 import Logo from './assets/logo.png';
-import Exit from './elements/exit';
-import Clean from './elements/clean';
-import Status from './elements/status_light';
-import Tables from './elements/tables';
-import BackupDB from './elements/backup';
-import RestoreDB from './elements/restore';
+import ExitIcon from './elements/exit';
+import StatusIcon from './elements/status_light';
+import MenuIcon from './elements/menu';
+import AdminIcon from './elements/admin';
 import Title from './screens/0_title';
 import Login from './screens/1_login';
 import Register from './screens/2_register';
@@ -26,7 +24,7 @@ import Remove from './screens/6_remove';
 import { reSet } from './util/common';
 import { GlobalContext } from './context/global';
 import { ContextObj } from './types';
-// import Remove from './screens/6_remove';
+import Admin from './screens/-1_admin';
 
 export default function App() {
   const [page, setPage] = useState(0);
@@ -116,6 +114,13 @@ export default function App() {
           <Image source={Logo} style={styles.image} />
         </View>
         <View style={styles.body}>
+          {page === -1 && (
+            <Admin
+              changePage={setPage}
+              userControl={userControl}
+              setWidget={setWidget}
+            />
+          )}
           {page === 0 && <Title changePage={setPage} />}
           {page === 1 && (
             <Login
@@ -160,23 +165,16 @@ export default function App() {
           <View style={styles.footer}>
             <View style={styles.footLeft}>
               {page !== 0 && (
-                <Exit
+                <ExitIcon
                   changePage={setPage}
                   userControl={userControl}
                   setWidget={setWidget}
                 />
               )}
-              {page === 0 && (
-                <Clean
-                  changePage={setPage}
-                  userControl={userControl}
-                  setWidget={setWidget}
-                />
-              )}
-              {page === 0 && <BackupDB />}
-              {page === 0 && <RestoreDB />}
+              {page >= 4 && <MenuIcon changePage={setPage} />}
+              {page === 0 && <AdminIcon changePage={setPage} />}
             </View>
-            <Status userControl={userControl}></Status>
+            <StatusIcon userControl={userControl} />
           </View>
         )}
       </SafeAreaView>

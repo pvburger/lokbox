@@ -7,7 +7,7 @@ import {
   Platform,
 } from 'react-native';
 import React, { useState, useEffect } from 'react';
-import { RoundButton } from '../elements/buttons';
+// import { RoundButton } from '../elements/buttons';
 import { getAllDataAsString } from '../util/database';
 import { useModContext } from '../context/global';
 
@@ -22,7 +22,7 @@ export default function Check({ changePage, userControl, widget }) {
   const dynamicSty = StyleSheet.create({
     scrollBox: {
       marginTop: 0.02 * scrH,
-      marginBottom: 0.01 * scrH,
+      marginBottom: 0.02 * scrH,
       borderRadius: 0.02 * scrH,
       borderWidth: 0.0035 * scrH,
       elevation: 0.005 * scrH,
@@ -77,9 +77,9 @@ export default function Check({ changePage, userControl, widget }) {
           <Text style={[dynamicSty.text, staticSty.text]}>{text}</Text>
         </ScrollView>
       </View>
-      <View style={styles.buttonContainer}>
+      {/* <View style={styles.buttonContainer}>
         <RoundButton onPressFunc={() => changePage(3)} label={'menu'} />
-      </View>
+      </View> */}
     </View>
   );
 }
@@ -105,14 +105,14 @@ const styles = StyleSheet.create({
     width: '90%',
     borderColor: 'black',
   },
-  buttonContainer: {
-    flexDirection: 'row',
-    alignItems: 'center',
-    justifyContent: 'space-evenly',
-    // added for development
-    // borderColor: 'blue',
-    // borderWidth: 4,
-  },
+  // buttonContainer: {
+  //   flexDirection: 'row',
+  //   alignItems: 'center',
+  //   justifyContent: 'space-evenly',
+  //   // added for development
+  //   // borderColor: 'blue',
+  //   // borderWidth: 4,
+  // },
   text: {
     fontFamily: Platform.OS === 'ios' ? 'Courier' : 'monospace',
   },
