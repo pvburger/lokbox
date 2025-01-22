@@ -86,17 +86,20 @@ export default function Register({
       <View>
         <TextInput
           style={dynamicSty.inpBox}
+          autoCapitalize='none'
           onChangeText={(inp) => setUser(inp)}
           placeholder='username'
         />
         <TextInput
           style={dynamicSty.inpBox}
+          autoCapitalize='none'
           onChangeText={(inp) => setPassA(inp)}
           placeholder='password'
           secureTextEntry={true}
         />
         <TextInput
           style={dynamicSty.inpBox}
+          autoCapitalize='none'
           onChangeText={(inp) => setPassB(inp)}
           placeholder='confirm password'
           secureTextEntry={true}

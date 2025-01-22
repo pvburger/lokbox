@@ -80,11 +80,13 @@ export default function Login({
       <View>
         <TextInput
           style={dynamicSty.inpBox}
+          autoCapitalize='none'
           onChangeText={(inp) => setUser(inp)}
           placeholder='username'
         />
         <TextInput
           style={dynamicSty.inpBox}
+          autoCapitalize='none'
           onChangeText={(inp) => setPass(inp)}
           placeholder='password'
           secureTextEntry={true}

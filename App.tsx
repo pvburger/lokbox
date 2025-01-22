@@ -24,7 +24,7 @@ import Remove from './screens/6_remove';
 import { reSet } from './util/common';
 import { GlobalContext } from './context/global';
 import { ContextObj } from './types';
-import Admin from './screens/-1_admin';
+import Admin from './screens/20_admin';
 
 export default function App() {
   const [page, setPage] = useState(0);
@@ -114,7 +114,7 @@ export default function App() {
           <Image source={Logo} style={styles.image} />
         </View>
         <View style={styles.body}>
-          {page === -1 && (
+          {page === 20 && (
             <Admin
               changePage={setPage}
               userControl={userControl}
@@ -171,7 +171,7 @@ export default function App() {
                   setWidget={setWidget}
                 />
               )}
-              {page >= 4 && <MenuIcon changePage={setPage} />}
+              {page >= 4 && page <= 19 && <MenuIcon changePage={setPage} />}
               {page === 0 && <AdminIcon changePage={setPage} />}
             </View>
             <StatusIcon userControl={userControl} />

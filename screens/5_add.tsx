@@ -56,6 +56,7 @@ export default function AddInfo({ changePage, userControl, widget }) {
         {sub === 0 && (
           <TextInput
             style={dynamicSty.inpBox}
+            autoCapitalize='none'
             onChangeText={(inp) => editEntry(inp, 'org')}
             placeholder='organization'
             value={userInfo.org}
@@ -64,6 +65,7 @@ export default function AddInfo({ changePage, userControl, widget }) {
         {sub === 0 && (
           <TextInput
             style={dynamicSty.inpBox}
+            autoCapitalize='none'
             onChangeText={(inp) => editEntry(inp, 'login')}
             placeholder='username'
             value={userInfo.login}
@@ -72,6 +74,7 @@ export default function AddInfo({ changePage, userControl, widget }) {
         {sub === 1 && (
           <TextInput
             style={dynamicSty.inpBox}
+            autoCapitalize='none'
             onChangeText={(inp) => editEntry(inp, 'passwordA')}
             placeholder='password'
             value={userInfo.passwordA}
@@ -81,6 +84,7 @@ export default function AddInfo({ changePage, userControl, widget }) {
         {sub === 1 && (
           <TextInput
             style={dynamicSty.inpBox}
+            autoCapitalize='none'
             onChangeText={(inp) => editEntry(inp, 'passwordB')}
             placeholder='confirm password'
             value={userInfo.passwordB}
@@ -90,6 +94,7 @@ export default function AddInfo({ changePage, userControl, widget }) {
         {sub === 2 && (
           <TextInput
             style={dynamicSty.inpBox}
+            autoCapitalize='none'
             onChangeText={(inp) => editEntry(inp, 'pinA')}
             placeholder='pin'
             value={userInfo.pinA}
@@ -99,6 +104,7 @@ export default function AddInfo({ changePage, userControl, widget }) {
         {sub === 2 && (
           <TextInput
             style={dynamicSty.inpBox}
+            autoCapitalize='none'
             onChangeText={(inp) => editEntry(inp, 'pinB')}
             placeholder='confirm pin'
             value={userInfo.pinB}
@@ -108,6 +114,7 @@ export default function AddInfo({ changePage, userControl, widget }) {
         {sub === 3 && (
           <TextInput
             style={dynamicSty.inpBox}
+            autoCapitalize='none'
             onChangeText={(inp) => editEntry(inp, 'email')}
             placeholder='email'
             value={userInfo.email}
@@ -116,6 +123,7 @@ export default function AddInfo({ changePage, userControl, widget }) {
         {sub === 3 && (
           <TextInput
             style={dynamicSty.inpBox}
+            autoCapitalize='none'
             onChangeText={(inp) => editEntry(inp, 'url')}
             placeholder='url'
             value={userInfo.url}
@@ -124,6 +132,7 @@ export default function AddInfo({ changePage, userControl, widget }) {
         {sub === 4 && (
           <TextInput
             style={dynamicSty.inpBox}
+            autoCapitalize='none'
             onChangeText={(inp) => editEntry(inp, 'misc')}
             placeholder='additional info'
             value={userInfo.misc}
