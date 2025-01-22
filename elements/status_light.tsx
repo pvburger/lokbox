@@ -1,27 +1,34 @@
 import { StyleSheet, View, Image } from 'react-native';
 import red_status from '../assets/led_red.png';
-import yellow_status from '../assets/led_yellow.png';
 import green_status from '../assets/led_green.png';
+import { useModContext } from '../context/global';
 
-export default function Status({ userControl }) {
+export default function StatusIcon({ userControl }) {
+  // bring in global context
+  const globject = useModContext();
+
+  const dynamicSty = StyleSheet.create({
+    tinyB: {
+      height: globject.icon_size,
+      width: globject.icon_size,
+      resizeMode: 'contain',
+    },
+  });
+
   return (
     <View>
       {userControl.get() === 0 && (
-        <Image source={red_status} style={styles.light} />
+        <Image
+          source={red_status}
+          style={[dynamicSty.tinyB, { marginRight: 0.01 * globject.screen_h }]}
+        />
       )}
       {userControl.get() !== 0 && (
-        <Image source={green_status} style={styles.light} />
+        <Image
+          source={green_status}
+          style={[dynamicSty.tinyB, { marginRight: 0.01 * globject.screen_h }]}
+        />
       )}
     </View>
   );
 }
-
-const styles = StyleSheet.create({
-  light: {
-    width: 40,
-    height: 40,
-    // marginRight: 5,
-    marginLeft: 40,
-    resizeMode: 'contain',
-  },
-});

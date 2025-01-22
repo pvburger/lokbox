@@ -1,25 +1,19 @@
 import { StatusBar } from 'expo-status-bar';
 import {
   StyleSheet,
-  Text,
   View,
   Image,
-  Pressable,
-  Alert,
   AppState,
-  AppStateStatus,
   Keyboard,
-  KeyboardAvoidingView,
   Dimensions,
 } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
 import React, { useState, useEffect } from 'react';
-import Logo from './assets/logo_transparent.png';
-import Exit from './elements/exit';
-import Status from './elements/status_light';
-import Clean from './elements/clean';
-import Tables from './elements/tables';
-// import { printTables } from './util/database';
+import Logo from './assets/logo.png';
+import ExitIcon from './elements/exit';
+import StatusIcon from './elements/status_light';
+import MenuIcon from './elements/menu';
+import AdminIcon from './elements/admin';
 import Title from './screens/0_title';
 import Login from './screens/1_login';
 import Register from './screens/2_register';
@@ -30,7 +24,7 @@ import Remove from './screens/6_remove';
 import { reSet } from './util/common';
 import { GlobalContext } from './context/global';
 import { ContextObj } from './types';
-// import Remove from './screens/6_remove';
+import Admin from './screens/20_admin';
 
 export default function App() {
   const [page, setPage] = useState(0);
@@ -40,10 +34,11 @@ export default function App() {
   const [keeboard, setKeeboard] = useState(false);
 
   // globalObj to be used with GlobalContext.provider
-  const globject: ContextObj = {
-    screen_h: Dimensions.get('window').height,
-    screen_w: Dimensions.get('window').width,
-  };
+  const windH = Dimensions.get('window').height;
+  const windW = Dimensions.get('window').width;
+  const scrH = Dimensions.get('screen').height;
+  const scrW = Dimensions.get('screen').width;
+  const globject = new ContextObj(windH, windW, scrH, scrW);
 
   const userControl = {
     get: () => {
@@ -68,8 +63,6 @@ export default function App() {
     // console.log(`Running handleUnFocus; appState: ${appState}`);
     if (appState === 'background' || appState === 'inactive') {
       try {
-        // added for development
-        // console.log('running handleUnFocus');
         await reSetWrap();
       } catch (err) {
         throw err;
@@ -77,46 +70,41 @@ export default function App() {
     }
   };
 
-  // useEffect cleans up after app is no longer in foreground
+  // useEffect to establish listeners
   useEffect(() => {
-    // added during development
-    console.log(`useEffect invoked; appState: ${appState}`);
-
-    // add event listener
+    // add AppState event listener
     const myListener = AppState.addEventListener('change', (newAppState) =>
       setAppState(newAppState.toString())
     );
 
-    handleUnFocus();
-
-    // cleanup
-    return () => {
-      myListener.remove();
-    };
-  }, [appState]);
-
-  // useEffect to set keyboard state
-  useEffect(() => {
-    // added during development
-
+    // add Keyboard state event listener
     const keyboardOpenListener = Keyboard.addListener('keyboardDidShow', () => {
+      console.log('keyboard status: open');
       setKeeboard(true);
     });
 
     const keyboardCloseListener = Keyboard.addListener(
       'keyboardDidHide',
       () => {
+        console.log('keyboard status: closed');
         setKeeboard(false);
       }
     );
 
-    console.log(`useEffect invoked; keyboard visible: ${keeboard.toString()}`);
-
     return () => {
+      myListener.remove();
       keyboardOpenListener.remove();
       keyboardCloseListener.remove();
     };
-  }, [keeboard]);
+  }, []);
+
+  // useEffect cleans up after app is no longer in foreground
+  useEffect(() => {
+    // added during development
+    console.log(`useEffect invoked; appState: ${appState}`);
+
+    handleUnFocus();
+  }, [appState]);
 
   return (
     <GlobalContext.Provider value={globject}>
@@ -126,12 +114,20 @@ export default function App() {
           <Image source={Logo} style={styles.image} />
         </View>
         <View style={styles.body}>
+          {page === 20 && (
+            <Admin
+              changePage={setPage}
+              userControl={userControl}
+              setWidget={setWidget}
+            />
+          )}
           {page === 0 && <Title changePage={setPage} />}
           {page === 1 && (
             <Login
               changePage={setPage}
               userControl={userControl}
               setWidget={setWidget}
+              keeboard={keeboard}
             />
           )}
           {page === 2 && (
@@ -139,6 +135,7 @@ export default function App() {
               changePage={setPage}
               userControl={userControl}
               setWidget={setWidget}
+              keeboard={keeboard}
             />
           )}
           {page === 3 && <Menu changePage={setPage} />}
@@ -168,22 +165,16 @@ export default function App() {
           <View style={styles.footer}>
             <View style={styles.footLeft}>
               {page !== 0 && (
-                <Exit
+                <ExitIcon
                   changePage={setPage}
                   userControl={userControl}
                   setWidget={setWidget}
                 />
               )}
-              {page === 0 && (
-                <Clean
-                  changePage={setPage}
-                  userControl={userControl}
-                  setWidget={setWidget}
-                />
-              )}
-              {page === 0 && <Tables />}
+              {page >= 4 && page <= 19 && <MenuIcon changePage={setPage} />}
+              {page === 0 && <AdminIcon changePage={setPage} />}
             </View>
-            <Status userControl={userControl}></Status>
+            <StatusIcon userControl={userControl} />
           </View>
         )}
       </SafeAreaView>
@@ -205,9 +196,9 @@ const styles = StyleSheet.create({
   header: {
     flex: 1,
     width: '100%',
-    height: 0.15 * Dimensions.get('window').height,
-    minHeight: 0.15 * Dimensions.get('window').height,
-    maxHeight: 0.15 * Dimensions.get('window').height,
+    height: 0.13 * Dimensions.get('screen').height,
+    minHeight: 0.13 * Dimensions.get('screen').height,
+    maxHeight: 0.13 * Dimensions.get('screen').height,
     alignItems: 'center',
     justifyContent: 'flex-end',
     // added for development
@@ -215,19 +206,19 @@ const styles = StyleSheet.create({
     // borderWidth: 4,
   },
   image: {
-    width: '90%',
-    height: '60%',
+    width: '87%',
+    height: 0.08 * Dimensions.get('screen').height,
     resizeMode: 'contain',
     // added for development
     // borderColor: '#e6e6e6',
     // borderWidth: 4,
   },
   body: {
-    width: '100%',
-    height: '78%',
-    resizeMode: 'contain',
+    flex: 1,
+    // resizeMode: 'contain',
     alignItems: 'center',
     justifyContent: 'center',
+    width: '100%',
     // added for development
     // borderColor: 'yellow',
     // borderWidth: 4,
@@ -236,8 +227,8 @@ const styles = StyleSheet.create({
     flexDirection: 'row',
     justifyContent: 'space-between',
     alignItems: 'center',
-    width: '95%',
-    height: '5%',
+    width: '100%',
+    marginBottom: 0.01 * Dimensions.get('screen').height,
     // added for development
     // borderColor: 'blue',
     // borderWidth: 4,

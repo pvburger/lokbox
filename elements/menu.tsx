@@ -1,10 +1,8 @@
-import { StyleSheet, Text, View, Image, Pressable } from 'react-native';
-import TableIcon from '../assets/icon_tables.png';
-// import { tinyB } from '../styles';
-import { printTables } from '../util/database';
+import { StyleSheet, View, Image, Pressable } from 'react-native';
 import { useModContext } from '../context/global';
+import MenuPic from '../assets/icon_menu.png';
 
-export default function Tables() {
+export default function MenuIcon({ changePage }) {
   // bring in global context
   const globject = useModContext();
 
@@ -18,9 +16,9 @@ export default function Tables() {
 
   return (
     <View>
-      <Pressable onPress={() => printTables()}>
+      <Pressable onPress={() => changePage(3)}>
         <Image
-          source={TableIcon}
+          source={MenuPic}
           style={[dynamicSty.tinyB, { marginLeft: 0.03 * globject.screen_h }]}
         />
       </Pressable>

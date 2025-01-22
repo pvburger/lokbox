@@ -4,3 +4,5 @@
     "strict": true
   }
 }
+
+// this might need to include declarations.d.ts file...

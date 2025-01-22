@@ -1,9 +1,9 @@
 import { Pressable, StyleSheet, Text, View } from 'react-native';
-import React, { memo } from 'react';
+import React from 'react';
 import { RegButton } from '../elements/buttons';
 // import Submit from '../elements/submit';
 
-const Menu = memo(function ({ changePage }) {
+const Menu = ({ changePage }) => {
   return (
     <View style={styles.container}>
       <RegButton onPressFunc={() => changePage(4)} label={'check'} />
@@ -13,11 +13,12 @@ const Menu = memo(function ({ changePage }) {
       <RegButton onPressFunc={() => changePage(0)} label={'download'} />
     </View>
   );
-});
+};
 
 const styles = StyleSheet.create({
   container: {
-    height: '100%',
+    // height: '100%',
+    flex: 1,
     width: '100%',
     justifyContent: 'center',
     alignItems: 'center',

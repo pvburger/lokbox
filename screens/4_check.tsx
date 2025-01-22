@@ -1,20 +1,38 @@
 import {
-  Pressable,
   StyleSheet,
   Text,
   View,
-  TextInput,
   Alert,
   ScrollView,
   Platform,
 } from 'react-native';
 import React, { useState, useEffect } from 'react';
-import { RoundButton } from '../elements/buttons';
+// import { RoundButton } from '../elements/buttons';
 import { getAllDataAsString } from '../util/database';
+import { useModContext } from '../context/global';
 
 export default function Check({ changePage, userControl, widget }) {
   const [text, setText] = useState('');
   const [isLoading, setIsLoading] = useState(true);
+
+  // bring in global context
+  const scrH = useModContext().screen_h;
+
+  // dynamic stylesheet
+  const dynamicSty = StyleSheet.create({
+    scrollBox: {
+      marginTop: 0.02 * scrH,
+      marginBottom: 0.02 * scrH,
+      borderRadius: 0.02 * scrH,
+      borderWidth: 0.0035 * scrH,
+      elevation: 0.005 * scrH,
+      padding: 0.01 * scrH,
+    },
+    text: {
+      fontSize: 0.015 * scrH,
+    },
+  });
+  const staticSty = styles;
 
   const getText = async (): Promise<void> => {
     try {
@@ -55,24 +73,20 @@ export default function Check({ changePage, userControl, widget }) {
   return (
     <View style={styles.container}>
       <View style={styles.scrollContainer}>
-        <ScrollView
-          style={styles.scrollBox}
-          contentContainerStyle={{ padding: 10 }}
-        >
-          <Text style={styles.text}>{text}</Text>
+        <ScrollView style={[dynamicSty.scrollBox, staticSty.scrollBox]}>
+          <Text style={[dynamicSty.text, staticSty.text]}>{text}</Text>
         </ScrollView>
       </View>
-      <View style={styles.buttonContainer}>
+      {/* <View style={styles.buttonContainer}>
         <RoundButton onPressFunc={() => changePage(3)} label={'menu'} />
-      </View>
+      </View> */}
     </View>
   );
 }
 
 const styles = StyleSheet.create({
   container: {
-    height: '100%',
-    width: '100%',
+    flex: 1,
     justifyContent: 'space-between',
     alignItems: 'center',
     // added for development
@@ -80,8 +94,8 @@ const styles = StyleSheet.create({
     // borderWidth: 4,
   },
   scrollContainer: {
+    flex: 1,
     width: '100%',
-    height: '82%',
     // added for development
     // borderColor: 'red',
     // borderWidth: 4,
@@ -89,22 +103,17 @@ const styles = StyleSheet.create({
   scrollBox: {
     backgroundColor: 'white',
     width: '90%',
-    margin: 25,
-    borderRadius: 25,
     borderColor: 'black',
-    borderWidth: 4,
-    elevation: 5,
   },
-  buttonContainer: {
-    flexDirection: 'row',
-    alignItems: 'center',
-    justifyContent: 'space-evenly',
-    // added for development
-    // borderColor: 'blue',
-    // borderWidth: 4,
-  },
+  // buttonContainer: {
+  //   flexDirection: 'row',
+  //   alignItems: 'center',
+  //   justifyContent: 'space-evenly',
+  //   // added for development
+  //   // borderColor: 'blue',
+  //   // borderWidth: 4,
+  // },
   text: {
-    fontSize: 18,
     fontFamily: Platform.OS === 'ios' ? 'Courier' : 'monospace',
   },
 });

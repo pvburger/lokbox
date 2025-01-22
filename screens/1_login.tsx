@@ -1,77 +1,99 @@
 import { StyleSheet, View, TextInput, Alert } from 'react-native';
 import React, { useState, useEffect } from 'react';
+import { Image, Keyboard } from 'react-native';
 import { RoundButton } from '../elements/buttons';
 import { inputBox } from '../styles';
 import { loginUser, getDataSalt } from '../util/database';
 import { useModContext } from '../context/global';
+import Spin from '../assets/spinner.gif';
+import { delay } from '../util/general';
 
-export default function Login({ changePage, userControl, setWidget }) {
-  let username = '';
-  let password = '';
+export default function Login({
+  changePage,
+  userControl,
+  setWidget,
+  keeboard,
+}) {
+  const [user, setUser] = useState('');
+  const [pass, setPass] = useState('');
+  const [isClicked, setIsClicked] = useState(false);
+  const [isLoading, setIsLoading] = useState(false);
 
   // bring in global context
-  const globject = useModContext();
-
-  // updater functions for username and password
-  const updUser = (input: string): void => {
-    username = input;
-  };
-
-  const updPass = (input: string): void => {
-    password = input;
-  };
+  const scrH = useModContext().screen_h;
+  const dynamicSty = StyleSheet.create({
+    ...inputBox(scrH),
+    spin: {
+      height: 0.2 * scrH,
+      width: 0.2 * scrH,
+    },
+  });
+  const staticSty = styles;
 
   // function to check credentials
-  // handled by submit button
   const checkCreds = async (): Promise<void> => {
-    // insert logic to check credentials
     try {
-      const userRow = await loginUser(username, password);
+      // insert logic to check credentials
+      const userRow = await loginUser(user, pass);
 
       // retrieve salt and generate key
       const salt = await getDataSalt(userRow);
 
       userControl.set(userRow);
       setWidget(salt);
-      Alert.alert('Success!', `${username} has successfully logged in.`);
+      Alert.alert('Success!', `${user} has successfully logged in.`);
       changePage(3);
     } catch (error) {
       Alert.alert(
         'Error',
-        `There was a problem logging ${username} into the database: ${error}`
+        `There was a problem logging ${user} into the database: ${error}`
       );
+    } finally {
+      setIsClicked(false);
+      setIsLoading(false);
     }
   };
 
-  // the following block sets up for using both static and dynamic styling to leverage context
-  const staticStyles = styles;
-  const dynamicStyles = {
-    buttonContainer: {
-      // heigth: 0.12 * globject.screen_h,
-      // minHeight: 0.12 * globject.screen_h,
-    },
+  // function to handle submit click
+  const onClickHandler = () => {
+    Keyboard.dismiss();
+    setIsClicked(true);
   };
+
+  useEffect(() => {
+    if (isClicked && !keeboard) {
+      setIsLoading(true);
+      checkCreds();
+    }
+  }, [keeboard]);
+
+  if (isLoading) {
+    return (
+      <View style={styles.container}>
+        <Image source={Spin} style={[dynamicSty.spin, staticSty.spin]}></Image>
+      </View>
+    );
+  }
 
   return (
     <View style={styles.container}>
       <View>
         <TextInput
-          style={inputBox.inputBox}
-          onChangeText={(inp) => updUser(inp)}
+          style={dynamicSty.inpBox}
+          autoCapitalize='none'
+          onChangeText={(inp) => setUser(inp)}
           placeholder='username'
         />
         <TextInput
-          style={inputBox.inputBox}
-          onChangeText={(inp) => updPass(inp)}
+          style={dynamicSty.inpBox}
+          autoCapitalize='none'
+          onChangeText={(inp) => setPass(inp)}
           placeholder='password'
           secureTextEntry={true}
         />
       </View>
-      {/* implementing elements of static and dynamic styling */}
-      <View
-        style={[staticStyles.buttonContainer, dynamicStyles.buttonContainer]}
-      >
-        <RoundButton onPressFunc={checkCreds} label={'submit'} />
+      <View style={styles.buttonContainer}>
+        <RoundButton onPressFunc={() => onClickHandler()} label={'submit'} />
       </View>
     </View>
   );
@@ -79,12 +101,18 @@ export default function Login({ changePage, userControl, setWidget }) {
 
 const styles = StyleSheet.create({
   container: {
-    height: '100%',
+    flex: 1,
     width: '100%',
     justifyContent: 'center',
     alignItems: 'center',
     // added for development
     // borderColor: 'blue',
+    // borderWidth: 4,
+  },
+  spin: {
+    resizeMode: 'contain',
+    // added for development
+    // borderColor: 'red',
     // borderWidth: 4,
   },
   buttonContainer: {

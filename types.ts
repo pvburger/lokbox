@@ -1,10 +1,18 @@
 export class ContextObj {
+  window_h: number;
+  window_w: number;
   screen_h: number;
   screen_w: number;
+  navBar_h: number;
+  icon_size: number;
 
-  constructor() {
-    this.screen_h = 0;
-    this.screen_w = 0;
+  constructor(windH: number, windW: number, scrH: number, scrW: number) {
+    this.window_h = windH;
+    this.window_w = windW;
+    this.screen_h = scrH;
+    this.screen_w = scrW;
+    this.navBar_h = scrH - windH;
+    this.icon_size = 0.05 * scrH;
   }
 }
 
@@ -37,6 +45,7 @@ export type EntryFormKey = keyof EntryForm;
 export type DBUser = {
   usr_id: number;
   usr_login: string;
+  usr_email: string | null;
   usr_password: string;
   usr_salt: string;
   usr_created: string;

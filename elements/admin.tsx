@@ -1,9 +1,8 @@
 import { StyleSheet, View, Image, Pressable } from 'react-native';
-import ExitPic from '../assets/icon_exit.png';
-import { reSet } from '../util/common';
 import { useModContext } from '../context/global';
+import SettingsPic from '../assets/icon_settings.png';
 
-export default function ExitIcon({ changePage, userControl, setWidget }) {
+export default function AdminIcon({ changePage }) {
   // bring in global context
   const globject = useModContext();
 
@@ -15,19 +14,11 @@ export default function ExitIcon({ changePage, userControl, setWidget }) {
     },
   });
 
-  const reSetWrap = async (): Promise<void> => {
-    try {
-      await reSet(changePage, userControl, setWidget);
-    } catch (err) {
-      throw err;
-    }
-  };
-
   return (
     <View>
-      <Pressable onPress={reSetWrap}>
+      <Pressable onPress={() => changePage(20)}>
         <Image
-          source={ExitPic}
+          source={SettingsPic}
           style={[dynamicSty.tinyB, { marginLeft: 0.01 * globject.screen_h }]}
         />
       </Pressable>
