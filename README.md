@@ -4,7 +4,7 @@ _Password Manager_
 
 ## Summary
 
-Lokbox is a free password management application implemented in React-Native using TypeScript with the following features:
+Lokbox is a free password management application for mobile devices, implemented in React-Native using TypeScript. Lokbox is distinguished by:
 
 - Fully local implementation; no internet connection required
 - User password hashing with salt, utilizing bcryptJS
@@ -14,7 +14,7 @@ Lokbox is a free password management application implemented in React-Native usi
 
 ## Implemented Features
 
-Currently implemented features in lokbox include:
+Lokbox is under development. Currently implemented features include:
 
 - User account creation
 - Adding/removing entries from database
