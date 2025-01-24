@@ -1,6 +1,8 @@
 import * as SQLite from 'expo-sqlite';
 import { Dirs, FileSystem } from 'react-native-file-access';
 import { pickSingle } from 'react-native-document-picker';
+import Papa from 'papaparse';
+import { zip, zipWithPassword } from 'react-native-zip-archive';
 
 import {
   getHashEntry,
@@ -17,6 +19,7 @@ import {
   DBEntry,
   DBEntryKey,
   DBEntryColObj,
+  CSVEntry,
 } from '../types';
 
 // ***** IS IT APPROPIATE TO HAVE THESE INITIALIZED HERE ? *****
@@ -122,6 +125,37 @@ export const loginUser = async (
     console.log(`usr_id: ${userRow.usr_id}`);
 
     return userRow.usr_id;
+  } catch (error) {
+    throw error;
+  }
+};
+
+// login user
+/* known issues:
+ */
+export const verifyUser = async (
+  usr_id: number,
+  password: string
+): Promise<void> => {
+  try {
+    // connect to database
+    const db = await SQLiteDB.connectDB();
+
+    // retrieve hashed password
+    // hashed password is returned on the usr_password key of the returned object
+    const userRow: DBUser | null = await db.getFirstAsync(
+      `SELECT * FROM ${table1} WHERE usr_id = ?`,
+      [usr_id]
+    );
+
+    if (userRow === null) {
+      throw 'Invalid username/password';
+    }
+
+    const compareResult = await comparePass(password, userRow.usr_password);
+    if (!compareResult) {
+      throw 'Invalid username/password';
+    }
   } catch (error) {
     throw error;
   }
@@ -682,6 +716,80 @@ export const restore = async (): Promise<void> => {
     if (!dbExists) {
       throw new Error(`Selected database could not be restored`);
     }
+  } catch (err) {
+    throw err;
+  }
+};
+
+export const data2ZIP = async (
+  id: number,
+  password: string,
+  widget: string
+): Promise<void> => {
+  try {
+    // get data from database
+    const dbArray = await getAllData(id, widget, false);
+    if (dbArray.length === 0) {
+      throw new Error('No data in database');
+    }
+
+    // create new array of object with data_id and usr_id removed
+    const abridgedArr = dbArray.map((el): CSVEntry => {
+      return {
+        data_org: el.data_org,
+        data_login: el.data_login,
+        data_password: el.data_password,
+        data_pin: el.data_pin,
+        data_email: el.data_email,
+        data_url: el.data_url,
+        data_misc: el.data_misc,
+        data_created: el.data_created,
+        data_modified: el.data_modified,
+      };
+    });
+
+    // generate csv string
+    const csvString = Papa.unparse(abridgedArr);
+
+    // get backup filename
+    const fName = 'lokbox_' + getTimeStamp(getTimeString());
+    // app TEMP directory path
+    const tempPath = `${Dirs.DocumentDir}/TEMP`;
+    const encType = 'AES-256';
+
+    // added for development
+    // console.log(`app directory: ${Dirs.DocumentDir}`);
+
+    // check if TEMP path exists; if not, create it
+    const pathExists = await FileSystem.exists(tempPath);
+
+    if (!pathExists) {
+      await FileSystem.mkdir(tempPath);
+    }
+
+    // write string to csv in application directory
+    await FileSystem.writeFile(`${tempPath}/${fName}.csv`, csvString, 'utf8');
+
+    // create zip file from csv
+    // currently, there's a bug passing encryption type string to zipWithPassword
+    await zipWithPassword(
+      [`${tempPath}/${fName}.csv`],
+      `${tempPath}/${fName}.zip`,
+      password,
+      encType
+    );
+
+    // copy csv in application directory to shared Downloads directory
+    await FileSystem.cpExternal(
+      `${Dirs.DocumentDir}/TEMP/${fName}.zip`,
+      `${fName}.zip`,
+      'downloads'
+    );
+
+    // delete csv and zip in application directory
+    await FileSystem.unlink(`${Dirs.DocumentDir}/TEMP/${fName}.csv`);
+    await FileSystem.unlink(`${Dirs.DocumentDir}/TEMP/${fName}.zip`);
+    
   } catch (err) {
     throw err;
   }

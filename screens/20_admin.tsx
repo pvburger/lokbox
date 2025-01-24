@@ -20,7 +20,7 @@ export default function Admin({ changePage, userControl, setWidget }) {
   const backupDB = async (): Promise<void> => {
     try {
       await backup();
-      Alert.alert('Success', 'Database has been saved to the Documents folder');
+      Alert.alert('Success', 'Database has been saved to the Downloads folder');
     } catch (err) {
       Alert.alert(
         'Error',

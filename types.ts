@@ -75,6 +75,9 @@ export type DBEntryColObj = {
   data_val: string | number;
 };
 
+// type based on DBEntry with index keys omitted
+export type CSVEntry = Omit<DBEntry, 'data_id' | 'usr_id'>;
+
 export class FListEntry {
   orgName: string;
   key: string;

@@ -1,16 +1,25 @@
-import { Pressable, StyleSheet, Text, View } from 'react-native';
+import { Pressable, StyleSheet, Text, Alert, View } from 'react-native';
 import React from 'react';
 import { RegButton } from '../elements/buttons';
-// import Submit from '../elements/submit';
 
-const Menu = ({ changePage }) => {
+
+const Menu = ({changePage}) => {
+  // const downLoad = async (): Promise<void> => {
+  //   try {
+  //     await data2CSV(userControl.get(), widget);
+  //     Alert.alert('Succes', `CSV file downloaded to Downloads folder`);
+  //   } catch (err) {
+  //     Alert.alert('Error', `There was an error downloading CSV file: ${err}`);
+  //   }
+  // };
+
   return (
     <View style={styles.container}>
       <RegButton onPressFunc={() => changePage(4)} label={'check'} />
       <RegButton onPressFunc={() => changePage(5)} label={'add'} />
       <RegButton onPressFunc={() => changePage(6)} label={'remove'} />
       <RegButton onPressFunc={() => changePage(0)} label={'update'} />
-      <RegButton onPressFunc={() => changePage(0)} label={'download'} />
+      <RegButton onPressFunc={() => changePage(7)} label={'download'} />
     </View>
   );
 };

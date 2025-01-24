@@ -21,6 +21,7 @@ import Menu from './screens/3_menu';
 import Check from './screens/4_check';
 import AddInfo from './screens/5_add';
 import Remove from './screens/6_remove';
+import Download from './screens/7_download';
 import { reSet } from './util/common';
 import { GlobalContext } from './context/global';
 import { ContextObj } from './types';
@@ -158,6 +159,14 @@ export default function App() {
               changePage={setPage}
               userControl={userControl}
               widget={widget}
+            />
+          )}
+          {page === 7 && (
+            <Download
+              changePage={setPage}
+              userControl={userControl}
+              widget={widget}
+              keeboard={keeboard}
             />
           )}
         </View>
