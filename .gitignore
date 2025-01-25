@@ -7,7 +7,7 @@
 node_modules/
 
 # working files
-working_files/
+lokbox_resources/
 
 # old files
 *.OLD

@@ -9,30 +9,31 @@ Lokbox is a free password management application for mobile devices, implemented
 - Fully local implementation; no internet connection required
 - User password hashing with salt, utilizing bcryptJS
 - Robust encryption key derivation using PBKDF2 algorithm
-- Random number generation and encryption via react-native-quick-crypto library
+- Random number generation and encryption (AES-256) via react-native-quick-crypto library
 - Encrypted storage in ACID-compliant SQLite database
 
 ## Implemented Features
 
-Lokbox is under development. Currently implemented features include:
+Lokbox is under development. Implemented features include:
 
 - User account creation
 - Adding/removing entries from database
 - Viewing summary of all database entries
 - Android compatibility
 - Login status indicator
+- Option to download user's data to csv (zipped and password-protected with AES-256)
 
 ## Upcoming Features
 
 Features which will be implemented in the near-term include:
 
-- Downloading data to csv file (zipped and password-protected with AES-256) to a shared resource on device (i.e., Downloads folder)
+- Upload data from csv function
 - Search for single database entry
 - Password generator to create cryptographically-secure passwords for the user, given a set of constraints (i.e., character pools)
 
 ## Future Goals
 
-Features I'd like to incorporate further down the line include:
+Features I'd like to incorporate further down-the-line include:
 
 - iOS compatibility; currently lacking an iOS device for development
 - Deployment on Google Play and The App Store
