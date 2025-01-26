@@ -12,14 +12,14 @@ import { addUser, getDataSalt } from '../util/database';
 import { useModContext } from '../context/global';
 import Spin from '../assets/spinner.gif';
 import React, { useState, useEffect } from 'react';
-import { delay } from '../util/general';
+import { Props } from '../types';
 
 export default function Register({
   changePage,
   userControl,
   setWidget,
   keeboard,
-}) {
+}: Props) {
   const [user, setUser] = useState('');
   const [passA, setPassA] = useState('');
   const [passB, setPassB] = useState('');
@@ -43,11 +43,11 @@ export default function Register({
     try {
       const userRow = await addUser(user, passA, passB);
       const salt = await getDataSalt(userRow);
-      userControl.set(userRow);
-      setWidget(salt);
+      userControl!.set(userRow);
+      setWidget!(salt);
       // setIsLoading(false);
       Alert.alert('Success!', `${user} has successfully logged in.`);
-      changePage(3);
+      changePage!(3);
     } catch (error) {
       // setIsLoading(false);
       Alert.alert(

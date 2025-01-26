@@ -16,6 +16,17 @@ export class ContextObj {
   }
 }
 
+export type Props = {
+  changePage?: (inp: number) => void;
+  widget?: string;
+  setWidget?: (inp: string) => void;
+  keeboard?: boolean;
+  userControl?: {
+    get: () => number;
+    set: (inp: number) => void;
+  };
+};
+
 export class EntryForm {
   org: string;
   login: string;

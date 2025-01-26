@@ -5,6 +5,7 @@ import { RoundButton } from '../elements/buttons';
 import { inputBox } from '../styles';
 import { verifyUser, data2ZIP } from '../util/database';
 import { useModContext } from '../context/global';
+import { Props } from '../types';
 import Spin from '../assets/spinner.gif';
 
 export default function Download({
@@ -12,7 +13,7 @@ export default function Download({
   userControl,
   widget,
   keeboard,
-}) {
+}: Props) {
   const [pass, setPass] = useState('');
   const [isClicked, setIsClicked] = useState(false);
   const [isLoading, setIsLoading] = useState(false);
@@ -31,12 +32,12 @@ export default function Download({
   const getZIP = async (): Promise<void> => {
     try {
       // verify user
-      await verifyUser(userControl.get(), pass);
+      await verifyUser(userControl!.get(), pass);
 
       // download encrypted zip
-      await data2ZIP(userControl.get(), pass, widget);
+      await data2ZIP(userControl!.get(), pass, widget!);
       Alert.alert('Succes', `Zipped CSV file copied to Downloads folder`);
-      changePage(3);
+      changePage!(3);
     } catch (err) {
       Alert.alert(
         'Error',

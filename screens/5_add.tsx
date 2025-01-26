@@ -3,10 +3,10 @@ import React, { useState } from 'react';
 import { RoundButton } from '../elements/buttons';
 import { inputBox } from '../styles';
 import { addData } from '../util/database';
-import { EntryForm, EntryFormKey } from '../types';
+import { EntryForm, EntryFormKey, Props } from '../types';
 import { useModContext } from '../context/global';
 
-export default function AddInfo({ changePage, userControl, widget }) {
+export default function AddInfo({ changePage, userControl, widget }:Props) {
   // sets the subsection of the form
   const [sub, setSub] = useState(0);
   const [userInfo, setUserInfo] = useState(new EntryForm());
@@ -32,16 +32,16 @@ export default function AddInfo({ changePage, userControl, widget }) {
 
   // add user data to database
   const addEntry = async (): Promise<void> => {
-    const userID = userControl.get();
+    const userID = userControl!.get();
     try {
       // added for development
       // console.log(`userID: ${userID}`);
       // for (const [key, val] of Object.entries(userInfo)) {
       //   console.log(`key: ${key}, value: ${val}`);
       // }
-      await addData(userInfo, userControl.get(), widget);
+      await addData(userInfo, userControl!.get(), widget!);
       Alert.alert('Success!', `${userInfo.org} added to database`);
-      changePage(3);
+      changePage!(3);
     } catch (err) {
       Alert.alert(
         'Error',

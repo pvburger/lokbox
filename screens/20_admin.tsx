@@ -3,8 +3,9 @@ import React from 'react';
 import { RoundButton } from '../elements/buttons';
 import { nuke, backup, restore } from '../util/database';
 import { reSet } from '../util/common';
+import { Props } from '../types';
 
-export default function Admin({ changePage, userControl, setWidget }) {
+export default function Admin({ changePage, userControl, setWidget }: Props) {
   // wrapper for reSet function
   const cleanDB = async (): Promise<void> => {
     try {
@@ -62,5 +63,3 @@ const styles = StyleSheet.create({
     // borderWidth: 4,
   },
 });
-
-// export default Menu;

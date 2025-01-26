@@ -9,10 +9,10 @@ import {
 import React, { useState, useEffect } from 'react';
 import { RoundButton } from '../elements/buttons';
 import { removeData, getSingleData } from '../util/database';
-import { DBEntryColObj, FListEntry } from '../types';
+import { DBEntryColObj, FListEntry, Props } from '../types';
 import { useModContext } from '../context/global';
 
-export default function Remove({ changePage, userControl, widget }) {
+export default function Remove({ changePage, userControl, widget }: Props) {
   const [orgList, setOrgList] = useState<FListEntry[]>([]);
   const [selections, setSelections] = useState<DBEntryColObj[]>([]);
   const [orgObjArr, setOrgObjArr] = useState<DBEntryColObj[]>([]);
@@ -116,7 +116,7 @@ export default function Remove({ changePage, userControl, widget }) {
     } catch (err) {
       Alert.alert(`There was a problem deleting database entries: ${err}`);
       // CLEANUP - HOW TO HANDLE
-      changePage(3);
+      changePage!(3);
     }
   };
 
@@ -125,9 +125,9 @@ export default function Remove({ changePage, userControl, widget }) {
     try {
       // get array of objects w/ data_id and data_org for user from database
       const usrOrgObjArr = await getSingleData(
-        userControl.get(),
+        userControl!.get(),
         'data_org',
-        widget
+        widget!
       );
 
       // throw error if there is no data in the database
@@ -153,7 +153,7 @@ export default function Remove({ changePage, userControl, widget }) {
       setOrgList(resultArr);
     } catch (err) {
       Alert.alert('Error', `${err}`);
-      changePage(3);
+      changePage!(3);
     }
   };
 
@@ -222,10 +222,6 @@ export default function Remove({ changePage, userControl, widget }) {
           onPressFunc={() => deleteEntries()}
           label={'delete'}
         ></RoundButton>
-        {/* <RoundButton
-          onPressFunc={() => changePage(3)}
-          label={'menu'}
-        ></RoundButton> */}
       </View>
     </View>
   );

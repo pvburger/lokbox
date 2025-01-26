@@ -6,14 +6,14 @@ import { inputBox } from '../styles';
 import { loginUser, getDataSalt } from '../util/database';
 import { useModContext } from '../context/global';
 import Spin from '../assets/spinner.gif';
-import { delay } from '../util/general';
+import { Props } from '../types';
 
 export default function Login({
   changePage,
   userControl,
   setWidget,
   keeboard,
-}) {
+}: Props) {
   const [user, setUser] = useState('');
   const [pass, setPass] = useState('');
   const [isClicked, setIsClicked] = useState(false);
@@ -39,10 +39,10 @@ export default function Login({
       // retrieve salt and generate key
       const salt = await getDataSalt(userRow);
 
-      userControl.set(userRow);
-      setWidget(salt);
+      userControl!.set(userRow);
+      setWidget!(salt);
       Alert.alert('Success!', `${user} has successfully logged in.`);
-      changePage(3);
+      changePage!(3);
     } catch (error) {
       Alert.alert(
         'Error',

@@ -7,11 +7,11 @@ import {
   Platform,
 } from 'react-native';
 import React, { useState, useEffect } from 'react';
-// import { RoundButton } from '../elements/buttons';
 import { getAllDataAsString } from '../util/database';
 import { useModContext } from '../context/global';
+import { Props } from '../types';
 
-export default function Check({ changePage, userControl, widget }) {
+export default function Check({ changePage, userControl, widget }: Props) {
   const [text, setText] = useState('');
   const [isLoading, setIsLoading] = useState(true);
 
@@ -36,7 +36,7 @@ export default function Check({ changePage, userControl, widget }) {
 
   const getText = async (): Promise<void> => {
     try {
-      const data = await getAllDataAsString(userControl.get(), widget);
+      const data = await getAllDataAsString(userControl!.get(), widget!);
       if (data === '') {
         throw new Error(`User has no data stored in the database`);
       }
@@ -44,7 +44,7 @@ export default function Check({ changePage, userControl, widget }) {
       setIsLoading(true);
     } catch (err) {
       Alert.alert('Error', `${err}`);
-      changePage(3);
+      changePage!(3);
     }
   };
 
@@ -77,9 +77,6 @@ export default function Check({ changePage, userControl, widget }) {
           <Text style={[dynamicSty.text, staticSty.text]}>{text}</Text>
         </ScrollView>
       </View>
-      {/* <View style={styles.buttonContainer}>
-        <RoundButton onPressFunc={() => changePage(3)} label={'menu'} />
-      </View> */}
     </View>
   );
 }
@@ -105,14 +102,6 @@ const styles = StyleSheet.create({
     width: '90%',
     borderColor: 'black',
   },
-  // buttonContainer: {
-  //   flexDirection: 'row',
-  //   alignItems: 'center',
-  //   justifyContent: 'space-evenly',
-  //   // added for development
-  //   // borderColor: 'blue',
-  //   // borderWidth: 4,
-  // },
   text: {
     fontFamily: Platform.OS === 'ios' ? 'Courier' : 'monospace',
   },

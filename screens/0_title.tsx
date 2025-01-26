@@ -1,13 +1,14 @@
 import { StyleSheet, View } from 'react-native';
 import { RegButton } from '../elements/buttons';
 import React from 'react';
+import { Props } from '../types';
 
-export default function Title({ changePage }) {
+export default function Title({ changePage }: Props) {
   return (
     <View style={styles.container}>
-      <RegButton onPressFunc={() => changePage(1)} label={'login'}></RegButton>
+      <RegButton onPressFunc={() => changePage!(1)} label={'login'}></RegButton>
       <RegButton
-        onPressFunc={() => changePage(2)}
+        onPressFunc={() => changePage!(2)}
         label={'register'}
       ></RegButton>
     </View>
