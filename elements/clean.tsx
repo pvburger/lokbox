@@ -3,8 +3,13 @@ import ResetPic from '../assets/icon_delete.png';
 import { nuke } from '../util/database';
 import { reSet } from '../util/common';
 import { useModContext } from '../context/global';
+import { Props } from '../types';
 
-export default function CleanIcon({ changePage, userControl, setWidget }) {
+export default function CleanIcon({
+  changePage,
+  userControl,
+  setWidget,
+}: Props) {
   // bring in global context
   const globject = useModContext();
 

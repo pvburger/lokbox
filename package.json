@@ -11,6 +11,7 @@
   },
   "dependencies": {
     "@craftzdog/react-native-buffer": "^6.0.5",
+    "@react-native-community/slider": "^4.5.5",
     "bcryptjs": "^2.4.3",
     "expo": "~52.0.9",
     "expo-sqlite": "~15.0.6",

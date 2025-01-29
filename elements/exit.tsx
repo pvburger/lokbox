@@ -2,8 +2,13 @@ import { StyleSheet, View, Image, Pressable } from 'react-native';
 import ExitPic from '../assets/icon_exit.png';
 import { reSet } from '../util/common';
 import { useModContext } from '../context/global';
+import { Props } from '../types';
 
-export default function ExitIcon({ changePage, userControl, setWidget }) {
+export default function ExitIcon({
+  changePage,
+  userControl,
+  setWidget,
+}: Props) {
   // bring in global context
   const globject = useModContext();
 

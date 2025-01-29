@@ -22,6 +22,7 @@ import Check from './screens/4_check';
 import AddInfo from './screens/5_add';
 import Remove from './screens/6_remove';
 import Download from './screens/7_download';
+import Passgen from './screens/9_passgen';
 import { reSet } from './util/common';
 import { GlobalContext } from './context/global';
 import { ContextObj } from './types';
@@ -34,12 +35,14 @@ export default function App() {
   const [widget, setWidget] = useState('');
   const [keeboard, setKeeboard] = useState(false);
 
+  const bkgColor = '#d3d3d3';
+
   // globalObj to be used with GlobalContext.provider
   const windH = Dimensions.get('window').height;
   const windW = Dimensions.get('window').width;
   const scrH = Dimensions.get('screen').height;
   const scrW = Dimensions.get('screen').width;
-  const globject = new ContextObj(windH, windW, scrH, scrW);
+  const globject = new ContextObj(windH, windW, scrH, scrW, bkgColor);
 
   const userControl = {
     get: () => {
@@ -49,6 +52,17 @@ export default function App() {
       setUserID(input);
     },
   };
+
+  // this is a wrapper for the setPage function
+  // it allows the '3_menu' component to be returned when the page state variable is 3 or 13
+  // this simply allows the user to use the 'menu' icon to return to the top of the menu from within the menu
+  // const setPageWrap = (inp: number) => {
+  //   if (inp === 3 && page === 3) {
+  //     setPage(13);
+  //   } else {
+  //     setPage(inp);
+  //   }
+  // };
 
   const reSetWrap = async (): Promise<void> => {
     try {
@@ -109,7 +123,9 @@ export default function App() {
 
   return (
     <GlobalContext.Provider value={globject}>
-      <SafeAreaView style={styles.mainContainer}>
+      <SafeAreaView
+        style={[styles.mainContainer, { backgroundColor: bkgColor }]}
+      >
         <StatusBar />
         <View style={styles.header}>
           <Image source={Logo} style={styles.image} />
@@ -139,7 +155,7 @@ export default function App() {
               keeboard={keeboard}
             />
           )}
-          {page === 3 && <Menu changePage={setPage} />}
+          {(page === 3 || page === 13) && <Menu changePage={setPage} />}
           {page === 4 && (
             <Check
               changePage={setPage}
@@ -169,6 +185,7 @@ export default function App() {
               keeboard={keeboard}
             />
           )}
+          {page === 9 && <Passgen />}
         </View>
         {!keeboard && (
           <View style={styles.footer}>
@@ -195,7 +212,7 @@ const styles = StyleSheet.create({
   mainContainer: {
     flex: 1,
     // backgroundColor: '#45b6fe',
-    backgroundColor: '#d3d3d3',
+    // backgroundColor: '#d3d3d3',
     alignItems: 'center',
     justifyContent: 'space-between',
     // added for development

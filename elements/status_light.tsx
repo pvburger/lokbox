@@ -2,8 +2,9 @@ import { StyleSheet, View, Image } from 'react-native';
 import red_status from '../assets/led_red.png';
 import green_status from '../assets/led_green.png';
 import { useModContext } from '../context/global';
+import { Props } from '../types';
 
-export default function StatusIcon({ userControl }) {
+export default function StatusIcon({ userControl }: Props) {
   // bring in global context
   const globject = useModContext();
 
@@ -17,13 +18,13 @@ export default function StatusIcon({ userControl }) {
 
   return (
     <View>
-      {userControl.get() === 0 && (
+      {userControl!.get() === 0 && (
         <Image
           source={red_status}
           style={[dynamicSty.tinyB, { marginRight: 0.01 * globject.screen_h }]}
         />
       )}
-      {userControl.get() !== 0 && (
+      {userControl!.get() !== 0 && (
         <Image
           source={green_status}
           style={[dynamicSty.tinyB, { marginRight: 0.01 * globject.screen_h }]}

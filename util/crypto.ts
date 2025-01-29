@@ -11,10 +11,17 @@ see index.ts for implementation and react-native-quick-crypto docs
 
 // import QuickCrypto from 'react-native-quick-crypto';
 // const { randomBytes, pbkdf2, createCipheriv, createDecipheriv } = QuickCrypto;
-import { randomBytes, pbkdf2, createCipheriv, createDecipheriv } from 'crypto';
+import {
+  randomBytes,
+  randomInt,
+  pbkdf2,
+  createCipheriv,
+  createDecipheriv,
+} from 'crypto';
 import { Buffer } from 'buffer';
-
+import { PassSettings } from '../types';
 import { hash, genSalt, compare, getRounds, getSalt } from 'bcryptjs';
+import { getLettersArr, getDigitsArr, getSpecialsArr } from '../util/general';
 
 // BCRYPT FUNCTIONALITY
 
@@ -181,5 +188,48 @@ export const dCrypt = async (
     return decoded;
   } catch (err) {
     throw new Error(`There was a problem during decryption: ${err}`);
+  }
+};
+
+// generate a random password
+export const genPass = async (inp: PassSettings): Promise<string> => {
+  let charPool: string[] = [];
+  let result = '';
+
+  // helper function to generate random numbers
+  const getRandInt = (): Promise<number> => {
+    return new Promise((resolve, reject) => {
+      randomInt(0, charPool.length, (err, value) => {
+        if (err) {
+          reject(
+            new Error(`There was a problem generating a random integer: ${err}`)
+          );
+        } else {
+          resolve(value);
+        }
+      });
+    });
+  };
+  if (inp.letters) {
+    charPool = [...charPool, ...getLettersArr()];
+  }
+  if (inp.numbers) {
+    charPool = [...charPool, ...getDigitsArr()];
+  }
+  if (inp.special) {
+    charPool = [...charPool, ...inp.specialSet];
+  }
+  if (charPool.length === 0) {
+    throw new Error(`No valid characters in character pool`);
+  }
+
+  try {
+    for (let i = 0; i < inp.charNum; i++) {
+      const randomNum = await getRandInt();
+      result += charPool[randomNum];
+    }
+    return result;
+  } catch (err) {
+    throw `There was a problem generating a random password: ${err}`;
   }
 };

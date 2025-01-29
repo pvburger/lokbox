@@ -5,14 +5,22 @@ export class ContextObj {
   screen_w: number;
   navBar_h: number;
   icon_size: number;
+  color: string;
 
-  constructor(windH: number, windW: number, scrH: number, scrW: number) {
+  constructor(
+    windH: number,
+    windW: number,
+    scrH: number,
+    scrW: number,
+    color: string
+  ) {
     this.window_h = windH;
     this.window_w = windW;
     this.screen_h = scrH;
     this.screen_w = scrW;
     this.navBar_h = scrH - windH;
     this.icon_size = 0.05 * scrH;
+    this.color = color;
   }
 }
 
@@ -26,6 +34,22 @@ export type Props = {
     set: (inp: number) => void;
   };
 };
+
+export class PassSettings {
+  charNum: number;
+  numbers: boolean;
+  letters: boolean;
+  special: boolean;
+  specialSet: Set<string>;
+
+  constructor(specials:string[]) {
+    this.charNum = 13;
+    this.numbers = true;
+    this.letters = true;
+    this.special = true;
+    this.specialSet = new Set<string>(specials);
+  }
+}
 
 export class EntryForm {
   org: string;
