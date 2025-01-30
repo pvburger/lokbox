@@ -44,7 +44,8 @@ export default function Remove({ changePage, userControl, widget }: Props) {
     },
     textHeader: {
       fontSize: 0.018 * scrH,
-      margin: 0.02 * scrH,
+      marginTop: 0.02 * scrH,
+      marginBottom: 0.01 * scrH,
     },
     orgText: {
       fontSize: 0.03 * scrH,

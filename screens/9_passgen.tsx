@@ -2,18 +2,15 @@ import {
   Pressable,
   StyleSheet,
   Text,
-  TextInput,
   View,
-  FlatList,
   Alert,
   ScrollView,
 } from 'react-native';
 import React, { useState, useEffect } from 'react';
 import { RoundButton } from '../elements/buttons';
-import { removeData, getSingleData } from '../util/database';
-import { DBEntryColObj, FListEntry, Props, PassSettings } from '../types';
+import { PassSettings } from '../types';
 import { useModContext } from '../context/global';
-import { getLettersArr, getDigitsArr, getSpecialsArr } from '../util/general';
+import { getSpecialsArr } from '../util/general';
 import Slider from '@react-native-community/slider';
 import { genPass } from '../util/crypto';
 
@@ -22,9 +19,6 @@ export default function Passgen({ passCache }) {
   const [passSettings, setPassSettings] = useState(() => {
     return new PassSettings(getSpecialsArr());
   });
-
-  // bring in global context
-  const bkgColor = useModContext().color;
 
   // wrapper for setPassSettings
   const updateSettings = (
@@ -58,6 +52,7 @@ export default function Passgen({ passCache }) {
 
   // bring in global context
   const scrH = useModContext().screen_h;
+  const bkgColor = useModContext().color;
 
   // dynamic styleheet
   const dynamicSty = StyleSheet.create({
@@ -70,7 +65,8 @@ export default function Passgen({ passCache }) {
     },
     textHeader: {
       fontSize: 0.018 * scrH,
-      // margin: 0.02 * scrH,
+      marginTop: 0.02 * scrH,
+      marginBottom: 0.01 * scrH,
     },
     subContainer: {
       marginHorizontal: 0.02 * scrH,
@@ -81,10 +77,8 @@ export default function Passgen({ passCache }) {
     },
     charNumView: {
       height: 0.04 * scrH,
-      // width: 0.06 * scrH,
       marginTop: 0.01 * scrH,
       marginBottom: 0.01 * scrH,
-      // backgroundColor: 'white',
       alignItems: 'center',
       justifyContent: 'center',
       // added for development
@@ -156,6 +150,7 @@ export default function Passgen({ passCache }) {
     return result;
   };
 
+  // force rerender whenever passSettings changes
   useEffect(() => {}, [passSettings]);
 
   return (
@@ -280,7 +275,6 @@ const styles = StyleSheet.create({
     flexGrow: 1,
   },
   subContainer: {
-    // flex: 1,
     width: '90%',
     alignItems: 'center',
     // added for development
@@ -295,10 +289,6 @@ const styles = StyleSheet.create({
     width: '100%',
     alignItems: 'center',
   },
-  subText: {
-    color: 'black',
-  },
-  charNumInp: {},
   smButton: {
     alignItems: 'center',
     justifyContent: 'center',

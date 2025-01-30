@@ -9,7 +9,7 @@ import {
 } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
 import React, { useState, useEffect } from 'react';
-import Logo from './assets/logo.png';
+import Logo from './assets/logo_lb.png';
 import ExitIcon from './elements/exit';
 import StatusIcon from './elements/status_light';
 import MenuIcon from './elements/menu';
@@ -232,8 +232,8 @@ const styles = StyleSheet.create({
     // borderWidth: 4,
   },
   image: {
-    width: '87%',
-    height: 0.08 * Dimensions.get('screen').height,
+    width: '100%',
+    height: 0.1 * Dimensions.get('screen').height,
     resizeMode: 'contain',
     // added for development
     // borderColor: '#e6e6e6',
