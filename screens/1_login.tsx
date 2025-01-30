@@ -7,6 +7,7 @@ import { loginUser, getDataSalt } from '../util/database';
 import { useModContext } from '../context/global';
 import Spin from '../assets/spinner.gif';
 import { Props } from '../types';
+import { makeKey } from '../util/crypto';
 
 export default function Login({
   changePage,
@@ -40,7 +41,11 @@ export default function Login({
       const salt = await getDataSalt(userRow);
 
       userControl!.set(userRow);
-      setWidget!(salt);
+      // widget is the encryption key
+      const myWidget = await makeKey(pass, salt);
+      setWidget!(myWidget);
+      // added for development
+      // console.log(`myWidget: ${myWidget}`);
       Alert.alert('Success!', `${user} has successfully logged in.`);
       changePage!(3);
     } catch (error) {

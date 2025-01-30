@@ -13,6 +13,7 @@ import { useModContext } from '../context/global';
 import Spin from '../assets/spinner.gif';
 import React, { useState, useEffect } from 'react';
 import { Props } from '../types';
+import { makeKey } from '../util/crypto';
 
 export default function Register({
   changePage,
@@ -44,12 +45,15 @@ export default function Register({
       const userRow = await addUser(user, passA, passB);
       const salt = await getDataSalt(userRow);
       userControl!.set(userRow);
-      setWidget!(salt);
-      // setIsLoading(false);
+      // widget is the encryption key
+      const myWidget = await makeKey(passA, salt);
+      setWidget!(myWidget);
+      // added for development
+      // console.log(`mySalt: ${salt}`);
+      // console.log(`myWidget: ${myWidget}`);
       Alert.alert('Success!', `${user} has successfully logged in.`);
       changePage!(3);
     } catch (error) {
-      // setIsLoading(false);
       Alert.alert(
         'Error',
         `There was an error adding ${user} to the database: ${error}`

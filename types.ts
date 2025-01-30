@@ -1,3 +1,5 @@
+import { getSpecialsArr } from './util/general';
+
 export class ContextObj {
   window_h: number;
   window_w: number;
@@ -42,14 +44,35 @@ export class PassSettings {
   special: boolean;
   specialSet: Set<string>;
 
-  constructor(specials:string[]) {
+  constructor() {
     this.charNum = 13;
     this.numbers = true;
     this.letters = true;
     this.special = true;
-    this.specialSet = new Set<string>(specials);
+    this.specialSet = new Set<string>(getSpecialsArr());
   }
 }
+
+export class PinSettings {
+  charNum: number;
+
+  constructor() {
+    this.charNum = 13;
+  }
+}
+
+export class Settings {
+  color: string;
+  pass: PassSettings;
+  pin: PinSettings;
+
+  constructor(){
+    this.color = '#d3d3d3';
+    this.pass = new PassSettings;
+    this.pin = new PinSettings;
+  }
+}
+
 
 export class EntryForm {
   org: string;

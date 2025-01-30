@@ -17,7 +17,7 @@ import { genPass } from '../util/crypto';
 export default function Passgen({ passCache }) {
   // lazy initialization of state to prevenent needles repetetive execution
   const [passSettings, setPassSettings] = useState(() => {
-    return new PassSettings(getSpecialsArr());
+    return new PassSettings();
   });
 
   // wrapper for setPassSettings

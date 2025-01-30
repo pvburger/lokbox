@@ -20,6 +20,7 @@ import {
   DBEntryKey,
   DBEntryColObj,
   CSVEntry,
+  Settings,
 } from '../types';
 
 // ***** IS IT APPROPIATE TO HAVE THESE INITIALIZED HERE ? *****
@@ -47,7 +48,7 @@ export class SQLiteDB {
   
           CREATE TABLE IF NOT EXISTS ${table1} (usr_id INTEGER PRIMARY KEY NOT NULL, 
           usr_login TEXT NOT NULL COLLATE NOCASE, usr_password TEXT NOT NULL, usr_email TEXT, 
-          usr_salt TEXT NOT NULL, usr_created TEXT NOT NULL,
+          usr_salt TEXT NOT NULL, usr_settings TEXT NOT NULL, usr_created TEXT NOT NULL,
           /* usr_logins must all be unique */
           UNIQUE(usr_login));
   
@@ -228,8 +229,8 @@ export const addUser = async (
 
       // add entry to database
       await db.runAsync(
-        `INSERT INTO ${table1} (usr_login, usr_password, usr_salt, usr_created) VALUES (?, ?, ?, ?)`,
-        [username, hash, salt, getTimeString()]
+        `INSERT INTO ${table1} (usr_login, usr_password, usr_salt, usr_settings, usr_created) VALUES (?, ?, ?, ?, ?)`,
+        [username, hash, salt, 'settings_string', getTimeString()]
       );
 
       // return usr_id
@@ -789,7 +790,6 @@ export const data2ZIP = async (
     // delete csv and zip in application directory
     await FileSystem.unlink(`${Dirs.DocumentDir}/TEMP/${fName}.csv`);
     await FileSystem.unlink(`${Dirs.DocumentDir}/TEMP/${fName}.zip`);
-    
   } catch (err) {
     throw err;
   }

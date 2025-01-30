@@ -173,7 +173,7 @@ export const dCrypt = async (
     // parse database input
     const dbArray = input.split('$');
     const iVecBuff = Buffer.from(dbArray[1], encoding);
-    const secretBuff = Buffer.from(dbArray[2], encoding);
+    // const secretBuff = Buffer.from(dbArray[2], encoding);
 
     // added during development
     // console.log(`iVec: ${dbArray[1]}`);
