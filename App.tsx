@@ -25,20 +25,12 @@ import Download from './screens/7_download';
 import Passgen from './screens/9_passgen';
 import { reSet } from './util/common';
 import { GlobalContext } from './context/global';
-import {
-  ContextObj,
-  UserSettings,
-  GlobalObj,
-  DataObj,
-  PassSettings,
-  PinSettings,
-  SettingsLB,
-} from './types';
+import { UserSettings, DataObj } from './types';
 import Admin from './screens/20_admin';
 import ColorPicker from './screens/10_colors';
 
 export default function App() {
-  // get screen dimensions
+  // get screen dimensions and assign
   const windH = Dimensions.get('window').height;
   const windW = Dimensions.get('window').width;
   const scrH = Dimensions.get('screen').height;
@@ -51,7 +43,7 @@ export default function App() {
   const [keeboard, setKeeboard] = useState(false);
   const [globals, setGlobals] = useState(new DataObj(windH, windW, scrH, scrW));
 
-  // GENERICS
+  // GENERICS - REVIEW IMPLEMENTATION
   const globalObj = {
     data: globals,
     setContext: <T extends keyof UserSettings>(
@@ -76,35 +68,26 @@ export default function App() {
     },
   };
 
-  const globalControl = {
-    get: () => {
-      return globals;
-    },
-    set: (input: DataObj) => {
-      setGlobals(input);
-    },
-  };
-
-  const reSetWrap = async (): Promise<void> => {
-    try {
-      await reSet(setPage);
-    } catch (err) {
-      throw err;
-    }
-  };
+  // const reSetWrap = async (): Promise<void> => {
+  //   try {
+  //     await reSet(setPage);
+  //   } catch (err) {
+  //     throw err;
+  //   }
+  // };
 
   // function to handle inactivity or application no longer in foreground
-  const handleUnFocus = async () => {
-    // added for development
-    // console.log(`Running handleUnFocus; appState: ${appState}`);
-    if (appState === 'background' || appState === 'inactive') {
-      try {
-        await reSetWrap();
-      } catch (err) {
-        throw err;
-      }
-    }
-  };
+  // const handleUnFocus = async () => {
+  //   // added for development
+  //   // console.log(`Running handleUnFocus; appState: ${appState}`);
+  //   if (appState === 'background' || appState === 'inactive') {
+  //     try {
+  //       await reSetWrap();
+  //     } catch (err) {
+  //       throw err;
+  //     }
+  //   }
+  // };
 
   // useEffect to establish listeners
   useEffect(() => {
@@ -135,24 +118,41 @@ export default function App() {
   }, []);
 
   // useEffect cleans up after app is no longer in foreground
+  // useEffect(() => {
+  //   // added during development
+  //   console.log(`useEffect invoked; appState: ${appState}`);
+
+  //   handleUnFocus();
+  // }, [appState]);
+
+  // useEffect(() => {
+  //   if (page === 0) {
+  //     setUserID(0);
+  //     setWidget('');
+  //     setGlobals(new DataObj(windH, windW, scrH, scrW));
+  //     console.log(`useEffect invoked; cleaning up state...`);
+  //   }
+  // }, [page]);
+
+  // useEffect cleans up after app is no longer in foreground, or when the user logs out
   useEffect(() => {
-    // added during development
-    console.log(`useEffect invoked; appState: ${appState}`);
-
-    handleUnFocus();
-  }, [appState]);
-
-  // useEffect causes rerender if there is a user change
-  // useEffect(() => {}, [userID]);
-
-  useEffect(() => {
-    if (page === 0) {
-      setUserID(0);
-      setWidget('');
-      setGlobals(new DataObj(windH, windW, scrH, scrW));
-      console.log(`useEffect invoked; cleaning up state...`);
-    }
-  }, [page]);
+    // IIFE - Immediatly-invoked function to enable async-await inside useEffect
+    (async () => {
+      try {
+        if (page === 0 || appState === 'background' || appState === 'inactive') {
+          await reSet(setPage);
+          setUserID(0);
+          setWidget('');
+          setGlobals(new DataObj(windH, windW, scrH, scrW));
+          console.log(`useEffect invoked; cleaning up state...`);
+        }
+      } catch (err) {
+        throw new Error(
+          `There was a problem resetting the application: ${err}`
+        );
+      }
+    })();
+  }, [page, appState]);
 
   return (
     <GlobalContext.Provider value={globalObj}>

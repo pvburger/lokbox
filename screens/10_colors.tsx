@@ -38,13 +38,11 @@ export default function ColorPicker({ userControl, widget }: Props) {
     const newSettingsString = stringifyLB(newSettings);
     // save to database
     try {
-      const result = await setUsrSettings(
+      await setUsrSettings(
         newSettingsString,
         userControl!.get(),
         widget!
       );
-      // added for development
-      console.log(`result of setUsrSettings: ${result}`);
       Alert.alert(`Success`, `User settings were successfully updated`);
     } catch (err) {
       Alert.alert(`There was a problem updating user settings: ${err}`);
