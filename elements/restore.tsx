@@ -4,13 +4,18 @@ import { restore } from '../util/database';
 import { useModContext } from '../context/global';
 
 export default function RestoreIcon() {
+  // // bring in global context
+  // const globject = useModContext();
+
   // bring in global context
-  const globject = useModContext();
+  const globalObj = useModContext();
+  const scrH = globalObj.data.dimensions.scr_H;
+  const iconS = globalObj.data.dimensions.icon_S;
 
   const dynamicSty = StyleSheet.create({
     tinyB: {
-      height: globject.icon_size,
-      width: globject.icon_size,
+      height: iconS,
+      width: iconS,
       resizeMode: 'contain',
     },
   });
@@ -33,7 +38,7 @@ export default function RestoreIcon() {
       <Pressable onPress={() => restoreDB()}>
         <Image
           source={RestorePic}
-          style={[dynamicSty.tinyB, { marginLeft: 0.03 * globject.screen_h }]}
+          style={[dynamicSty.tinyB, { marginLeft: 0.03 * scrH }]}
         />
       </Pressable>
     </View>

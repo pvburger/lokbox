@@ -4,13 +4,18 @@ import MenuPic from '../assets/icon_menu.png';
 import { Props } from '../types';
 
 export default function MenuIcon({ changePage }: Props) {
+  // // bring in global context
+  // const globject = useModContext();
+
   // bring in global context
-  const globject = useModContext();
+  const globalObj = useModContext();
+  const scrH = globalObj.data.dimensions.scr_H;
+  const iconS = globalObj.data.dimensions.icon_S;
 
   const dynamicSty = StyleSheet.create({
     tinyB: {
-      height: globject.icon_size,
-      width: globject.icon_size,
+      height: iconS,
+      width: iconS,
       resizeMode: 'contain',
     },
   });
@@ -20,7 +25,7 @@ export default function MenuIcon({ changePage }: Props) {
       <Pressable onPress={() => changePage!(3)}>
         <Image
           source={MenuPic}
-          style={[dynamicSty.tinyB, { marginLeft: 0.03 * globject.screen_h }]}
+          style={[dynamicSty.tinyB, { marginLeft: 0.03 * scrH }]}
         />
       </Pressable>
     </View>

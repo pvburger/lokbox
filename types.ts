@@ -1,28 +1,55 @@
 import { getSpecialsArr } from './util/general';
 
-export class ContextObj {
-  window_h: number;
-  window_w: number;
-  screen_h: number;
-  screen_w: number;
-  navBar_h: number;
-  icon_size: number;
-  color: string;
+export type ContextObject = {
+  data: DataObj;
+  setContext: <T extends keyof UserSettings>(
+    prop: T,
+    val: UserSettings[T]
+  ) => void;
+  setAllContext: (inp: UserSettings) => void;
+};
 
-  constructor(
-    windH: number,
-    windW: number,
-    scrH: number,
-    scrW: number,
-    color: string
-  ) {
-    this.window_h = windH;
-    this.window_w = windW;
-    this.screen_h = scrH;
-    this.screen_w = scrW;
-    this.navBar_h = scrH - windH;
-    this.icon_size = 0.05 * scrH;
-    this.color = color;
+export class UserSettings {
+  color: string;
+  pass_charNum: number;
+  pass_numbers: boolean;
+  pass_letters: boolean;
+  pass_specials: boolean;
+  pass_specialSet: Set<string>;
+  pin_charNum: number;
+
+  constructor() {
+    this.color = '#d3d3d3';
+    this.pass_charNum = 13;
+    this.pass_numbers = true;
+    this.pass_letters = true;
+    this.pass_specials = true;
+    this.pass_specialSet = new Set(getSpecialsArr());
+    this.pin_charNum = 13;
+  }
+}
+
+export class DataObj {
+  dimensions: {
+    win_H: number;
+    win_W: number;
+    scr_H: number;
+    scr_W: number;
+    nav_H: number;
+    icon_S: number;
+  };
+  settings: UserSettings;
+
+  constructor(windH: number, windW: number, scrH: number, scrW: number) {
+    this.dimensions = {
+      win_H: windH,
+      win_W: windW,
+      scr_H: scrH,
+      scr_W: scrW,
+      nav_H: scrH - windH,
+      icon_S: 0.05 * scrH,
+    };
+    this.settings = new UserSettings();
   }
 }
 
@@ -61,18 +88,17 @@ export class PinSettings {
   }
 }
 
-export class Settings {
-  color: string;
-  pass: PassSettings;
-  pin: PinSettings;
+// export class SettingsLB {
+//   color: string;
+//   pass: PassSettings;
+//   pin: PinSettings;
 
-  constructor(){
-    this.color = '#d3d3d3';
-    this.pass = new PassSettings;
-    this.pin = new PinSettings;
-  }
-}
-
+//   constructor() {
+//     this.color = '#d3d3d3';
+//     this.pass = new PassSettings();
+//     this.pin = new PinSettings();
+//   }
+// }
 
 export class EntryForm {
   org: string;
@@ -106,6 +132,7 @@ export type DBUser = {
   usr_email: string | null;
   usr_password: string;
   usr_salt: string;
+  usr_settings: string;
   usr_created: string;
 };
 

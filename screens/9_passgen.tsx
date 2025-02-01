@@ -14,7 +14,7 @@ import { getSpecialsArr } from '../util/general';
 import Slider from '@react-native-community/slider';
 import { genPass } from '../util/crypto';
 
-export default function Passgen({ passCache }) {
+export default function Passgen() {
   // lazy initialization of state to prevenent needles repetetive execution
   const [passSettings, setPassSettings] = useState(() => {
     return new PassSettings();
@@ -50,9 +50,16 @@ export default function Passgen({ passCache }) {
     }
   };
 
+  // // bring in global context
+  // // const scrH = useModContext().screen_h;
+  // const scrH = useModContext().data.dimensions.scr_H;
+  // // const bkgColor = useModContext().settings.color;
+  // const bkgColor = useModContext().data.settings.color;
+
   // bring in global context
-  const scrH = useModContext().screen_h;
-  const bkgColor = useModContext().color;
+  const globalObj = useModContext();
+  const scrH = globalObj.data.dimensions.scr_H;
+  const bkgColor = globalObj.data.settings.color;
 
   // dynamic styleheet
   const dynamicSty = StyleSheet.create({

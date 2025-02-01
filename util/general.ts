@@ -1,3 +1,5 @@
+import { UserSettings } from '../types';
+
 // return a timestamp of the current time
 export const getTimeString = (): string => {
   const time = new Date();
@@ -106,4 +108,24 @@ export const getSpecialsArr = (): string[] => {
     result.push(String.fromCharCode(l));
   }
   return result;
+};
+
+// custom function to stringify Settings object
+export const stringifyLB = (inp: UserSettings): string => {
+  return JSON.stringify(inp, (key, value) => {
+    if (value instanceof Set) {
+      return [...value];
+    }
+    return value;
+  });
+};
+
+// custom function to parse Settings object
+export const parseLB = (inp: string): UserSettings => {
+  return JSON.parse(inp, (key, value) => {
+    if (key === 'specialSet') {
+      return new Set<string>(value);
+    }
+    return value;
+  });
 };

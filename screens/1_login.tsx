@@ -3,11 +3,12 @@ import React, { useState, useEffect } from 'react';
 import { Image, Keyboard } from 'react-native';
 import { RoundButton } from '../elements/buttons';
 import { inputBox } from '../styles';
-import { loginUser, getDataSalt } from '../util/database';
-import { useModContext } from '../context/global';
+import { loginUser, getDataSalt, getUsrSettings } from '../util/database';
+import { useModContext, GlobalContext } from '../context/global';
 import Spin from '../assets/spinner.gif';
 import { Props } from '../types';
-import { makeKey } from '../util/crypto';
+import { makeKey, dCrypt } from '../util/crypto';
+import { parseLB } from '../util/general';
 
 export default function Login({
   changePage,
@@ -21,7 +22,11 @@ export default function Login({
   const [isLoading, setIsLoading] = useState(false);
 
   // bring in global context
-  const scrH = useModContext().screen_h;
+  const globalObj = useModContext();
+  const scrH = globalObj.data.dimensions.scr_H;
+  const upd8UserSettings = globalObj.setAllContext;
+
+
   const dynamicSty = StyleSheet.create({
     ...inputBox(scrH),
     spin: {
@@ -34,18 +39,26 @@ export default function Login({
   // function to check credentials
   const checkCreds = async (): Promise<void> => {
     try {
-      // insert logic to check credentials
-      const userRow = await loginUser(user, pass);
+      // log user into database
+      const userID = await loginUser(user, pass);
 
-      // retrieve salt and generate key
-      const salt = await getDataSalt(userRow);
+      // retrieve salt
+      const salt = await getDataSalt(userID);
 
-      userControl!.set(userRow);
-      // widget is the encryption key
+      // generate encryption key
       const myWidget = await makeKey(pass, salt);
+
+      // update state variable
+      userControl!.set(userID);
       setWidget!(myWidget);
-      // added for development
-      // console.log(`myWidget: ${myWidget}`);
+
+      // retrieve encrypted settings
+      let usrSettings = await getUsrSettings(userID);
+      // decrypt settings
+      usrSettings = await dCrypt(usrSettings, myWidget);
+      // update user settings with decrypted, parsed object from database
+      upd8UserSettings(parseLB(usrSettings))
+
       Alert.alert('Success!', `${user} has successfully logged in.`);
       changePage!(3);
     } catch (error) {

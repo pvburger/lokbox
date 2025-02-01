@@ -15,8 +15,14 @@ export default function Check({ changePage, userControl, widget }: Props) {
   const [text, setText] = useState('');
   const [isLoading, setIsLoading] = useState(true);
 
-  // bring in global context
-  const scrH = useModContext().screen_h;
+    // bring in global context
+    const globalObj = useModContext();
+    const scrH = globalObj.data.dimensions.scr_H;
+  
+  
+  // // bring in global context
+  // // const scrH = useModContext().screen_h;
+  // const scrH = useModContext().data.dimensions.scr_H;
 
   // dynamic stylesheet
   const dynamicSty = StyleSheet.create({

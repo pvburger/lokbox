@@ -8,12 +8,13 @@ import {
 } from 'react-native';
 import { RoundButton } from '../elements/buttons';
 import { inputBox } from '../styles';
-import { addUser, getDataSalt } from '../util/database';
+import { addUser, getDataSalt, getUsrSettings } from '../util/database';
 import { useModContext } from '../context/global';
 import Spin from '../assets/spinner.gif';
 import React, { useState, useEffect } from 'react';
 import { Props } from '../types';
-import { makeKey } from '../util/crypto';
+import { makeKey, dCrypt } from '../util/crypto';
+import { parseLB } from '../util/general';
 
 export default function Register({
   changePage,
@@ -28,7 +29,9 @@ export default function Register({
   const [isLoading, setIsLoading] = useState(false);
 
   // bring in global context
-  const scrH = useModContext().screen_h;
+  const globalObj = useModContext();
+  const scrH = globalObj.data.dimensions.scr_H;
+  const upd8UserSettings = globalObj.setAllContext;
 
   const dynamicSty = StyleSheet.create({
     ...inputBox(scrH),
@@ -42,15 +45,26 @@ export default function Register({
   // function to register user
   const regUser = async (): Promise<void> => {
     try {
-      const userRow = await addUser(user, passA, passB);
-      const salt = await getDataSalt(userRow);
-      userControl!.set(userRow);
-      // widget is the encryption key
+      // add user to database
+      const userID = await addUser(user, passA, passB);
+
+      // retrieve salt
+      const salt = await getDataSalt(userID);
+
+      // generate encryption key
       const myWidget = await makeKey(passA, salt);
+
+      // update state variable
+      userControl!.set(userID);
       setWidget!(myWidget);
-      // added for development
-      // console.log(`mySalt: ${salt}`);
-      // console.log(`myWidget: ${myWidget}`);
+
+      // retrieve encrypted settings
+      let usrSettings = await getUsrSettings(userID);
+      // decrypt settings
+      usrSettings = await dCrypt(usrSettings, myWidget);
+      // update user settings with decrypted, parsed object from database
+      upd8UserSettings(parseLB(usrSettings));
+
       Alert.alert('Success!', `${user} has successfully logged in.`);
       changePage!(3);
     } catch (error) {

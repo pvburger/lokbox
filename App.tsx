@@ -25,24 +25,47 @@ import Download from './screens/7_download';
 import Passgen from './screens/9_passgen';
 import { reSet } from './util/common';
 import { GlobalContext } from './context/global';
-import { ContextObj } from './types';
+import {
+  ContextObj,
+  UserSettings,
+  GlobalObj,
+  DataObj,
+  PassSettings,
+  PinSettings,
+  SettingsLB,
+} from './types';
 import Admin from './screens/20_admin';
+import ColorPicker from './screens/10_colors';
 
 export default function App() {
+  // get screen dimensions
+  const windH = Dimensions.get('window').height;
+  const windW = Dimensions.get('window').width;
+  const scrH = Dimensions.get('screen').height;
+  const scrW = Dimensions.get('screen').width;
+
   const [page, setPage] = useState(0);
   const [userID, setUserID] = useState(0);
   const [appState, setAppState] = useState('');
   const [widget, setWidget] = useState('');
   const [keeboard, setKeeboard] = useState(false);
+  const [globals, setGlobals] = useState(new DataObj(windH, windW, scrH, scrW));
 
-  const bkgColor = '#d3d3d3';
-
-  // globalObj to be used with GlobalContext.provider
-  const windH = Dimensions.get('window').height;
-  const windW = Dimensions.get('window').width;
-  const scrH = Dimensions.get('screen').height;
-  const scrW = Dimensions.get('screen').width;
-  const globject = new ContextObj(windH, windW, scrH, scrW, bkgColor);
+  // GENERICS
+  const globalObj = {
+    data: globals,
+    setContext: <T extends keyof UserSettings>(
+      prop: T,
+      val: UserSettings[T]
+    ): void => {
+      const mySettings: UserSettings = { ...globals.settings };
+      mySettings[prop] = val;
+      setGlobals({ ...globals, settings: mySettings });
+    },
+    setAllContext: (inp: UserSettings): void => {
+      setGlobals({ ...globals, settings: inp });
+    },
+  };
 
   const userControl = {
     get: () => {
@@ -53,20 +76,18 @@ export default function App() {
     },
   };
 
-  // this is a wrapper for the setPage function
-  // it allows the '3_menu' component to be returned when the page state variable is 3 or 13
-  // this simply allows the user to use the 'menu' icon to return to the top of the menu from within the menu
-  // const setPageWrap = (inp: number) => {
-  //   if (inp === 3 && page === 3) {
-  //     setPage(13);
-  //   } else {
-  //     setPage(inp);
-  //   }
-  // };
+  const globalControl = {
+    get: () => {
+      return globals;
+    },
+    set: (input: DataObj) => {
+      setGlobals(input);
+    },
+  };
 
   const reSetWrap = async (): Promise<void> => {
     try {
-      await reSet(setPage, userControl, setWidget);
+      await reSet(setPage);
     } catch (err) {
       throw err;
     }
@@ -121,10 +142,25 @@ export default function App() {
     handleUnFocus();
   }, [appState]);
 
+  // useEffect causes rerender if there is a user change
+  // useEffect(() => {}, [userID]);
+
+  useEffect(() => {
+    if (page === 0) {
+      setUserID(0);
+      setWidget('');
+      setGlobals(new DataObj(windH, windW, scrH, scrW));
+      console.log(`useEffect invoked; cleaning up state...`);
+    }
+  }, [page]);
+
   return (
-    <GlobalContext.Provider value={globject}>
+    <GlobalContext.Provider value={globalObj}>
       <SafeAreaView
-        style={[styles.mainContainer, { backgroundColor: bkgColor }]}
+        style={[
+          styles.mainContainer,
+          { backgroundColor: globals.settings.color },
+        ]}
       >
         <StatusBar />
         <View style={styles.header}>
@@ -155,7 +191,7 @@ export default function App() {
               keeboard={keeboard}
             />
           )}
-          {(page === 3 || page === 13) && <Menu changePage={setPage} />}
+          {page === 3 && <Menu changePage={setPage} />}
           {page === 4 && (
             <Check
               changePage={setPage}
@@ -186,6 +222,9 @@ export default function App() {
             />
           )}
           {page === 9 && <Passgen />}
+          {page === 10 && (
+            <ColorPicker userControl={userControl} widget={widget} />
+          )}
         </View>
         {!keeboard && (
           <View style={styles.footer}>

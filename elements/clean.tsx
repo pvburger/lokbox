@@ -10,13 +10,18 @@ export default function CleanIcon({
   userControl,
   setWidget,
 }: Props) {
-  // bring in global context
-  const globject = useModContext();
+  // // bring in global context
+  // const globject = useModContext();
+
+    // bring in global context
+    const globalObj = useModContext();
+    const scrH = globalObj.data.dimensions.scr_H;
+    const iconS = globalObj.data.dimensions.icon_S;
 
   const dynamicSty = StyleSheet.create({
     tinyB: {
-      height: globject.icon_size,
-      width: globject.icon_size,
+      height: iconS,
+      width: iconS,
       resizeMode: 'contain',
     },
   });
@@ -25,7 +30,7 @@ export default function CleanIcon({
   const cleanDB = async (): Promise<void> => {
     try {
       await nuke();
-      await reSet(changePage, userControl, setWidget);
+      await reSet(changePage);
       Alert.alert('Success', 'Database has been deleted');
     } catch (err) {
       Alert.alert('Error', `There was a problem deleting the database: ${err}`);
@@ -37,7 +42,7 @@ export default function CleanIcon({
       <Pressable onPress={cleanDB}>
         <Image
           source={ResetPic}
-          style={[dynamicSty.tinyB, { marginLeft: 0.01 * globject.screen_h }]}
+          style={[dynamicSty.tinyB, { marginLeft: 0.01 * scrH }]}
         />
       </Pressable>
     </View>

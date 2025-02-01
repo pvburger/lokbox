@@ -3,8 +3,12 @@ import { useModContext } from '../context/global';
 
 // TODO: ADD TYPE FOR BUTTON PROPS OR ADD PROPERTIES TO 'PROPS' TYPE
 export function RegButton({ onPressFunc, label }) {
+  // // bring in global context
+  // const scrH = useModContext().screen_h;
+
   // bring in global context
-  const scrH = useModContext().screen_h;
+  const globalObj = useModContext();
+  const scrH = globalObj.data.dimensions.scr_H;
 
   const dynamicSty = StyleSheet.create({
     regButton: {
@@ -35,8 +39,12 @@ export function RegButton({ onPressFunc, label }) {
 }
 
 export function RoundButton({ onPressFunc, label }) {
+  // // bring in global context
+  // const scrH = useModContext().screen_h;
+
   // bring in global context
-  const scrH = useModContext().screen_h;
+  const globalObj = useModContext();
+  const scrH = globalObj.data.dimensions.scr_H;
 
   const dynamicSty = StyleSheet.create({
     roundButton: {

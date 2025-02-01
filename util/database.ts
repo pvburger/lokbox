@@ -11,8 +11,9 @@ import {
   generateSalt,
   nCrypt,
   dCrypt,
+  makeKey,
 } from './crypto';
-import { getTimeString, getTimeStamp } from './general';
+import { getTimeString, getTimeStamp, stringifyLB, parseLB } from './general';
 import {
   EntryForm,
   DBUser,
@@ -20,7 +21,7 @@ import {
   DBEntryKey,
   DBEntryColObj,
   CSVEntry,
-  Settings,
+  UserSettings,
 } from '../types';
 
 // ***** IS IT APPROPIATE TO HAVE THESE INITIALIZED HERE ? *****
@@ -183,6 +184,62 @@ export const getDataSalt = async (userID: number): Promise<string> => {
   }
 };
 
+export const getUsrSettings = async (userID: number): Promise<string> => {
+  try {
+    // connect to database
+    const db = await SQLiteDB.connectDB();
+
+    // check if user exists
+    const userRow: DBUser | null = await db.getFirstAsync(
+      `SELECT * FROM ${table1} WHERE usr_id = ?`,
+      [userID]
+    );
+
+    if (userRow === null) {
+      throw new Error(
+        'There was a problem retrieving user settings from database'
+      );
+    }
+
+    return userRow.usr_settings;
+  } catch (error) {
+    throw error;
+  }
+};
+
+export const setUsrSettings = async (
+  input: string,
+  id: number,
+  widget: string
+): Promise<void> => {
+  try {
+    // connect to database
+    const db = await SQLiteDB.connectDB();
+
+    // check if user exists
+    const userRow: DBUser | null = await db.getFirstAsync(
+      `SELECT * FROM ${table1} WHERE usr_id = ?`,
+      [id]
+    );
+
+    if (userRow === null) {
+      throw new Error(
+        'There was a problem retrieving user settings from database'
+      );
+    }
+
+    // encrypt settings data
+    const secretSettings = await nCrypt(input, widget);
+
+    await db.runAsync(
+      `UPDATE ${table1} SET usr_settings = ? WHERE usr_id = ?`,
+      [secretSettings, id]
+    );
+  } catch (error) {
+    throw error;
+  }
+};
+
 // add user
 /* known issues:
    1. requires comprehensive username password rules
@@ -227,10 +284,19 @@ export const addUser = async (
       getHashInfo(hash);
       // console.log('Current time (UTC): ' + getTimeString());
 
+      // create encryption key to encrypt 'usr_setting' entries
+      const tempWidget = await makeKey(passwordA, salt);
+
+      // get new settings object and stringify it
+      const defSettings = new UserSettings();
+
+      const mySettings = stringifyLB(defSettings);
+      const mySecretSettings = await nCrypt(mySettings, tempWidget);
+
       // add entry to database
       await db.runAsync(
         `INSERT INTO ${table1} (usr_login, usr_password, usr_salt, usr_settings, usr_created) VALUES (?, ?, ?, ?, ?)`,
-        [username, hash, salt, 'settings_string', getTimeString()]
+        [username, hash, salt, mySecretSettings, getTimeString()]
       );
 
       // return usr_id

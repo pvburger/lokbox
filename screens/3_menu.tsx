@@ -35,6 +35,9 @@ const Menu = ({ changePage }: Props) => {
       {subPage === 2 && (
         <RegButton onPressFunc={() => changePage!(7)} label={'restore'} />
       )}
+      {subPage === 2 && (
+        <RegButton onPressFunc={() => changePage!(10)} label={'color'} />
+      )}
       {subPage >= 1 && (
         <View style={styles.buttonContainer}>
           <RoundButton onPressFunc={() => setSubPage(0)} label={'prev'} />

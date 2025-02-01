@@ -9,20 +9,25 @@ export default function ExitIcon({
   userControl,
   setWidget,
 }: Props) {
+  // // bring in global context
+  // const globject = useModContext();
+
   // bring in global context
-  const globject = useModContext();
+  const globalObj = useModContext();
+  const scrH = globalObj.data.dimensions.scr_H;
+  const iconS = globalObj.data.dimensions.icon_S;
 
   const dynamicSty = StyleSheet.create({
     tinyB: {
-      height: globject.icon_size,
-      width: globject.icon_size,
+      height: iconS,
+      width: iconS,
       resizeMode: 'contain',
     },
   });
 
   const reSetWrap = async (): Promise<void> => {
     try {
-      await reSet(changePage, userControl, setWidget);
+      await reSet(changePage);
     } catch (err) {
       throw err;
     }
@@ -33,7 +38,7 @@ export default function ExitIcon({
       <Pressable onPress={reSetWrap}>
         <Image
           source={ExitPic}
-          style={[dynamicSty.tinyB, { marginLeft: 0.01 * globject.screen_h }]}
+          style={[dynamicSty.tinyB, { marginLeft: 0.01 * scrH }]}
         />
       </Pressable>
     </View>

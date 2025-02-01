@@ -18,8 +18,14 @@ export default function Download({
   const [isClicked, setIsClicked] = useState(false);
   const [isLoading, setIsLoading] = useState(false);
 
-  // bring in global context
-  const scrH = useModContext().screen_h;
+  // // bring in global context
+  // // const scrH = useModContext().screen_h;
+  // const scrH = useModContext().data.dimensions.scr_H;
+
+    // bring in global context
+    const globalObj = useModContext();
+    const scrH = globalObj.data.dimensions.scr_H;
+    
   const dynamicSty = StyleSheet.create({
     ...inputBox(scrH),
     spin: {

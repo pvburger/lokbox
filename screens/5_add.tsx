@@ -11,8 +11,12 @@ export default function AddInfo({ changePage, userControl, widget }:Props) {
   const [sub, setSub] = useState(0);
   const [userInfo, setUserInfo] = useState(new EntryForm());
 
-  // bring in global context
-  const scrH = useModContext().screen_h;
+  // // bring in global context
+  // // const scrH = useModContext().screen_h;
+  // const scrH = useModContext().data.dimensions.scr_H;
+    // bring in global context
+    const globalObj = useModContext();
+    const scrH = globalObj.data.dimensions.scr_H;
   const dynamicSty = inputBox(scrH);
 
   // tool to update single property on userInfo
