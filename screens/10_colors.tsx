@@ -1,64 +1,65 @@
-import { StyleSheet, View, TextInput, Alert } from 'react-native';
-import React, { useState } from 'react';
-import { Keyboard } from 'react-native';
+import { StyleSheet, View, Alert } from 'react-native';
+import React, { useState, useEffect, useRef } from 'react';
 import { RoundButton } from '../elements/buttons';
-import { inputBox } from '../styles';
 import { setUsrSettings } from '../util/database';
 import { useModContext } from '../context/global';
 import { Props } from '../types';
 import { stringifyLB } from '../util/general';
+import { TriangleColorPicker, fromHsv } from 'react-native-color-picker';
 
 export default function ColorPicker({ userControl, widget }: Props) {
-  const [color, setColor] = useState('#d3d3d3');
-
-  // bring in global context
+  // bring in global context first
   const globalObj = useModContext();
   const scrH = globalObj.data.dimensions.scr_H;
-  const bkgColor = globalObj.data.settings.color;
   const currSettings = globalObj.data.settings;
-  // const upd8UserSettings = globalObj.setContext;
+  const colorChanger = globalObj.setContext;
 
-  // setColor('black');
+  // most evidence suggests useRef is synchronous, therefore 'oldColor' should be available instantly
+  const oldColor = useRef(globalObj.data.settings.color);
+  const [color, setColor] = useState(oldColor.current);
 
   const dynamicSty = StyleSheet.create({
-    ...inputBox(scrH),
-    spin: {
-      height: 0.2 * scrH,
-      width: 0.2 * scrH,
+    pickerContainer: {
+      marginTop: 0.02 * scrH,
+      marginBottom: 0.01 * scrH,
+      borderRadius: 0.02 * scrH,
+      borderWidth: 0.0035 * scrH,
+      elevation: 0.005 * scrH,
     },
   });
   const staticSty = styles;
 
   // function to handle submit click
   const onClickHandler = async () => {
-    Keyboard.dismiss();
     // update database entry
     const newSettings = { ...currSettings, color: color };
     // stringify newSettings
     const newSettingsString = stringifyLB(newSettings);
     // save to database
     try {
-      await setUsrSettings(
-        newSettingsString,
-        userControl!.get(),
-        widget!
-      );
+      await setUsrSettings(newSettingsString, userControl!.get(), widget!);
       Alert.alert(`Success`, `User settings were successfully updated`);
     } catch (err) {
       Alert.alert(`There was a problem updating user settings: ${err}`);
     }
   };
 
+  // changes color in real time
+  useEffect(() => {
+    colorChanger('color', color);
+  }, [color]);
+
   return (
     <View style={styles.container}>
-      <View>
-        <TextInput
-          style={dynamicSty.inpBox}
-          autoCapitalize='none'
-          onChangeText={(inp) => setColor(inp)}
-          placeholder='color'
+      <View style={[dynamicSty.pickerContainer, staticSty.pickerContainer]}>
+        <TriangleColorPicker
+          style={styles.colorPicker}
+          hideControls={true}
+          defaultColor={oldColor.current}
+          onColorChange={(color) => setColor(fromHsv(color))}
         />
       </View>
+
       <View style={styles.buttonContainer}>
         <RoundButton onPressFunc={() => onClickHandler()} label={'save'} />
       </View>
@@ -75,6 +76,18 @@ const styles = StyleSheet.create({
     // added for development
     // borderColor: 'blue',
     // borderWidth: 4,
+  },
+  pickerContainer: {
+    flex: 1,
+    width: '90%',
+    justifyContent: 'center',
+    alignItems: 'center',
+    backgroundColor: 'white',
+    borderColor: 'black',
+  },
+  colorPicker: {
+    height: '80%',
+    width: '80%',
   },
   buttonContainer: {
     flexDirection: 'row',

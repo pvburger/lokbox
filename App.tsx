@@ -232,8 +232,6 @@ export default function App() {
               {page !== 0 && (
                 <ExitIcon
                   changePage={setPage}
-                  userControl={userControl}
-                  setWidget={setWidget}
                 />
               )}
               {page >= 4 && page <= 19 && <MenuIcon changePage={setPage} />}
