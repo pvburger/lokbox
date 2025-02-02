@@ -139,9 +139,9 @@ export default function Passgen() {
     let counter = 1;
     for (let char of characters) {
       result.push(
-        <View style={styles.smButtonBox}>
+        <View key={`spV-${counter}`} style={styles.smButtonBox}>
           <Pressable
-            key={`sp-${counter++}`}
+            key={`sp-${counter}`}
             style={[
               dynamicSty.smButton,
               staticSty.smButton,
@@ -153,6 +153,7 @@ export default function Passgen() {
           </Pressable>
         </View>
       );
+      counter++;
     }
     return result;
   };
@@ -265,14 +266,17 @@ const styles = StyleSheet.create({
   },
   settingsContainer: {
     flex: 1,
-    backgroundColor: 'white',
     width: '90%',
+    backgroundColor: 'white',
     borderColor: 'black',
     alignItems: 'center',
   },
   textHeaderContainer: {
     width: '100%',
     alignItems: 'center',
+    // added for development
+    // borderColor: 'red',
+    // borderWidth: 4,
   },
   textHeader: {
     color: '#808080',

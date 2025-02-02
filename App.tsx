@@ -14,6 +14,7 @@ import ExitIcon from './elements/exit';
 import StatusIcon from './elements/status_light';
 import MenuIcon from './elements/menu';
 import AdminIcon from './elements/admin';
+import VisibleIcon from './elements/visible';
 import Title from './screens/0_title';
 import Login from './screens/1_login';
 import Register from './screens/2_register';
@@ -42,6 +43,7 @@ export default function App() {
   const [widget, setWidget] = useState('');
   const [keeboard, setKeeboard] = useState(false);
   const [globals, setGlobals] = useState(new DataObj(windH, windW, scrH, scrW));
+  const [cipherTxt, setCipherTxt] = useState(false);
 
   // GENERICS - REVIEW IMPLEMENTATION
   const globalObj = {
@@ -67,6 +69,15 @@ export default function App() {
       setUserID(input);
     },
   };
+
+  const visControl = {
+    get: () => {
+      return cipherTxt
+    },
+    set: () =>{
+      setCipherTxt(!cipherTxt)
+    }
+  }
 
   // const reSetWrap = async (): Promise<void> => {
   //   try {
@@ -143,6 +154,7 @@ export default function App() {
           await reSet(setPage);
           setUserID(0);
           setWidget('');
+          setCipherTxt(false);
           setGlobals(new DataObj(windH, windW, scrH, scrW));
           console.log(`useEffect invoked; cleaning up state...`);
         }
@@ -197,6 +209,7 @@ export default function App() {
               changePage={setPage}
               userControl={userControl}
               widget={widget}
+              visControl={visControl}
             />
           )}
           {page === 5 && (
@@ -235,6 +248,7 @@ export default function App() {
                 />
               )}
               {page >= 4 && page <= 19 && <MenuIcon changePage={setPage} />}
+              {page === 4 && <VisibleIcon visControl = {visControl}/>}
               {page === 0 && <AdminIcon changePage={setPage} />}
             </View>
             <StatusIcon userControl={userControl} />

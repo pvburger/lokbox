@@ -62,6 +62,10 @@ export type Props = {
     get: () => number;
     set: (inp: number) => void;
   };
+  visControl?: {
+    get: () => boolean;
+    set: () => void;
+  };
 };
 
 export class PassSettings {

@@ -593,12 +593,10 @@ export const getSingleData = async (
 
 export const getAllDataAsString = async (
   id: number,
-  widget: string
+  widget: string,
+  cipherT: boolean
 ): Promise<string> => {
   try {
-    // variable to determine whether to show cipher text or plain text
-    const cipherT = false;
-
     let allRows = await getAllData(id, widget, cipherT);
 
     // parse data into string
@@ -608,18 +606,20 @@ export const getAllDataAsString = async (
       const formString = (inp: string | null): string => {
         let result = '';
         let stringBuff = inp;
+        // magicNum is the number of characters per line, from the database entry
+        const magicNum = 20;
 
         if (stringBuff === null) {
           stringBuff = '<null>';
         }
 
-        while (stringBuff.length >= 25) {
-          if (stringBuff.length === 25) {
-            result += stringBuff.slice(0, 25);
+        while (stringBuff.length >= magicNum) {
+          if (stringBuff.length === magicNum) {
+            result += stringBuff.slice(0, magicNum);
           } else {
-            result += stringBuff.slice(0, 25) + '\n' + ' '.repeat(15);
+            result += stringBuff.slice(0, magicNum) + '\n' + ' '.repeat(15);
           }
-          stringBuff = stringBuff.slice(25);
+          stringBuff = stringBuff.slice(magicNum);
         }
         result += stringBuff + '\n';
         return result;
