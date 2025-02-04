@@ -1,4 +1,4 @@
-import { StyleSheet, View, TextInput, Alert } from 'react-native';
+import { StyleSheet, View, TextInput, Alert, Keyboard } from 'react-native';
 import React, { useState } from 'react';
 import { RoundButton } from '../elements/buttons';
 import { inputBox } from '../styles';
@@ -6,7 +6,7 @@ import { addData } from '../util/database';
 import { EntryForm, EntryFormKey, Props } from '../types';
 import { useModContext } from '../context/global';
 
-export default function AddInfo({ changePage, userControl, widget }:Props) {
+export default function AddInfo({ changePage, userControl, widget }: Props) {
   // sets the subsection of the form
   const [sub, setSub] = useState(0);
   const [userInfo, setUserInfo] = useState(new EntryForm());
@@ -14,9 +14,9 @@ export default function AddInfo({ changePage, userControl, widget }:Props) {
   // // bring in global context
   // // const scrH = useModContext().screen_h;
   // const scrH = useModContext().data.dimensions.scr_H;
-    // bring in global context
-    const globalObj = useModContext();
-    const scrH = globalObj.data.dimensions.scr_H;
+  // bring in global context
+  const globalObj = useModContext();
+  const scrH = globalObj.data.dimensions.scr_H;
   const dynamicSty = inputBox(scrH);
 
   // tool to update single property on userInfo
@@ -62,6 +62,7 @@ export default function AddInfo({ changePage, userControl, widget }:Props) {
             style={dynamicSty.inpBox}
             autoCapitalize='none'
             onChangeText={(inp) => editEntry(inp, 'org')}
+            onSubmitEditing={() => Keyboard.dismiss()}
             placeholder='organization'
             value={userInfo.org}
           />
@@ -71,6 +72,7 @@ export default function AddInfo({ changePage, userControl, widget }:Props) {
             style={dynamicSty.inpBox}
             autoCapitalize='none'
             onChangeText={(inp) => editEntry(inp, 'login')}
+            onSubmitEditing={() => Keyboard.dismiss()}
             placeholder='username'
             value={userInfo.login}
           />
@@ -80,6 +82,7 @@ export default function AddInfo({ changePage, userControl, widget }:Props) {
             style={dynamicSty.inpBox}
             autoCapitalize='none'
             onChangeText={(inp) => editEntry(inp, 'passwordA')}
+            onSubmitEditing={() => Keyboard.dismiss()}
             placeholder='password'
             value={userInfo.passwordA}
             secureTextEntry={true}
@@ -90,6 +93,7 @@ export default function AddInfo({ changePage, userControl, widget }:Props) {
             style={dynamicSty.inpBox}
             autoCapitalize='none'
             onChangeText={(inp) => editEntry(inp, 'passwordB')}
+            onSubmitEditing={() => Keyboard.dismiss()}
             placeholder='confirm password'
             value={userInfo.passwordB}
             secureTextEntry={true}
@@ -100,6 +104,7 @@ export default function AddInfo({ changePage, userControl, widget }:Props) {
             style={dynamicSty.inpBox}
             autoCapitalize='none'
             onChangeText={(inp) => editEntry(inp, 'pinA')}
+            onSubmitEditing={() => Keyboard.dismiss()}
             placeholder='pin'
             value={userInfo.pinA}
             secureTextEntry={true}
@@ -110,6 +115,7 @@ export default function AddInfo({ changePage, userControl, widget }:Props) {
             style={dynamicSty.inpBox}
             autoCapitalize='none'
             onChangeText={(inp) => editEntry(inp, 'pinB')}
+            onSubmitEditing={() => Keyboard.dismiss()}
             placeholder='confirm pin'
             value={userInfo.pinB}
             secureTextEntry={true}
@@ -120,6 +126,7 @@ export default function AddInfo({ changePage, userControl, widget }:Props) {
             style={dynamicSty.inpBox}
             autoCapitalize='none'
             onChangeText={(inp) => editEntry(inp, 'email')}
+            onSubmitEditing={() => Keyboard.dismiss()}
             placeholder='email'
             value={userInfo.email}
           />
@@ -129,6 +136,7 @@ export default function AddInfo({ changePage, userControl, widget }:Props) {
             style={dynamicSty.inpBox}
             autoCapitalize='none'
             onChangeText={(inp) => editEntry(inp, 'url')}
+            onSubmitEditing={() => Keyboard.dismiss()}
             placeholder='url'
             value={userInfo.url}
           />
@@ -138,6 +146,7 @@ export default function AddInfo({ changePage, userControl, widget }:Props) {
             style={dynamicSty.inpBox}
             autoCapitalize='none'
             onChangeText={(inp) => editEntry(inp, 'misc')}
+            onSubmitEditing={() => Keyboard.dismiss()}
             placeholder='additional info'
             value={userInfo.misc}
           />

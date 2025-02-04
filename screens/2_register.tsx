@@ -80,16 +80,22 @@ export default function Register({
 
   // function to handle submit click
   const onClickHandler = () => {
-    Keyboard.dismiss();
+    if (keeboard) {
+      Keyboard.dismiss();
+    }
     setIsClicked(true);
   };
 
   useEffect(() => {
     if (isClicked && !keeboard) {
       setIsLoading(true);
-      regUser();
+      try {
+        (async () => await regUser())();
+      } catch (err) {
+        throw err;
+      }
     }
-  }, [keeboard]);
+  }, [isClicked, keeboard]);
 
   if (isLoading) {
     return (
@@ -106,12 +112,14 @@ export default function Register({
           style={dynamicSty.inpBox}
           autoCapitalize='none'
           onChangeText={(inp) => setUser(inp)}
+          onSubmitEditing={() => Keyboard.dismiss()}
           placeholder='username'
         />
         <TextInput
           style={dynamicSty.inpBox}
           autoCapitalize='none'
           onChangeText={(inp) => setPassA(inp)}
+          onSubmitEditing={() => Keyboard.dismiss()}
           placeholder='password'
           secureTextEntry={true}
         />
@@ -119,6 +127,7 @@ export default function Register({
           style={dynamicSty.inpBox}
           autoCapitalize='none'
           onChangeText={(inp) => setPassB(inp)}
+          onSubmitEditing={() => Keyboard.dismiss()}
           placeholder='confirm password'
           secureTextEntry={true}
         />

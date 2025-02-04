@@ -21,7 +21,7 @@ import {
 import { Buffer } from 'buffer';
 import { PassSettings } from '../types';
 import { hash, genSalt, compare, getRounds, getSalt } from 'bcryptjs';
-import { getLettersArr, getDigitsArr, getSpecialsArr } from '../util/general';
+import { getLettersArr, getDigitsArr } from '../util/general';
 
 // BCRYPT FUNCTIONALITY
 

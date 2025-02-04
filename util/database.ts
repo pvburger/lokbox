@@ -2,7 +2,7 @@ import * as SQLite from 'expo-sqlite';
 import { Dirs, FileSystem } from 'react-native-file-access';
 import { pickSingle } from 'react-native-document-picker';
 import Papa from 'papaparse';
-import { zip, zipWithPassword } from 'react-native-zip-archive';
+import { zipWithPassword } from 'react-native-zip-archive';
 
 import {
   getHashEntry,
@@ -13,7 +13,7 @@ import {
   dCrypt,
   makeKey,
 } from './crypto';
-import { getTimeString, getTimeStamp, stringifyLB, parseLB } from './general';
+import { getTimeString, getTimeStamp, stringifyLB } from './general';
 import {
   EntryForm,
   DBUser,
@@ -115,10 +115,17 @@ export const loginUser = async (
     );
 
     if (userRow === null) {
+      // still run a bcrypt; response for bad login/ password should be the same
+      // if bCrypt parameters change, this hash will need to be updated to comply with new hash characteristics
+      const fakeHash =
+        '$2a$10$00000000000000000000000000000000000000000000000000000';
+      await comparePass('bogus', fakeHash);
+
       throw 'Invalid username/password';
     }
 
     const compareResult = await comparePass(password, userRow.usr_password);
+    console.log(`hashed password: ${userRow.usr_password}`);
     if (!compareResult) {
       throw 'Invalid username/password';
     }
@@ -151,6 +158,7 @@ export const verifyUser = async (
     );
 
     if (userRow === null) {
+      // this will never be the case as the user is already logged in
       throw 'Invalid username/password';
     }
 

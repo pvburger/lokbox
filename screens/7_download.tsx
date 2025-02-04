@@ -22,10 +22,10 @@ export default function Download({
   // // const scrH = useModContext().screen_h;
   // const scrH = useModContext().data.dimensions.scr_H;
 
-    // bring in global context
-    const globalObj = useModContext();
-    const scrH = globalObj.data.dimensions.scr_H;
-    
+  // bring in global context
+  const globalObj = useModContext();
+  const scrH = globalObj.data.dimensions.scr_H;
+
   const dynamicSty = StyleSheet.create({
     ...inputBox(scrH),
     spin: {
@@ -57,16 +57,23 @@ export default function Download({
 
   // function to handle submit click
   const onClickHandler = () => {
-    Keyboard.dismiss();
+    if (keeboard) {
+      Keyboard.dismiss();
+    }
     setIsClicked(true);
   };
 
   useEffect(() => {
     if (isClicked && !keeboard) {
       setIsLoading(true);
-      getZIP();
+      // IIFE
+      try {
+        (async () => await getZIP())();
+      } catch (err) {
+        throw err;
+      }
     }
-  }, [keeboard]);
+  }, [isClicked, keeboard]);
 
   if (isLoading) {
     return (
@@ -83,6 +90,7 @@ export default function Download({
           style={dynamicSty.inpBox}
           autoCapitalize='none'
           onChangeText={(inp) => setPass(inp)}
+          onSubmitEditing={() => Keyboard.dismiss()}
           placeholder='confirm password'
           secureTextEntry={true}
         />

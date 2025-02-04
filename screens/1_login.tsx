@@ -4,7 +4,7 @@ import { Image, Keyboard } from 'react-native';
 import { RoundButton } from '../elements/buttons';
 import { inputBox } from '../styles';
 import { loginUser, getDataSalt, getUsrSettings } from '../util/database';
-import { useModContext, GlobalContext } from '../context/global';
+import { useModContext } from '../context/global';
 import Spin from '../assets/spinner.gif';
 import { Props } from '../types';
 import { makeKey, dCrypt } from '../util/crypto';
@@ -25,7 +25,6 @@ export default function Login({
   const globalObj = useModContext();
   const scrH = globalObj.data.dimensions.scr_H;
   const upd8UserSettings = globalObj.setAllContext;
-
 
   const dynamicSty = StyleSheet.create({
     ...inputBox(scrH),
@@ -57,7 +56,7 @@ export default function Login({
       // decrypt settings
       usrSettings = await dCrypt(usrSettings, myWidget);
       // update user settings with decrypted, parsed object from database
-      upd8UserSettings(parseLB(usrSettings))
+      upd8UserSettings(parseLB(usrSettings));
 
       Alert.alert('Success!', `${user} has successfully logged in.`);
       changePage!(3);
@@ -74,16 +73,24 @@ export default function Login({
 
   // function to handle submit click
   const onClickHandler = () => {
-    Keyboard.dismiss();
+    if (keeboard) {
+      Keyboard.dismiss();
+    }
     setIsClicked(true);
+    // added for development
+    // console.log(`user is: ${user}; pass is ${pass}`);
   };
 
   useEffect(() => {
     if (isClicked && !keeboard) {
       setIsLoading(true);
-      checkCreds();
+      try {
+        (async () => await checkCreds())();
+      } catch (err) {
+        throw err;
+      }
     }
-  }, [keeboard]);
+  }, [isClicked, keeboard]);
 
   if (isLoading) {
     return (
@@ -100,12 +107,14 @@ export default function Login({
           style={dynamicSty.inpBox}
           autoCapitalize='none'
           onChangeText={(inp) => setUser(inp)}
+          onSubmitEditing={() => Keyboard.dismiss()}
           placeholder='username'
         />
         <TextInput
           style={dynamicSty.inpBox}
           autoCapitalize='none'
           onChangeText={(inp) => setPass(inp)}
+          onSubmitEditing={() => Keyboard.dismiss()}
           placeholder='password'
           secureTextEntry={true}
         />
