@@ -125,7 +125,6 @@ export const loginUser = async (
     }
 
     const compareResult = await comparePass(password, userRow.usr_password);
-    console.log(`hashed password: ${userRow.usr_password}`);
     if (!compareResult) {
       throw 'Invalid username/password';
     }

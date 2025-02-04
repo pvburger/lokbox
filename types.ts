@@ -69,26 +69,26 @@ export type Props = {
 };
 
 export class PassSettings {
-  charNum: number;
-  numbers: boolean;
-  letters: boolean;
-  special: boolean;
-  specialSet: Set<string>;
+  pass_charNum: number;
+  pass_numbers: boolean;
+  pass_letters: boolean;
+  pass_special: boolean;
+  pass_specialSet: Set<string>;
 
   constructor() {
-    this.charNum = 13;
-    this.numbers = true;
-    this.letters = true;
-    this.special = true;
-    this.specialSet = new Set<string>(getSpecialsArr());
+    this.pass_charNum = 13;
+    this.pass_numbers = true;
+    this.pass_letters = true;
+    this.pass_special = true;
+    this.pass_specialSet = new Set<string>(getSpecialsArr());
   }
 }
 
 export class PinSettings {
-  charNum: number;
+  pin_charNum: number;
 
   constructor() {
-    this.charNum = 13;
+    this.pin_charNum = 13;
   }
 }
 

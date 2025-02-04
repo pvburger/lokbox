@@ -22,21 +22,26 @@ export default function Passgen() {
 
   // wrapper for setPassSettings
   const updateSettings = (
-    prop: 'charNum' | 'numbers' | 'letters' | 'special' | 'specialSet',
+    prop:
+      | 'pass_charNum'
+      | 'pass_numbers'
+      | 'pass_letters'
+      | 'pass_special'
+      | 'pass_specialSet',
     val: number | string | boolean | Set<string>
   ): void => {
     // values passed in on props other than 'specialSet' can be directly copied to state
-    if (prop !== 'specialSet') {
+    if (prop !== 'pass_specialSet') {
       setPassSettings({ ...passSettings, [prop]: val });
       // for 'specialSet', we must add or remove the passed in value from the passSetting.specialSet
     } else if (typeof val === 'string') {
-      const setCopy = new Set(passSettings.specialSet);
+      const setCopy = new Set(passSettings.pass_specialSet);
       if (setCopy.has(val)) {
         setCopy.delete(val);
       } else {
         setCopy.add(val);
       }
-      setPassSettings({ ...passSettings, specialSet: setCopy });
+      setPassSettings({ ...passSettings, pass_specialSet: setCopy });
     }
   };
 
@@ -118,14 +123,14 @@ export default function Passgen() {
     inp: keyof Omit<PassSettings, 'charNum'>,
     char?: string
   ): string => {
-    if (inp !== 'specialSet') {
+    if (inp !== 'pass_specialSet') {
       if (passSettings[inp]) {
         return bkgColor;
       } else {
         return 'white';
       }
     }
-    if (typeof char === 'string' && passSettings.specialSet.has(char)) {
+    if (typeof char === 'string' && passSettings.pass_specialSet.has(char)) {
       return bkgColor;
     } else {
       return 'white';
@@ -145,9 +150,9 @@ export default function Passgen() {
             style={[
               dynamicSty.smButton,
               staticSty.smButton,
-              { backgroundColor: getColor('specialSet', char) },
+              { backgroundColor: getColor('pass_specialSet', char) },
             ]}
-            onPress={() => updateSettings('specialSet', char)}
+            onPress={() => updateSettings('pass_specialSet', char)}
           >
             <Text style={[dynamicSty.smButtonTxt]}>{char}</Text>
           </Pressable>
@@ -177,7 +182,7 @@ export default function Passgen() {
             </View>
             <View style={[dynamicSty.charNumView]}>
               <Text style={[dynamicSty.charNumTxt]}>
-                {passSettings.charNum}
+                {passSettings.pass_charNum}
               </Text>
             </View>
             <Slider
@@ -188,7 +193,7 @@ export default function Passgen() {
               thumbTintColor='black'
               step={1}
               value={13}
-              onValueChange={(val) => updateSettings('charNum', val)}
+              onValueChange={(val) => updateSettings('pass_charNum', val)}
             ></Slider>
           </View>
 
@@ -202,9 +207,11 @@ export default function Passgen() {
               <Pressable
                 style={[
                   dynamicSty.smButton,
-                  { backgroundColor: getColor('numbers') },
+                  { backgroundColor: getColor('pass_numbers') },
                 ]}
-                onPress={() => updateSettings('numbers', !passSettings.numbers)}
+                onPress={() =>
+                  updateSettings('pass_numbers', !passSettings.pass_numbers)
+                }
               />
               <Text style={[dynamicSty.charNumTxt]}>numbers</Text>
             </View>
@@ -212,9 +219,11 @@ export default function Passgen() {
               <Pressable
                 style={[
                   dynamicSty.smButton,
-                  { backgroundColor: getColor('letters') },
+                  { backgroundColor: getColor('pass_letters') },
                 ]}
-                onPress={() => updateSettings('letters', !passSettings.letters)}
+                onPress={() =>
+                  updateSettings('pass_letters', !passSettings.pass_letters)
+                }
               />
               <Text style={[dynamicSty.charNumTxt]}>letters</Text>
             </View>
@@ -222,9 +231,11 @@ export default function Passgen() {
               <Pressable
                 style={[
                   dynamicSty.smButton,
-                  { backgroundColor: getColor('special') },
+                  { backgroundColor: getColor('pass_special') },
                 ]}
-                onPress={() => updateSettings('special', !passSettings.special)}
+                onPress={() =>
+                  updateSettings('pass_special', !passSettings.pass_special)
+                }
               />
               <Text style={[dynamicSty.charNumTxt]}>special characters</Text>
             </View>

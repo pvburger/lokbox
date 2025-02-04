@@ -211,21 +211,21 @@ export const genPass = async (inp: PassSettings): Promise<string> => {
       });
     });
   };
-  if (inp.letters) {
+  if (inp.pass_letters) {
     charPool = [...charPool, ...getLettersArr()];
   }
-  if (inp.numbers) {
+  if (inp.pass_numbers) {
     charPool = [...charPool, ...getDigitsArr()];
   }
-  if (inp.special) {
-    charPool = [...charPool, ...inp.specialSet];
+  if (inp.pass_special) {
+    charPool = [...charPool, ...inp.pass_specialSet];
   }
   if (charPool.length === 0) {
     throw new Error(`No valid characters in character pool`);
   }
 
   try {
-    for (let i = 0; i < inp.charNum; i++) {
+    for (let i = 0; i < inp.pass_charNum; i++) {
       const randomNum = await getRandInt();
       result += charPool[randomNum];
     }

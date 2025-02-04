@@ -22,10 +22,9 @@ export default function Remove({ changePage, userControl, widget }: Props) {
   // // const scrH = useModContext().screen_h;
   // const scrH = useModContext().data.dimensions.scr_H;
 
-
-    // bring in global context
-    const globalObj = useModContext();
-    const scrH = globalObj.data.dimensions.scr_H;
+  // bring in global context
+  const globalObj = useModContext();
+  const scrH = globalObj.data.dimensions.scr_H;
 
   // dynamic styleheet
   const dynamicSty = StyleSheet.create({
@@ -259,9 +258,9 @@ const styles = StyleSheet.create({
   },
   textHeaderContainer: {
     width: '100%',
-    flexDirection: 'row',
+    // flexDirection: 'row',
     alignItems: 'center',
-    justifyContent: 'center',
+    // justifyContent: 'center',
   },
   textHeader: {
     color: '#808080',
