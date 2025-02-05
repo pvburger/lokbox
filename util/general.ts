@@ -123,7 +123,8 @@ export const stringifyLB = (inp: UserSettings): string => {
 // custom function to parse Settings object
 export const parseLB = (inp: string): UserSettings => {
   return JSON.parse(inp, (key, value) => {
-    if (key === 'specialSet') {
+    // deal with Set
+    if (key === 'pass_specialSet') {
       return new Set<string>(value);
     }
     return value;

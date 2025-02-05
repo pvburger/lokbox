@@ -17,6 +17,8 @@ export class UserSettings {
   pass_specials: boolean;
   pass_specialSet: Set<string>;
   pin_charNum: number;
+  // add key signature so one can iterate through object
+  [key: string]: string | number | boolean | Set<string>;
 
   constructor() {
     this.color = '#d3d3d3';
@@ -74,6 +76,8 @@ export class PassSettings {
   pass_letters: boolean;
   pass_special: boolean;
   pass_specialSet: Set<string>;
+  // add key signature so one can iterate through object
+  [key: string]: string | number | boolean | Set<string>;
 
   constructor() {
     this.pass_charNum = 13;
@@ -86,6 +90,7 @@ export class PassSettings {
 
 export class PinSettings {
   pin_charNum: number;
+  [key: string]: number;
 
   constructor() {
     this.pin_charNum = 13;

@@ -19,7 +19,7 @@ export default function ColorPicker({ userControl, widget }: Props) {
   const [color, setColor] = useState(oldColor.current);
 
   const dynamicSty = StyleSheet.create({
-    pickerContainer: {
+    pickContainer: {
       marginTop: 0.02 * scrH,
       marginBottom: 0.01 * scrH,
       borderRadius: 0.02 * scrH,
@@ -33,11 +33,10 @@ export default function ColorPicker({ userControl, widget }: Props) {
   const onClickHandler = async () => {
     // update database entry
     const newSettings = { ...currSettings, color: color };
-    // stringify newSettings
-    const newSettingsString = stringifyLB(newSettings);
+
     // save to database
     try {
-      await setUsrSettings(newSettingsString, userControl!.get(), widget!);
+      await setUsrSettings(newSettings, userControl!.get(), widget!);
       Alert.alert(`Success`, `User settings were successfully updated`);
     } catch (err) {
       Alert.alert(`There was a problem updating user settings: ${err}`);
@@ -51,7 +50,7 @@ export default function ColorPicker({ userControl, widget }: Props) {
 
   return (
     <View style={styles.container}>
-      <View style={[dynamicSty.pickerContainer, staticSty.pickerContainer]}>
+      <View style={[dynamicSty.pickContainer, staticSty.pickContainer]}>
         <TriangleColorPicker
           style={styles.colorPicker}
           hideControls={true}
@@ -77,7 +76,7 @@ const styles = StyleSheet.create({
     // borderColor: 'blue',
     // borderWidth: 4,
   },
-  pickerContainer: {
+  pickContainer: {
     flex: 1,
     width: '90%',
     justifyContent: 'center',

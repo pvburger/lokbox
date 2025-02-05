@@ -234,7 +234,7 @@ export default function App() {
               keeboard={keeboard}
             />
           )}
-          {page === 9 && <Passgen />}
+          {page === 9 && <Passgen userControl={userControl} widget={widget}/>}
           {page === 10 && (
             <ColorPicker userControl={userControl} widget={widget} />
           )}

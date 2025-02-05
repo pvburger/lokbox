@@ -58,12 +58,10 @@ export default function Register({
       userControl!.set(userID);
       setWidget!(myWidget);
 
-      // retrieve encrypted settings
-      let usrSettings = await getUsrSettings(userID);
-      // decrypt settings
-      usrSettings = await dCrypt(usrSettings, myWidget);
-      // update user settings with decrypted, parsed object from database
-      upd8UserSettings(parseLB(usrSettings));
+      // get user settings from database
+      const newSettings = await getUsrSettings(userID, myWidget);
+
+      upd8UserSettings(newSettings);
 
       Alert.alert('Success!', `${user} has successfully logged in.`);
       changePage!(3);

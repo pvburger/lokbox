@@ -13,7 +13,7 @@ import {
   dCrypt,
   makeKey,
 } from './crypto';
-import { getTimeString, getTimeStamp, stringifyLB } from './general';
+import { getTimeString, getTimeStamp, stringifyLB, parseLB } from './general';
 import {
   EntryForm,
   DBUser,
@@ -191,7 +191,7 @@ export const getDataSalt = async (userID: number): Promise<string> => {
   }
 };
 
-export const getUsrSettings = async (userID: number): Promise<string> => {
+export const getUsrSettings = async (userID: number, widget:string): Promise<UserSettings> => {
   try {
     // connect to database
     const db = await SQLiteDB.connectDB();
@@ -208,15 +208,19 @@ export const getUsrSettings = async (userID: number): Promise<string> => {
       );
     }
 
-    return userRow.usr_settings;
+    // decrypt database entry
+    const newSettings = await dCrypt(userRow.usr_settings, widget);
+
+    // parse settings and return 
+    return parseLB(newSettings);
   } catch (error) {
     throw error;
   }
 };
 
 export const setUsrSettings = async (
-  input: string,
-  id: number,
+  input: UserSettings,
+  userID: number,
   widget: string
 ): Promise<void> => {
   try {
@@ -226,7 +230,7 @@ export const setUsrSettings = async (
     // check if user exists
     const userRow: DBUser | null = await db.getFirstAsync(
       `SELECT * FROM ${table1} WHERE usr_id = ?`,
-      [id]
+      [userID]
     );
 
     if (userRow === null) {
@@ -235,12 +239,15 @@ export const setUsrSettings = async (
       );
     }
 
+    // stringify UserSettings object
+    let secretSettings = stringifyLB(input)
+
     // encrypt settings data
-    const secretSettings = await nCrypt(input, widget);
+    secretSettings = await nCrypt(secretSettings, widget);
 
     await db.runAsync(
       `UPDATE ${table1} SET usr_settings = ? WHERE usr_id = ?`,
-      [secretSettings, id]
+      [secretSettings, userID]
     );
   } catch (error) {
     throw error;
@@ -294,7 +301,7 @@ export const addUser = async (
       // create encryption key to encrypt 'usr_setting' entries
       const tempWidget = await makeKey(passwordA, salt);
 
-      // get new settings object and stringify it
+      // get new settings object, stringify and encrypt
       const defSettings = new UserSettings();
 
       const mySettings = stringifyLB(defSettings);
@@ -318,9 +325,7 @@ export const addUser = async (
 
       // added for development
       console.log(`usr_id: ${newRow.usr_id}`);
-      // console.log(
-      //   `User: ${username} added (hash: ${hash}, data salt: ${salt})`
-      // );
+
       return newRow.usr_id;
     }
   } catch (error) {

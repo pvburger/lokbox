@@ -8,20 +8,34 @@ import {
 } from 'react-native';
 import React, { useState, useEffect } from 'react';
 import { RoundButton } from '../elements/buttons';
-import { PassSettings } from '../types';
+import { PassSettings, UserSettings } from '../types';
 import { useModContext } from '../context/global';
 import { getSpecialsArr } from '../util/general';
 import Slider from '@react-native-community/slider';
 import { genPass } from '../util/crypto';
+import { setUsrSettings } from '../util/database';
+import { Props } from '../types';
 
-export default function Passgen() {
-  // lazy initialization of state to prevenent needles repetetive execution
-  const [passSettings, setPassSettings] = useState(() => {
-    return new PassSettings();
-  });
+export default function Passgen({ userControl, widget }: Props) {
+  // bring in global context; passSettings state variable is predicated on globalObj.data.settings
+  const globalObj = useModContext();
+  const scrH = globalObj.data.dimensions.scr_H;
+  const bkgColor = globalObj.data.settings.color;
+  const upd8Settings = globalObj.setAllContext;
+
+  // generate passSettings instance
+  const usrPassSettings = new PassSettings();
+  // shallow copy relevant properties from globalObj.data.settings to userPassSettings
+  for (const [key, val] of Object.entries(globalObj.data.settings)) {
+    if (Object.hasOwn(usrPassSettings, key)) {
+      usrPassSettings[key] = val;
+    }
+  }
+
+  const [passSettings, setPassSettings] = useState(usrPassSettings);
 
   // wrapper for setPassSettings
-  const updateSettings = (
+  const updateCurrSettings = (
     prop:
       | 'pass_charNum'
       | 'pass_numbers'
@@ -35,13 +49,35 @@ export default function Passgen() {
       setPassSettings({ ...passSettings, [prop]: val });
       // for 'specialSet', we must add or remove the passed in value from the passSetting.specialSet
     } else if (typeof val === 'string') {
-      const setCopy = new Set(passSettings.pass_specialSet);
+      const setCopy = new Set<string>(passSettings.pass_specialSet);
       if (setCopy.has(val)) {
         setCopy.delete(val);
       } else {
         setCopy.add(val);
       }
       setPassSettings({ ...passSettings, pass_specialSet: setCopy });
+    }
+  };
+
+  // wrapper to update user's settings
+  const updateUserSettings = async () => {
+    // create new setting object
+    const newSettingsTemplate = { ...globalObj.data.settings };
+    // iterate through passSettings and overwrite properties in newSettingTemplate
+    for (const [key, val] of Object.entries(passSettings)) {
+      if (Object.hasOwn(newSettingsTemplate, key)) {
+        newSettingsTemplate[key] = val;
+      }
+    }
+    // update global settings with current state
+    upd8Settings(newSettingsTemplate);
+
+    try {
+      // write global settings to database
+      await setUsrSettings(newSettingsTemplate, userControl!.get(), widget!);
+      Alert.alert(`Success`, `User settings were successfully updated`);
+    } catch (err) {
+      Alert.alert(`There was a problem updating user settings: ${err}`);
     }
   };
 
@@ -54,17 +90,6 @@ export default function Passgen() {
       Alert.alert('Error', `${err}`);
     }
   };
-
-  // // bring in global context
-  // // const scrH = useModContext().screen_h;
-  // const scrH = useModContext().data.dimensions.scr_H;
-  // // const bkgColor = useModContext().settings.color;
-  // const bkgColor = useModContext().data.settings.color;
-
-  // bring in global context
-  const globalObj = useModContext();
-  const scrH = globalObj.data.dimensions.scr_H;
-  const bkgColor = globalObj.data.settings.color;
 
   // dynamic styleheet
   const dynamicSty = StyleSheet.create({
@@ -120,7 +145,7 @@ export default function Passgen() {
 
   // function to return color of small character buttons based on state
   const getColor = (
-    inp: keyof Omit<PassSettings, 'charNum'>,
+    inp: keyof Omit<PassSettings, 'pass_charNum'>,
     char?: string
   ): string => {
     if (inp !== 'pass_specialSet') {
@@ -137,7 +162,7 @@ export default function Passgen() {
     }
   };
 
-  // function to generate special characters
+  // function to generate special characters elements
   const genSpecial = (): JSX.Element[] => {
     const result: JSX.Element[] = [];
     const characters = getSpecialsArr();
@@ -152,7 +177,7 @@ export default function Passgen() {
               staticSty.smButton,
               { backgroundColor: getColor('pass_specialSet', char) },
             ]}
-            onPress={() => updateSettings('pass_specialSet', char)}
+            onPress={() => updateCurrSettings('pass_specialSet', char)}
           >
             <Text style={[dynamicSty.smButtonTxt]}>{char}</Text>
           </Pressable>
@@ -192,8 +217,8 @@ export default function Passgen() {
               minimumTrackTintColor='black'
               thumbTintColor='black'
               step={1}
-              value={13}
-              onValueChange={(val) => updateSettings('pass_charNum', val)}
+              value={passSettings.pass_charNum}
+              onValueChange={(val) => updateCurrSettings('pass_charNum', val)}
             ></Slider>
           </View>
 
@@ -210,7 +235,7 @@ export default function Passgen() {
                   { backgroundColor: getColor('pass_numbers') },
                 ]}
                 onPress={() =>
-                  updateSettings('pass_numbers', !passSettings.pass_numbers)
+                  updateCurrSettings('pass_numbers', !passSettings.pass_numbers)
                 }
               />
               <Text style={[dynamicSty.charNumTxt]}>numbers</Text>
@@ -222,7 +247,7 @@ export default function Passgen() {
                   { backgroundColor: getColor('pass_letters') },
                 ]}
                 onPress={() =>
-                  updateSettings('pass_letters', !passSettings.pass_letters)
+                  updateCurrSettings('pass_letters', !passSettings.pass_letters)
                 }
               />
               <Text style={[dynamicSty.charNumTxt]}>letters</Text>
@@ -234,7 +259,7 @@ export default function Passgen() {
                   { backgroundColor: getColor('pass_special') },
                 ]}
                 onPress={() =>
-                  updateSettings('pass_special', !passSettings.pass_special)
+                  updateCurrSettings('pass_special', !passSettings.pass_special)
                 }
               />
               <Text style={[dynamicSty.charNumTxt]}>special characters</Text>
@@ -259,7 +284,8 @@ export default function Passgen() {
         <RoundButton
           onPressFunc={() => createPassword()}
           label={'voil\u00E0'}
-        ></RoundButton>
+        />
+        <RoundButton onPressFunc={() => updateUserSettings()} label={'save'} />
       </View>
     </View>
   );
@@ -333,7 +359,7 @@ const styles = StyleSheet.create({
   buttonContainer: {
     flexDirection: 'row',
     alignItems: 'center',
-    justifyContent: 'center',
+    justifyContent: 'space-evenly',
     width: '100%',
     // added for development
     // borderColor: 'blue',
