@@ -1,4 +1,4 @@
-import { getSpecialsArr } from './util/general';
+import { getSpecialsArr } from "./util/initialize";
 
 export type ContextObject = {
   data: DataObj;
