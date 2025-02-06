@@ -39,7 +39,7 @@ const Menu = ({ changePage }: Props) => {
         <RegButton onPressFunc={() => changePage!(7)} label={'restore'} />
       )}
       {subPage === 2 && (
-        <RegButton onPressFunc={() => changePage!(10)} label={'color'} />
+        <RegButton onPressFunc={() => changePage!(11)} label={'color'} />
       )}
       {subPage >= 1 && (
         <View style={styles.buttonContainer}>
