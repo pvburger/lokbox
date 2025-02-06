@@ -13,8 +13,7 @@ import { useModContext } from '../context/global';
 import Spin from '../assets/spinner.gif';
 import React, { useState, useEffect } from 'react';
 import { Props } from '../types';
-import { makeKey, dCrypt } from '../util/crypto';
-import { parseLB } from '../util/general';
+import { makeKey } from '../util/crypto';
 
 export default function Register({
   changePage,
@@ -63,8 +62,11 @@ export default function Register({
 
       upd8UserSettings(newSettings);
 
-      Alert.alert('Success!', `${user} has successfully logged in.`);
-      changePage!(3);
+      Alert.alert(
+        'Success!',
+        `${user} account has been created.\nContinue to login.`
+      );
+      changePage!(0);
     } catch (error) {
       Alert.alert(
         'Error',

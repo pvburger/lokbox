@@ -297,9 +297,8 @@ export const addUser = async (
       // generate users's salt for data encryption
       const salt = await generateSalt();
 
-      // added for development
-      getHashInfo(hash);
-      // console.log('Current time (UTC): ' + getTimeString());
+      // added for development - logs new user information
+      // getHashInfo(hash);
 
       // create encryption key to encrypt 'usr_setting' entries
       const tempWidget = await makeKey(passwordA, salt);

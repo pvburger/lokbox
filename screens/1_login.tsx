@@ -6,9 +6,9 @@ import { inputBox } from '../styles';
 import { loginUser, getDataSalt, getUsrSettings } from '../util/database';
 import { useModContext } from '../context/global';
 import Spin from '../assets/spinner.gif';
-import { Props, UserSettings } from '../types';
-import { makeKey, dCrypt } from '../util/crypto';
-import { parseLB } from '../util/general';
+import { Props } from '../types';
+import { makeKey } from '../util/crypto';
+import { SQLiteDB } from '../util/database';
 
 export default function Login({
   changePage,
@@ -57,7 +57,13 @@ export default function Login({
       upd8UserSettings(newSettings);
 
       Alert.alert('Success!', `${user} has successfully logged in.`);
-      changePage!(3);
+      // if user is 'admin', redirect to admin page
+      if (user === 'admin') {
+        await SQLiteDB.disconnectDB();
+        changePage!(20);
+      } else {
+        changePage!(3);
+      }
     } catch (error) {
       Alert.alert(
         'Error',

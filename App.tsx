@@ -13,7 +13,7 @@ import Logo from './assets/logo_lb.png';
 import ExitIcon from './elements/exit';
 import StatusIcon from './elements/status_light';
 import MenuIcon from './elements/menu';
-import AdminIcon from './elements/admin';
+// import AdminIcon from './elements/admin';
 import VisibleIcon from './elements/visible';
 import Title from './screens/0_title';
 import Login from './screens/1_login';
@@ -213,7 +213,7 @@ export default function App() {
               {page !== 0 && <ExitIcon changePage={setPage} />}
               {page >= 4 && page <= 19 && <MenuIcon changePage={setPage} />}
               {page === 4 && <VisibleIcon visControl={visControl} />}
-              {page === 0 && <AdminIcon changePage={setPage} />}
+              {/* {page === 0 && <AdminIcon changePage={setPage} />} */}
             </View>
             <StatusIcon userControl={userControl} />
           </View>
