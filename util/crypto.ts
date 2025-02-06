@@ -19,7 +19,7 @@ import {
   createDecipheriv,
 } from 'crypto';
 import { Buffer } from 'buffer';
-import { PassSettings } from '../types';
+import { PassSettings, PinSettings } from '../types';
 import { hash, genSalt, compare, getRounds, getSalt } from 'bcryptjs';
 import { getLettersArr, getDigitsArr } from '../util/general';
 
@@ -232,5 +232,35 @@ export const genPass = async (inp: PassSettings): Promise<string> => {
     return result;
   } catch (err) {
     throw `There was a problem generating a random password: ${err}`;
+  }
+};
+
+// generate a random pin
+export const genPin = async (inp: PinSettings): Promise<string> => {
+  let result = '';
+
+  // helper function to generate random numbers
+  const getRandInt = (): Promise<number> => {
+    return new Promise((resolve, reject) => {
+      randomInt(0, 10, (err, value) => {
+        if (err) {
+          reject(
+            new Error(`There was a problem generating a random integer: ${err}`)
+          );
+        } else {
+          resolve(value);
+        }
+      });
+    });
+  };
+
+  try {
+    for (let i = 0; i < inp.pin_charNum; i++) {
+      const randomNum = await getRandInt();
+      result += randomNum;
+    }
+    return result;
+  } catch (err) {
+    throw `There was a problem generating a random pin: ${err}`;
   }
 };

@@ -24,11 +24,12 @@ import AddInfo from './screens/5_add';
 import Remove from './screens/6_remove';
 import Download from './screens/7_download';
 import Passgen from './screens/9_passgen';
+import Pingen from './screens/10_pingen';
 import { reSet } from './util/common';
 import { GlobalContext } from './context/global';
 import { UserSettings, DataObj } from './types';
 import Admin from './screens/20_admin';
-import ColorPicker from './screens/10_colors';
+import ColorPicker from './screens/11_colors';
 
 export default function App() {
   // get screen dimensions and assign
@@ -72,33 +73,12 @@ export default function App() {
 
   const visControl = {
     get: () => {
-      return cipherTxt
+      return cipherTxt;
     },
-    set: () =>{
-      setCipherTxt(!cipherTxt)
-    }
-  }
-
-  // const reSetWrap = async (): Promise<void> => {
-  //   try {
-  //     await reSet(setPage);
-  //   } catch (err) {
-  //     throw err;
-  //   }
-  // };
-
-  // function to handle inactivity or application no longer in foreground
-  // const handleUnFocus = async () => {
-  //   // added for development
-  //   // console.log(`Running handleUnFocus; appState: ${appState}`);
-  //   if (appState === 'background' || appState === 'inactive') {
-  //     try {
-  //       await reSetWrap();
-  //     } catch (err) {
-  //       throw err;
-  //     }
-  //   }
-  // };
+    set: () => {
+      setCipherTxt(!cipherTxt);
+    },
+  };
 
   // useEffect to establish listeners
   useEffect(() => {
@@ -128,29 +108,16 @@ export default function App() {
     };
   }, []);
 
-  // useEffect cleans up after app is no longer in foreground
-  // useEffect(() => {
-  //   // added during development
-  //   console.log(`useEffect invoked; appState: ${appState}`);
-
-  //   handleUnFocus();
-  // }, [appState]);
-
-  // useEffect(() => {
-  //   if (page === 0) {
-  //     setUserID(0);
-  //     setWidget('');
-  //     setGlobals(new DataObj(windH, windW, scrH, scrW));
-  //     console.log(`useEffect invoked; cleaning up state...`);
-  //   }
-  // }, [page]);
-
   // useEffect cleans up after app is no longer in foreground, or when the user logs out
   useEffect(() => {
     // IIFE - Immediatly-invoked function to enable async-await inside useEffect
     (async () => {
       try {
-        if (page === 0 || appState === 'background' || appState === 'inactive') {
+        if (
+          page === 0 ||
+          appState === 'background' ||
+          appState === 'inactive'
+        ) {
           await reSet(setPage);
           setUserID(0);
           setWidget('');
@@ -234,21 +201,18 @@ export default function App() {
               keeboard={keeboard}
             />
           )}
-          {page === 9 && <Passgen userControl={userControl} widget={widget}/>}
-          {page === 10 && (
+          {page === 9 && <Passgen userControl={userControl} widget={widget} />}
+          {page === 10 && <Pingen userControl={userControl} widget={widget} />}
+          {page === 11 && (
             <ColorPicker userControl={userControl} widget={widget} />
           )}
         </View>
         {!keeboard && (
           <View style={styles.footer}>
             <View style={styles.footLeft}>
-              {page !== 0 && (
-                <ExitIcon
-                  changePage={setPage}
-                />
-              )}
+              {page !== 0 && <ExitIcon changePage={setPage} />}
               {page >= 4 && page <= 19 && <MenuIcon changePage={setPage} />}
-              {page === 4 && <VisibleIcon visControl = {visControl}/>}
+              {page === 4 && <VisibleIcon visControl={visControl} />}
               {page === 0 && <AdminIcon changePage={setPage} />}
             </View>
             <StatusIcon userControl={userControl} />

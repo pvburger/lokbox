@@ -191,7 +191,10 @@ export const getDataSalt = async (userID: number): Promise<string> => {
   }
 };
 
-export const getUsrSettings = async (userID: number, widget:string): Promise<UserSettings> => {
+export const getUsrSettings = async (
+  userID: number,
+  widget: string
+): Promise<UserSettings> => {
   try {
     // connect to database
     const db = await SQLiteDB.connectDB();
@@ -211,7 +214,7 @@ export const getUsrSettings = async (userID: number, widget:string): Promise<Use
     // decrypt database entry
     const newSettings = await dCrypt(userRow.usr_settings, widget);
 
-    // parse settings and return 
+    // parse settings and return
     return parseLB(newSettings);
   } catch (error) {
     throw error;
@@ -240,7 +243,7 @@ export const setUsrSettings = async (
     }
 
     // stringify UserSettings object
-    let secretSettings = stringifyLB(input)
+    let secretSettings = stringifyLB(input);
 
     // encrypt settings data
     secretSettings = await nCrypt(secretSettings, widget);
@@ -324,7 +327,7 @@ export const addUser = async (
       }
 
       // added for development
-      console.log(`usr_id: ${newRow.usr_id}`);
+      // console.log(`usr_id: ${newRow.usr_id}`);
 
       return newRow.usr_id;
     }
@@ -359,7 +362,8 @@ export const addData = async (
   widget: string
 ): Promise<void> => {
   try {
-    console.log(`adding Data for usrID: ${id} for usr_org: ${dataEntry.org}`);
+    // added for development
+    // console.log(`adding Data for usrID: ${id} for usr_org: ${dataEntry.org}`);
 
     // do some scrubbing first
     if (dataEntry.org === '') {

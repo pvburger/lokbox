@@ -30,6 +30,9 @@ const Menu = ({ changePage }: Props) => {
         <RegButton onPressFunc={() => changePage!(9)} label={'passgen'} />
       )}
       {subPage === 2 && (
+        <RegButton onPressFunc={() => changePage!(10)} label={'pingen'} />
+      )}
+      {subPage === 2 && (
         <RegButton onPressFunc={() => changePage!(7)} label={'backup'} />
       )}
       {subPage === 2 && (

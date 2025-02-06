@@ -1,4 +1,4 @@
-import { UserSettings } from '../types';
+import { PassSettings, PinSettings, UserSettings } from '../types';
 
 // return a timestamp of the current time
 export const getTimeString = (): string => {
@@ -129,4 +129,24 @@ export const parseLB = (inp: string): UserSettings => {
     }
     return value;
   });
+};
+
+// function to generate PassSettings from UserSettings
+export const getPassFromUser = (inp: UserSettings): PassSettings => {
+  const usrPassSettings = new PassSettings();
+  // shallow copy relevant properties from globalObj.data.settings to userPassSettings
+  for (const [key, val] of Object.entries(inp)) {
+    if (Object.hasOwn(usrPassSettings, key)){
+      usrPassSettings[key] = val;
+    }
+  }
+  return usrPassSettings;
+};
+
+// function to generate PinSettings from UserSettings
+export const getPinFromUser = (inp: UserSettings): PinSettings => {
+  const usrPinSettings = new PinSettings();
+  // shallow copy relevant properties from globalObj.data.settings to userPassSettings
+  usrPinSettings.pin_charNum = inp.pin_charNum;
+  return usrPinSettings;
 };

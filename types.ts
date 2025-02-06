@@ -27,7 +27,7 @@ export class UserSettings {
     this.pass_letters = true;
     this.pass_specials = true;
     this.pass_specialSet = new Set(getSpecialsArr());
-    this.pin_charNum = 13;
+    this.pin_charNum = 4;
   }
 }
 
@@ -93,21 +93,9 @@ export class PinSettings {
   [key: string]: number;
 
   constructor() {
-    this.pin_charNum = 13;
+    this.pin_charNum = 4;
   }
 }
-
-// export class SettingsLB {
-//   color: string;
-//   pass: PassSettings;
-//   pin: PinSettings;
-
-//   constructor() {
-//     this.color = '#d3d3d3';
-//     this.pass = new PassSettings();
-//     this.pin = new PinSettings();
-//   }
-// }
 
 export class EntryForm {
   org: string;

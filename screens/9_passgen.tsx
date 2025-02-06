@@ -10,7 +10,7 @@ import React, { useState, useEffect } from 'react';
 import { RoundButton } from '../elements/buttons';
 import { PassSettings, UserSettings } from '../types';
 import { useModContext } from '../context/global';
-import { getSpecialsArr } from '../util/general';
+import { getSpecialsArr, getPassFromUser } from '../util/general';
 import Slider from '@react-native-community/slider';
 import { genPass } from '../util/crypto';
 import { setUsrSettings } from '../util/database';
@@ -24,13 +24,9 @@ export default function Passgen({ userControl, widget }: Props) {
   const upd8Settings = globalObj.setAllContext;
 
   // generate passSettings instance
-  const usrPassSettings = new PassSettings();
-  // shallow copy relevant properties from globalObj.data.settings to userPassSettings
-  for (const [key, val] of Object.entries(globalObj.data.settings)) {
-    if (Object.hasOwn(usrPassSettings, key)) {
-      usrPassSettings[key] = val;
-    }
-  }
+  const usrPassSettings = getPassFromUser(
+    globalObj.data.settings
+  );
 
   const [passSettings, setPassSettings] = useState(usrPassSettings);
 

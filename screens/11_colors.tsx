@@ -4,7 +4,6 @@ import { RoundButton } from '../elements/buttons';
 import { setUsrSettings } from '../util/database';
 import { useModContext } from '../context/global';
 import { Props } from '../types';
-import { stringifyLB } from '../util/general';
 import { TriangleColorPicker, fromHsv } from 'react-native-color-picker';
 
 export default function ColorPicker({ userControl, widget }: Props) {
