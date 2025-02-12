@@ -6,7 +6,6 @@ import { zipWithPassword } from 'react-native-zip-archive';
 
 import {
   getHashEntry,
-  getHashInfo,
   comparePass,
   generateSalt,
   nCrypt,
@@ -366,13 +365,13 @@ export const addData = async (
 
     // do some scrubbing first
     if (dataEntry.org === '') {
-      throw `Input error, "organization" entry cannot be empty.`;
+      throw new Error('"organization" cannot be empty');
     }
     if (
       dataEntry.passwordA !== dataEntry.passwordB ||
       dataEntry.pinA !== dataEntry.pinB
     ) {
-      throw 'Security credentials do not match.';
+      throw new Error('Security credentials do not match');
     }
 
     // connect to database
@@ -428,26 +427,32 @@ export const addData = async (
         newEntry.data_pin = await nCrypt(entry.pinA, widget);
       if (entry.email !== '')
         newEntry.data_email = await nCrypt(entry.email, widget);
-      if (entry.url !== '')
-        newEntry.data_url = await nCrypt(entry.email, widget);
+      if (entry.url !== '') newEntry.data_url = await nCrypt(entry.url, widget);
       if (entry.misc !== '')
         newEntry.data_misc = await nCrypt(entry.misc, widget);
 
       return newEntry;
     };
 
-    const entry = await parseEntry(dataEntry);
+    const dbEntry = await parseEntry(dataEntry);
 
     // build arrays with properties and values
     const keys: string[] = [];
     const vals: (string | number)[] = [];
     const questions: string[] = [];
 
-    for (const [key, val] of Object.entries(entry)) {
-      keys.push(key);
-      vals.push(val);
-      questions.push('?');
+    for (const [key, val] of Object.entries(dbEntry)) {
+      if (key !== 'data_id') {
+        keys.push(key);
+        vals.push(val);
+        questions.push('?');
+      }
     }
+
+    // added for development
+    // for (let i = 0; i < keys.length; i++) {
+    //   console.log(`key: ${keys[i]}; value: ${vals[i]}`);
+    // }
 
     // build query
     const myQuery = `INSERT INTO ${table2} (${keys.join(
@@ -456,6 +461,85 @@ export const addData = async (
 
     // added for development
     // console.log(`myQuery: ${myQuery}`);
+
+    await db.runAsync(myQuery, vals);
+  } catch (err) {
+    throw err;
+  }
+};
+
+// add data entry
+export const upD8Data = async (
+  dataEntry: EntryForm,
+  widget: string,
+  oldEntry: DBEntry
+): Promise<void> => {
+  try {
+    // do some scrubbing first
+    if (dataEntry.org === '') {
+      throw new Error('"organization" cannot be empty');
+    }
+    if (
+      dataEntry.passwordA !== dataEntry.passwordB ||
+      dataEntry.pinA !== dataEntry.pinB
+    ) {
+      throw new Error('Security credentials do not match');
+    }
+
+    // connect to database
+    const db = await SQLiteDB.connectDB();
+
+    // build query
+    const parseEntry = async (entry: EntryForm): Promise<DBEntry> => {
+      const time = getTimeString();
+      const newEntry = new DBEntry();
+      newEntry.usr_id = oldEntry.usr_id;
+      // newEntry.data_id = oldEntry.data_id;
+
+      newEntry.data_created = await nCrypt(oldEntry.data_created!, widget);
+      newEntry.data_modified = await nCrypt(time, widget);
+      newEntry.data_org = await nCrypt(dataEntry.org, widget);
+
+      if (dataEntry.login !== '')
+        newEntry.data_login = await nCrypt(dataEntry.login, widget);
+      if (dataEntry.passwordA !== '')
+        newEntry.data_password = await nCrypt(dataEntry.passwordA, widget);
+      if (dataEntry.pinA !== '')
+        newEntry.data_pin = await nCrypt(dataEntry.pinA, widget);
+      if (dataEntry.email !== '')
+        newEntry.data_email = await nCrypt(dataEntry.email, widget);
+      if (dataEntry.url !== '')
+        newEntry.data_url = await nCrypt(dataEntry.url, widget);
+      if (dataEntry.misc !== '')
+        newEntry.data_misc = await nCrypt(dataEntry.misc, widget);
+
+      return newEntry;
+    };
+
+    const dbEntry = await parseEntry(dataEntry);
+
+    // build arrays with properties and values
+    const vals: (string | number)[] = [];
+    const queArray: string[] = [];
+
+    for (const [key, val] of Object.entries(dbEntry)) {
+      if (key !== 'data_id') {
+        vals.push(val);
+        queArray.push(`${key} = ?`);
+      }
+    }
+
+    // add data_id to vals array
+    vals.push(oldEntry.data_id!);
+
+    // build query
+    const myQuery = `UPDATE ${table2} SET ${queArray.join(
+      ', '
+    )} WHERE data_id = ?`;
+
+    // added for development
+    // console.log(`myQuery: ${myQuery}`);
+    // console.log(`vals: ${vals.join(', ')}`);
 
     await db.runAsync(myQuery, vals);
   } catch (err) {
@@ -606,6 +690,59 @@ export const getSingleData = async (
   }
 };
 
+// returns the entire database entry given a data_org
+export const getDBEntry = async (
+  userID: number,
+  widget: string,
+  dataOrg: string
+): Promise<DBEntry> => {
+  try {
+    // connect to database
+    const db = await SQLiteDB.connectDB();
+
+    // get unencrypted array of DBEntryColObj for data_orgs
+    const dataOrgArr = await getSingleData(userID, 'data_org', widget, false);
+
+    // throw error if no data
+    if (dataOrgArr.length === 0) {
+      throw new Error('No data in database');
+    }
+
+    // determine data_id for given dataOrg
+    let dataID = 0;
+    for (let i = 0; i < dataOrgArr.length; i++) {
+      if (dataOrgArr[i].data_val === dataOrg) {
+        dataID = dataOrgArr[i].data_id;
+        break;
+      }
+    }
+
+    // throw error if no corresponding entry for dataOrg
+    if (dataID === 0) {
+      throw new Error(`No records found for ${dataOrg}`);
+    }
+
+    // added for development
+    console.log(`data_id: ${dataID}`);
+
+    // retrieve DBEntry
+    const dataEntry: DBEntry | null = await db.getFirstAsync(
+      `SELECT * FROM ${table2} WHERE usr_id = ? AND data_id = ?`,
+      [userID, dataID]
+    );
+
+    // should never actually be null...
+    if (dataEntry === null) {
+      throw new Error(`No records found for ${dataOrg}`);
+    }
+
+    // decrypt and return data entry
+    return await dCryptObject(dataEntry, widget);
+  } catch (err) {
+    throw err;
+  }
+};
+
 export const getAllDataAsString = async (
   id: number,
   widget: string,
@@ -678,7 +815,7 @@ export const getAllDataAsString = async (
           result += `NOTES:         <null>\n`;
         }
         result += `DATE CREATED:  ${formString(entry.data_created)}`;
-        result += `DATE MODIFIED: ${formString(entry.data_created)}\n\n\n`;
+        result += `DATE MODIFIED: ${formString(entry.data_modified)}\n\n\n`;
       }
 
       return result;

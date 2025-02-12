@@ -3,9 +3,6 @@ import { useModContext } from '../context/global';
 
 // TODO: ADD TYPE FOR BUTTON PROPS OR ADD PROPERTIES TO 'PROPS' TYPE
 export function RegButton({ onPressFunc, label }) {
-  // // bring in global context
-  // const scrH = useModContext().screen_h;
-
   // bring in global context
   const globalObj = useModContext();
   const scrH = globalObj.data.dimensions.scr_H;
@@ -38,10 +35,40 @@ export function RegButton({ onPressFunc, label }) {
   );
 }
 
-export function RoundButton({ onPressFunc, label }) {
-  // // bring in global context
-  // const scrH = useModContext().screen_h;
+export function ThinButton({ onPressFunc, label }) {
+  // bring in global context
+  const globalObj = useModContext();
+  const scrH = globalObj.data.dimensions.scr_H;
 
+  const dynamicSty = StyleSheet.create({
+    thinButton: {
+      height: 0.05 * scrH,
+      width: 0.22 * scrH,
+      marginTop: 0.01 * scrH,
+      marginBottom: 0.01 * scrH,
+      borderRadius: 0.015 * scrH,
+      borderWidth: 0.0035 * scrH,
+      elevation: 0.005 * scrH,
+    },
+    thinButtonTxt: {
+      fontSize: 0.021 * scrH,
+    },
+  });
+  const staticSty = styles;
+
+  return (
+    <Pressable
+      style={[dynamicSty.thinButton, staticSty.regButton]}
+      onPress={() => onPressFunc()}
+    >
+      <Text style={[dynamicSty.thinButtonTxt, staticSty.regButtonTxt]}>
+        {label}
+      </Text>
+    </Pressable>
+  );
+}
+
+export function RoundButton({ onPressFunc, label }) {
   // bring in global context
   const globalObj = useModContext();
   const scrH = globalObj.data.dimensions.scr_H;

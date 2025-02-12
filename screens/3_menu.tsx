@@ -24,7 +24,7 @@ const Menu = ({ changePage }: Props) => {
         <RegButton onPressFunc={() => changePage!(6)} label={'remove'} />
       )}
       {subPage === 1 && (
-        <RegButton onPressFunc={() => changePage!(3)} label={'update'} />
+        <RegButton onPressFunc={() => changePage!(11)} label={'update'} />
       )}
       {subPage === 2 && (
         <RegButton onPressFunc={() => changePage!(9)} label={'passgen'} />
@@ -39,7 +39,7 @@ const Menu = ({ changePage }: Props) => {
         <RegButton onPressFunc={() => changePage!(7)} label={'restore'} />
       )}
       {subPage === 2 && (
-        <RegButton onPressFunc={() => changePage!(11)} label={'color'} />
+        <RegButton onPressFunc={() => changePage!(8)} label={'color'} />
       )}
       {subPage >= 1 && (
         <View style={styles.buttonContainer}>

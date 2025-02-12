@@ -13,7 +13,6 @@ import Logo from './assets/logo_lb.png';
 import ExitIcon from './elements/exit';
 import StatusIcon from './elements/status_light';
 import MenuIcon from './elements/menu';
-// import AdminIcon from './elements/admin';
 import VisibleIcon from './elements/visible';
 import Title from './screens/0_title';
 import Login from './screens/1_login';
@@ -23,13 +22,15 @@ import Check from './screens/4_check';
 import AddInfo from './screens/5_add';
 import Remove from './screens/6_remove';
 import Download from './screens/7_download';
+import ColorPicker from './screens/8_colors';
 import Passgen from './screens/9_passgen';
 import Pingen from './screens/10_pingen';
+import UpdateList from './screens/11_updateList';
+import UpdateForm from './screens/12_updateForm';
 import { reSet } from './util/common';
 import { GlobalContext } from './context/global';
-import { UserSettings, DataObj } from './types';
+import { UserSettings, DataObj, DBEntry } from './types';
 import Admin from './screens/20_admin';
-import ColorPicker from './screens/11_colors';
 
 export default function App() {
   // get screen dimensions and assign
@@ -45,6 +46,8 @@ export default function App() {
   const [keeboard, setKeeboard] = useState(false);
   const [globals, setGlobals] = useState(new DataObj(windH, windW, scrH, scrW));
   const [cipherTxt, setCipherTxt] = useState(false);
+  // used to pass DBEntry from screen 11 to screen 12
+  const [entry, setEntry] = useState(new DBEntry());
 
   // GENERICS - REVIEW IMPLEMENTATION
   const globalObj = {
@@ -77,6 +80,15 @@ export default function App() {
     },
     set: () => {
       setCipherTxt(!cipherTxt);
+    },
+  };
+
+  const entryControl = {
+    get: () => {
+      return entry;
+    },
+    set: (input: DBEntry) => {
+      setEntry(input);
     },
   };
 
@@ -201,10 +213,26 @@ export default function App() {
               keeboard={keeboard}
             />
           )}
+          {page === 8 && (
+            <ColorPicker userControl={userControl} widget={widget} />
+          )}
           {page === 9 && <Passgen userControl={userControl} widget={widget} />}
           {page === 10 && <Pingen userControl={userControl} widget={widget} />}
           {page === 11 && (
-            <ColorPicker userControl={userControl} widget={widget} />
+            <UpdateList
+              changePage={setPage}
+              userControl={userControl}
+              widget={widget}
+              entryControl={entryControl}
+            />
+          )}
+          {page === 12 && (
+            <UpdateForm
+              changePage={setPage}
+              userControl={userControl}
+              widget={widget}
+              entryControl={entryControl}
+            />
           )}
         </View>
         {!keeboard && (

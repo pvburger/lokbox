@@ -196,6 +196,7 @@ export default function Remove({ changePage, userControl, widget }: Props) {
         </View>
         <FlatList
           data={orgList}
+          style={styles.fList}
           renderItem={({ item }) => (
             <View style={styles.listEntryContainer}>
               <Pressable
@@ -248,6 +249,12 @@ const styles = StyleSheet.create({
     backgroundColor: 'white',
     width: '90%',
     borderColor: 'black',
+  },
+  fList: {
+    width: '100%',
+    // added for development
+    // borderColor: 'blue',
+    // borderWidth: 4,
   },
   listEntryContainer: {
     flexDirection: 'row',

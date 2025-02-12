@@ -1,4 +1,4 @@
-import { getSpecialsArr } from "./util/initialize";
+import { getSpecialsArr } from './util/initialize';
 
 export type ContextObject = {
   data: DataObj;
@@ -29,6 +29,11 @@ export class UserSettings {
     this.pass_specialSet = new Set(getSpecialsArr());
     this.pin_charNum = 4;
   }
+}
+
+// general class for lookup tables
+export class LookupTable {
+  [key: string]:string;
 }
 
 export class DataObj {
@@ -67,6 +72,10 @@ export type Props = {
   visControl?: {
     get: () => boolean;
     set: () => void;
+  };
+  entryControl?: {
+    get: () => DBEntry;
+    set: (inp: DBEntry) => void;
   };
 };
 
