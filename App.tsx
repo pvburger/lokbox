@@ -8,7 +8,7 @@ import {
   Dimensions,
 } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useRef } from 'react';
 import Logo from './assets/logo_lb.png';
 import ExitIcon from './elements/exit';
 import StatusIcon from './elements/status_light';
@@ -27,6 +27,7 @@ import Passgen from './screens/9_passgen';
 import Pingen from './screens/10_pingen';
 import UpdateList from './screens/11_updateList';
 import UpdateForm from './screens/12_updateForm';
+import Upload from './screens/13_upload';
 import { reSet } from './util/common';
 import { GlobalContext } from './context/global';
 import { UserSettings, DataObj, DBEntry } from './types';
@@ -48,6 +49,8 @@ export default function App() {
   const [cipherTxt, setCipherTxt] = useState(false);
   // used to pass DBEntry from screen 11 to screen 12
   const [entry, setEntry] = useState(new DBEntry());
+  // used to prevent auto logout when picker is running
+  const pickerRunning = useRef(false);
 
   // GENERICS - REVIEW IMPLEMENTATION
   const globalObj = {
@@ -79,7 +82,7 @@ export default function App() {
       return cipherTxt;
     },
     set: () => {
-      setCipherTxt(!cipherTxt);
+      setCipherTxt((curr) => !curr);
     },
   };
 
@@ -89,6 +92,15 @@ export default function App() {
     },
     set: (input: DBEntry) => {
       setEntry(input);
+    },
+  };
+
+  const pickControl = {
+    get: () => {
+      return pickerRunning.current;
+    },
+    set: () => {
+      pickerRunning.current = !pickerRunning.current;
     },
   };
 
@@ -122,13 +134,16 @@ export default function App() {
 
   // useEffect cleans up after app is no longer in foreground, or when the user logs out
   useEffect(() => {
+    // added for development
+    // console.log(`appState: ${appState}`);
     // IIFE - Immediatly-invoked function to enable async-await inside useEffect
     (async () => {
       try {
         if (
-          page === 0 ||
-          appState === 'background' ||
-          appState === 'inactive'
+          (page === 0 ||
+            appState === 'background' ||
+            appState === 'inactive') &&
+          !pickerRunning.current
         ) {
           await reSet(setPage);
           setUserID(0);
@@ -232,6 +247,15 @@ export default function App() {
               userControl={userControl}
               widget={widget}
               entryControl={entryControl}
+            />
+          )}
+          {page === 13 && (
+            <Upload
+              changePage={setPage}
+              userControl={userControl}
+              widget={widget}
+              keeboard={keeboard}
+              pickControl={pickControl}
             />
           )}
         </View>

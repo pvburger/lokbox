@@ -1,8 +1,13 @@
 import * as SQLite from 'expo-sqlite';
-import { Dirs, FileSystem } from 'react-native-file-access';
-import { pickSingle } from 'react-native-document-picker';
-import Papa from 'papaparse';
-import { zipWithPassword } from 'react-native-zip-archive';
+import {
+  AndroidScoped,
+  Dirs,
+  FileSystem,
+  Util,
+} from 'react-native-file-access';
+import { pickSingle, types } from 'react-native-document-picker';
+import Papa, { LocalFile } from 'papaparse';
+import { zipWithPassword, unzipWithPassword } from 'react-native-zip-archive';
 
 import {
   getHashEntry,
@@ -21,6 +26,7 @@ import {
   DBEntryColObj,
   CSVEntry,
   UserSettings,
+  PathSettings,
 } from '../types';
 
 // ***** IS IT APPROPIATE TO HAVE THESE INITIALIZED HERE ? *****
@@ -915,6 +921,9 @@ export const restore = async (): Promise<void> => {
     // get path to backup file
     const fileUri = (await pickSingle()).uri;
 
+    // added for development
+    // console.log(`fileUri: ${fileUri}`);
+
     // path to database
     const dbFileUri = `${Dirs.DocumentDir}/SQLite/${targetDB}`;
     // check there is an existing database
@@ -935,6 +944,165 @@ export const restore = async (): Promise<void> => {
     if (!dbExists) {
       throw new Error(`Selected database could not be restored`);
     }
+  } catch (err) {
+    throw err;
+  }
+};
+
+// functionality to obtain paths of zip file
+export const getPaths2Upload = async (): Promise<PathSettings> => {
+  const newPaths = new PathSettings();
+  try {
+    const resultObj = await pickSingle({ type: types.zip });
+    // get path to backup file (percent encoded)
+    newPaths.fileURI = resultObj.uri;
+
+    // testing method to get filename
+    // according to react-native-file-access documentation, most method should work on (content://) Android resource uris
+    newPaths.fileName = (await FileSystem.stat(newPaths.fileURI)).filename;
+
+    // app TEMP directory path
+    newPaths.temp = `${Dirs.DocumentDir}/TEMP`;
+
+    return newPaths;
+  } catch (err) {
+    throw err;
+  }
+};
+
+// functionality to unzip file and copy to application directory
+/*
+TODO: Invoke FileSystem.readFile with stream rather than string; which may crash for exceptionally large files
+Currently, cannot pass File objects to parser; unclear whether working with File objects is feasible in React-
+Native.
+*/
+export const unZipCopy = async (
+  pwd: string,
+  input: PathSettings,
+  userID: number,
+  widget: string
+): Promise<void> => {
+  try {
+    // check if TEMP path exists; if not, create it
+    const pathExists = await FileSystem.exists(input.temp);
+
+    if (!pathExists) {
+      await FileSystem.mkdir(input.temp);
+    }
+
+    const zipURL = `${input.temp}/${input.fileName}`;
+
+    // copy zip file to application TEMP directory
+    await FileSystem.cp(input.fileURI, zipURL);
+
+    // seperate try/catch block to throw legible error when password is incorrect
+    try {
+      await unzipWithPassword(zipURL, `${input.temp}`, pwd);
+    } catch {
+      throw new Error('Incorrect password');
+    }
+
+    // convert CSV to string
+    const csvURL = zipURL.slice(0, -3) + 'csv';
+    const csvAsString = await FileSystem.readFile(csvURL, 'utf8');
+
+    // Parse Round 1
+    // recon parse to ensure all data columns are included and accurate
+    let ppResults = Papa.parse<CSVEntry>(csvAsString, {
+      header: true,
+      // error only used to handle FileReader errors; irrelevant in this case
+      skipEmptyLines: true,
+      preview: 1,
+      complete: (results, file) => {
+        // added for development
+        // console.log('Parsing Round 1 complete');
+      },
+    });
+
+    // check for data columns in results
+    const dbEntryKeys = new Set(Object.keys(new DBEntry()));
+    const csvCols = new Set(Object.keys(ppResults.data[0]));
+
+    // remove irrelevant fields
+    const unNeeded = ['data_id', 'usr_id', 'data_created', 'data_modified'];
+    for (let item of unNeeded) {
+      dbEntryKeys.delete(item);
+    }
+
+    for (let property of csvCols) {
+      if (
+        !dbEntryKeys.has(property) &&
+        property !== 'data_created' &&
+        property !== 'data_modified'
+      ) {
+        throw new Error(`Invalid column header in CSV file: ${property}`);
+      }
+    }
+    // iterate through dbEntryKeys, and make sure all exist in results
+    for (let property of dbEntryKeys) {
+      if (!csvCols.has(property)) {
+        throw new Error(`Missing data column in CSV file: ${property}`);
+      }
+    }
+
+    // Parse Round 2
+    // Actual parsing
+    ppResults = Papa.parse<CSVEntry>(csvAsString, {
+      header: true,
+      // error only used to handle FileReader errors; irrelevant in this case
+      skipEmptyLines: true,
+      complete: (results, file) => {
+        // added for development
+        // console.log('Parsing Round 2 complete');
+      },
+    });
+
+    // get list of existing orgs
+    let currentOrgObjs = await getSingleData(userID, 'data_org', widget);
+    const currentOrgSet = new Set(currentOrgObjs.map((org) => org.data_val));
+
+    // iterate through previous results and ensure no conflicting entries and all data_orgs have a value
+    for (let item of ppResults.data) {
+      // data_org will never actually be null
+      if (item.data_org === '' || item.data_org === null) {
+        throw new Error(`Missing data_org`);
+      } else if (currentOrgSet.has(item.data_org)) {
+        throw new Error(`Invalid data_org: ${item.data_org}`);
+      }
+    }
+
+    // create EntryForm array
+    const entryFormArr = ppResults.data.map((item) => {
+      const newEntry = new EntryForm();
+      // item properties should never be null; Papa parse inserts empty strings rather than null values
+      if (item.data_org !== null && item.data_org !== '')
+        newEntry.org = item.data_org;
+      if (item.data_login !== null && item.data_login !== '')
+        newEntry.login = item.data_login;
+      if (item.data_password !== null && item.data_password !== '')
+        newEntry.passwordA = newEntry.passwordB = item.data_password!;
+      if (item.data_pin !== null && item.data_pin !== '')
+        newEntry.pinA = newEntry.pinB = item.data_pin!;
+      if (item.data_email !== null && item.data_email !== '')
+        newEntry.email = item.data_email!;
+      if (item.data_url !== null && item.data_url !== '')
+        newEntry.url = item.data_url!;
+      if (item.data_misc !== null && item.data_misc !== '')
+        newEntry.misc = item.data_misc!;
+      return newEntry;
+    });
+
+    // upload data to database
+    for (let item of entryFormArr) {
+      await addData(item, userID, widget);
+    }
+
+    // delete temp files
+    await FileSystem.unlink(zipURL);
+    await FileSystem.unlink(csvURL);
+
+    // added for development
+    // console.log('Uploaded data to user account');
   } catch (err) {
     throw err;
   }

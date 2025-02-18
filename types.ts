@@ -33,7 +33,7 @@ export class UserSettings {
 
 // general class for lookup tables
 export class LookupTable {
-  [key: string]:string;
+  [key: string]: string;
 }
 
 export class DataObj {
@@ -77,6 +77,10 @@ export type Props = {
     get: () => DBEntry;
     set: (inp: DBEntry) => void;
   };
+  pickControl?: {
+    get: () => boolean;
+    set: () => void;
+  };
 };
 
 export class PassSettings {
@@ -95,6 +99,12 @@ export class PassSettings {
     this.pass_special = true;
     this.pass_specialSet = new Set<string>(getSpecialsArr());
   }
+}
+
+export class PathSettings {
+  // temp?: string;
+  // fileURI?: string;
+  [key: string]: string;
 }
 
 export class PinSettings {
