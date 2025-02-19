@@ -18,10 +18,6 @@ export default function Remove({ changePage, userControl, widget }: Props) {
   const [orgObjArr, setOrgObjArr] = useState<DBEntryColObj[]>([]);
   const [isLoading, setIsLoading] = useState(true);
 
-  // // bring in global context
-  // // const scrH = useModContext().screen_h;
-  // const scrH = useModContext().data.dimensions.scr_H;
-
   // bring in global context
   const globalObj = useModContext();
   const scrH = globalObj.data.dimensions.scr_H;
@@ -164,8 +160,6 @@ export default function Remove({ changePage, userControl, widget }: Props) {
   };
 
   useEffect(() => {
-    // added for development
-    // console.log('useEffect invoked...');
 
     // ***** THIS IS AN IIFE (IMMEDIATELY INVOKED FUNCTION) *****
     // it is used, in this case, to allow async/await syntax inside of useEffect
@@ -265,9 +259,7 @@ const styles = StyleSheet.create({
   },
   textHeaderContainer: {
     width: '100%',
-    // flexDirection: 'row',
     alignItems: 'center',
-    // justifyContent: 'center',
   },
   textHeader: {
     color: '#808080',

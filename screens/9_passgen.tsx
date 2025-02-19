@@ -8,7 +8,7 @@ import {
 } from 'react-native';
 import React, { useState, useEffect } from 'react';
 import { RoundButton } from '../elements/buttons';
-import { PassSettings, UserSettings } from '../types';
+import { PassSettings } from '../types';
 import { useModContext } from '../context/global';
 import { getPassFromUser } from '../util/general';
 import { getSpecialsArr } from '../util/initialize';
@@ -26,7 +26,6 @@ export default function Passgen({ userControl, widget }: Props) {
 
   // generate passSettings instance
   const usrPassSettings = getPassFromUser(globalObj.data.settings);
-
   const [passSettings, setPassSettings] = useState(usrPassSettings);
 
   // wrapper for setPassSettings
@@ -72,7 +71,10 @@ export default function Passgen({ userControl, widget }: Props) {
       await setUsrSettings(newSettingsTemplate, userControl!.get(), widget!);
       Alert.alert(`Success`, `User settings were successfully updated`);
     } catch (err) {
-      Alert.alert(`There was a problem updating user settings: ${err}`);
+      Alert.alert(
+        'Error',
+        `There was a problem updating user settings: ${err}`
+      );
     }
   };
 
@@ -82,7 +84,7 @@ export default function Passgen({ userControl, widget }: Props) {
       const password = await genPass(passSettings);
       Alert.alert('Success', `Created a new password: \n${password}`);
     } catch (err) {
-      Alert.alert('Error', `${err}`);
+      Alert.alert('Error', `There was a problem generating a password: ${err}`);
     }
   };
 
@@ -157,7 +159,7 @@ export default function Passgen({ userControl, widget }: Props) {
     }
   };
 
-  // function to generate special characters elements
+  // function to generate selectable, special character button grid
   const genSpecial = (): JSX.Element[] => {
     const result: JSX.Element[] = [];
     const characters = getSpecialsArr();

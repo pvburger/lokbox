@@ -17,7 +17,6 @@ export default function Upload({
 }: Props) {
   const [pass, setPass] = useState('');
   const [isClicked, setIsClicked] = useState(false);
-  // const [isLoading, setIsLoading] = useState(false);
   const [pathVars, setPathVars] = useState(new PathSettings());
 
   // bring in global context
@@ -54,6 +53,7 @@ export default function Upload({
         });
 
         // if getPaths2Upload does not resolve in 10000 ms, timer will throw an error and user will be logged out
+        // safety feature
         const paths = await Promise.race([timer, getPaths2Upload()]);
         setPathVars(paths);
         // added for development
@@ -61,9 +61,6 @@ export default function Upload({
         //   `fileURI: ${paths.fileURI}\napplication (TEMP) path: ${paths.temp}`
         // );
         pickControl!.set();
-
-        // unzip and copy csv to temp file
-        // await unZipCopy(pass, pathVars);
       } catch (err) {
         Alert.alert(
           'Error',

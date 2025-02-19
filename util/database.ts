@@ -1,12 +1,7 @@
 import * as SQLite from 'expo-sqlite';
-import {
-  AndroidScoped,
-  Dirs,
-  FileSystem,
-  Util,
-} from 'react-native-file-access';
+import { Dirs, FileSystem } from 'react-native-file-access';
 import { pickSingle, types } from 'react-native-document-picker';
-import Papa, { LocalFile } from 'papaparse';
+import Papa from 'papaparse';
 import { zipWithPassword, unzipWithPassword } from 'react-native-zip-archive';
 
 import {
@@ -135,7 +130,7 @@ export const loginUser = async (
     }
 
     // added for development
-    console.log(`usr_id: ${userRow.usr_id}`);
+    // console.log(`usr_id: ${userRow.usr_id}`);
 
     return userRow.usr_id;
   } catch (error) {
@@ -265,7 +260,6 @@ export const setUsrSettings = async (
 // add user
 /* known issues:
    1. requires comprehensive username password rules
-   2. variables should be added to state as they are currently garbage collected after running function but still appear on screen
 */
 export const addUser = async (
   username: string,
@@ -500,7 +494,6 @@ export const upD8Data = async (
       const time = getTimeString();
       const newEntry = new DBEntry();
       newEntry.usr_id = oldEntry.usr_id;
-      // newEntry.data_id = oldEntry.data_id;
 
       newEntry.data_created = await nCrypt(oldEntry.data_created!, widget);
       newEntry.data_modified = await nCrypt(time, widget);
@@ -729,7 +722,7 @@ export const getDBEntry = async (
     }
 
     // added for development
-    console.log(`data_id: ${dataID}`);
+    // console.log(`data_id: ${dataID}`);
 
     // retrieve DBEntry
     const dataEntry: DBEntry | null = await db.getFirstAsync(
@@ -786,7 +779,6 @@ export const getAllDataAsString = async (
       let result = '';
 
       // implement sorting functionality
-
       for (let entry of allRows) {
         // 'data_org', 'data_created', and 'data_modified' cannot have null values according to SQLite database rules
         result += `ORG:           ${formString(entry.data_org)}`;
@@ -833,6 +825,7 @@ export const getAllDataAsString = async (
   }
 };
 
+// no longer accessible
 export const printTables = async (): Promise<void> => {
   try {
     // connect to database
@@ -867,11 +860,6 @@ export const removeData = async (entryArr: DBEntryColObj[]): Promise<void> => {
     }
     // connect to database
     const db = await SQLiteDB.connectDB();
-
-    // get an object of users data entries
-    // const table_users: DBUser[] = await db.getAllAsync(
-    //   `SELECT * FROM ${table1}`
-    // );
 
     for (let entry of entryArr) {
       await db.runAsync(`DELETE FROM ${table2} WHERE data_id = ?`, [
@@ -957,7 +945,7 @@ export const getPaths2Upload = async (): Promise<PathSettings> => {
     // get path to backup file (percent encoded)
     newPaths.fileURI = resultObj.uri;
 
-    // testing method to get filename
+    // get filename
     // according to react-native-file-access documentation, most method should work on (content://) Android resource uris
     newPaths.fileName = (await FileSystem.stat(newPaths.fileURI)).filename;
 
@@ -970,11 +958,10 @@ export const getPaths2Upload = async (): Promise<PathSettings> => {
   }
 };
 
-// functionality to unzip file and copy to application directory
+// functionality to unzip file, copy to application directory, update database and cleanup
 /*
-TODO: Invoke FileSystem.readFile with stream rather than string; which may crash for exceptionally large files
-Currently, cannot pass File objects to parser; unclear whether working with File objects is feasible in React-
-Native.
+TODO: Invoke FileSystem.readFile with stream rather than string. Currently, lokbox may crash given exceptionally large CSV files.
+Currently, cannot pass File objects to parser; unclear whether working with File objects is feasible in React-Native.
 */
 export const unZipCopy = async (
   pwd: string,
@@ -1029,6 +1016,7 @@ export const unZipCopy = async (
       dbEntryKeys.delete(item);
     }
 
+    // iterate through csvCols, make sure all are valid keys of DBEntry
     for (let property of csvCols) {
       if (
         !dbEntryKeys.has(property) &&
@@ -1038,7 +1026,8 @@ export const unZipCopy = async (
         throw new Error(`Invalid column header in CSV file: ${property}`);
       }
     }
-    // iterate through dbEntryKeys, and make sure all exist in results
+
+    // iterate through dbEntryKeys, and make sure all exist in csvCols
     for (let property of dbEntryKeys) {
       if (!csvCols.has(property)) {
         throw new Error(`Missing data column in CSV file: ${property}`);
@@ -1158,7 +1147,8 @@ export const data2ZIP = async (
     await FileSystem.writeFile(`${tempPath}/${fName}.csv`, csvString, 'utf8');
 
     // create zip file from csv
-    // currently, there's a bug passing encryption type string to zipWithPassword
+    // currently, there's a bug passing encryption type string to zipWithPassword in 'react-native-zip-archive' 
+    // library, hence reliance on forked repo
     await zipWithPassword(
       [`${tempPath}/${fName}.csv`],
       `${tempPath}/${fName}.zip`,

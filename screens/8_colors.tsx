@@ -12,8 +12,6 @@ export default function ColorPicker({ userControl, widget }: Props) {
   const scrH = globalObj.data.dimensions.scr_H;
   const currSettings = globalObj.data.settings;
   const colorChanger = globalObj.setContext;
-
-  // most evidence suggests useRef is synchronous, therefore 'oldColor' should be available instantly
   const oldColor = useRef(globalObj.data.settings.color);
   const [color, setColor] = useState(oldColor.current);
 

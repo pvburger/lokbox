@@ -58,7 +58,7 @@ export default function Login({
 
       Alert.alert('Success!', `${user} has successfully logged in.`);
       // if user is 'admin', redirect to admin page
-      if (user === 'admin') {
+      if (user.toLowerCase() === 'admin') {
         await SQLiteDB.disconnectDB();
         changePage!(20);
       } else {

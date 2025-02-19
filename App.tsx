@@ -104,6 +104,15 @@ export default function App() {
     },
   };
 
+  const pageControl = {
+    get: () => {
+      return page;
+    },
+    set: (input: number) => {
+      setPage(input);
+    },
+  };
+
   // useEffect to establish listeners
   useEffect(() => {
     // add AppState event listener
@@ -145,7 +154,7 @@ export default function App() {
             appState === 'inactive') &&
           !pickerRunning.current
         ) {
-          await reSet(setPage);
+          await reSet(pageControl.set);
           setUserID(0);
           setWidget('');
           setCipherTxt(false);
@@ -173,17 +182,11 @@ export default function App() {
           <Image source={Logo} style={styles.image} />
         </View>
         <View style={styles.body}>
-          {page === 20 && (
-            <Admin
-              changePage={setPage}
-              userControl={userControl}
-              setWidget={setWidget}
-            />
-          )}
-          {page === 0 && <Title changePage={setPage} />}
+          {page === 20 && <Admin changePage={pageControl.set} />}
+          {page === 0 && <Title changePage={pageControl.set} />}
           {page === 1 && (
             <Login
-              changePage={setPage}
+              changePage={pageControl.set}
               userControl={userControl}
               setWidget={setWidget}
               keeboard={keeboard}
@@ -191,16 +194,16 @@ export default function App() {
           )}
           {page === 2 && (
             <Register
-              changePage={setPage}
+              changePage={pageControl.set}
               userControl={userControl}
               setWidget={setWidget}
               keeboard={keeboard}
             />
           )}
-          {page === 3 && <Menu changePage={setPage} />}
+          {page === 3 && <Menu changePage={pageControl.set} />}
           {page === 4 && (
             <Check
-              changePage={setPage}
+              changePage={pageControl.set}
               userControl={userControl}
               widget={widget}
               visControl={visControl}
@@ -208,21 +211,21 @@ export default function App() {
           )}
           {page === 5 && (
             <AddInfo
-              changePage={setPage}
+              changePage={pageControl.set}
               userControl={userControl}
               widget={widget}
             />
           )}
           {page === 6 && (
             <Remove
-              changePage={setPage}
+              changePage={pageControl.set}
               userControl={userControl}
               widget={widget}
             />
           )}
           {page === 7 && (
             <Download
-              changePage={setPage}
+              changePage={pageControl.set}
               userControl={userControl}
               widget={widget}
               keeboard={keeboard}
@@ -235,7 +238,7 @@ export default function App() {
           {page === 10 && <Pingen userControl={userControl} widget={widget} />}
           {page === 11 && (
             <UpdateList
-              changePage={setPage}
+              changePage={pageControl.set}
               userControl={userControl}
               widget={widget}
               entryControl={entryControl}
@@ -243,7 +246,7 @@ export default function App() {
           )}
           {page === 12 && (
             <UpdateForm
-              changePage={setPage}
+              changePage={pageControl.set}
               userControl={userControl}
               widget={widget}
               entryControl={entryControl}
@@ -251,7 +254,7 @@ export default function App() {
           )}
           {page === 13 && (
             <Upload
-              changePage={setPage}
+              changePage={pageControl.set}
               userControl={userControl}
               widget={widget}
               keeboard={keeboard}
@@ -262,10 +265,11 @@ export default function App() {
         {!keeboard && (
           <View style={styles.footer}>
             <View style={styles.footLeft}>
-              {page !== 0 && <ExitIcon changePage={setPage} />}
-              {page >= 4 && page <= 19 && <MenuIcon changePage={setPage} />}
+              {page !== 0 && <ExitIcon changePage={pageControl.set} />}
+              {page >= 4 && page <= 19 && (
+                <MenuIcon changePage={pageControl.set} />
+              )}
               {page === 4 && <VisibleIcon visControl={visControl} />}
-              {/* {page === 0 && <AdminIcon changePage={setPage} />} */}
             </View>
             <StatusIcon userControl={userControl} />
           </View>
@@ -278,8 +282,6 @@ export default function App() {
 const styles = StyleSheet.create({
   mainContainer: {
     flex: 1,
-    // backgroundColor: '#45b6fe',
-    // backgroundColor: '#d3d3d3',
     alignItems: 'center',
     justifyContent: 'space-between',
     // added for development

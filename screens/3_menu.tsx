@@ -3,7 +3,7 @@ import React, { useState } from 'react';
 import { RegButton, RoundButton } from '../elements/buttons';
 import { Props } from '../types';
 
-const Menu = ({ changePage }: Props) => {
+export default function Menu({ changePage }: Props) {
   const [subPage, setSubPage] = useState(0);
 
   return (
@@ -33,10 +33,10 @@ const Menu = ({ changePage }: Props) => {
         <RegButton onPressFunc={() => changePage!(10)} label={'pingen'} />
       )}
       {subPage === 2 && (
-        <RegButton onPressFunc={() => changePage!(7)} label={'backup'} />
+        <RegButton onPressFunc={() => changePage!(7)} label={'export'} />
       )}
       {subPage === 2 && (
-        <RegButton onPressFunc={() => changePage!(13)} label={'restore'} />
+        <RegButton onPressFunc={() => changePage!(13)} label={'import'} />
       )}
       {subPage === 2 && (
         <RegButton onPressFunc={() => changePage!(8)} label={'color'} />
@@ -48,11 +48,10 @@ const Menu = ({ changePage }: Props) => {
       )}
     </View>
   );
-};
+}
 
 const styles = StyleSheet.create({
   container: {
-    // height: '100%',
     flex: 1,
     width: '100%',
     justifyContent: 'center',
@@ -71,5 +70,3 @@ const styles = StyleSheet.create({
     // borderWidth: 4,
   },
 });
-
-export default Menu;

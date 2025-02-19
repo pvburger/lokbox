@@ -4,6 +4,7 @@ import { useModContext } from '../context/global';
 import { Props } from '../types';
 
 export default function ExitIcon({ changePage }: Props) {
+  
   // bring in global context
   const globalObj = useModContext();
   const scrH = globalObj.data.dimensions.scr_H;

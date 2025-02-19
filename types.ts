@@ -81,6 +81,8 @@ export type Props = {
     get: () => boolean;
     set: () => void;
   };
+  label?: string;
+  onPressFunc?: (...args: any[]) => any;
 };
 
 export class PassSettings {

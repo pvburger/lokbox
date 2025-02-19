@@ -18,10 +18,6 @@ export default function Download({
   const [isClicked, setIsClicked] = useState(false);
   const [isLoading, setIsLoading] = useState(false);
 
-  // // bring in global context
-  // // const scrH = useModContext().screen_h;
-  // const scrH = useModContext().data.dimensions.scr_H;
-
   // bring in global context
   const globalObj = useModContext();
   const scrH = globalObj.data.dimensions.scr_H;
@@ -42,7 +38,7 @@ export default function Download({
 
       // download encrypted zip
       await data2ZIP(userControl!.get(), pass, widget!);
-      Alert.alert('Succes', `Zipped CSV file copied to Downloads folder`);
+      Alert.alert('Success', `Zipped CSV file copied to Downloads folder`);
       changePage!(3);
     } catch (err) {
       Alert.alert(
@@ -66,7 +62,6 @@ export default function Download({
   useEffect(() => {
     if (isClicked && !keeboard) {
       setIsLoading(true);
-      // IIFE
       try {
         (async () => await getZIP())();
       } catch (err) {

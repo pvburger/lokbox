@@ -65,11 +65,6 @@ export const err2String = (error: unknown): string => {
   }
 };
 
-// add slight delay; used to allow keyboard listener in <App> sufficient time to update state before isLoading is updated
-export const delay = async (milliS: number): Promise<void> => {
-  return new Promise((res) => setTimeout(res, milliS));
-};
-
 // custom function to stringify Settings object
 export const stringifyLB = (inp: UserSettings): string => {
   return JSON.stringify(inp, (key, value) => {

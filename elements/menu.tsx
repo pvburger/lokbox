@@ -4,8 +4,6 @@ import MenuPic from '../assets/icon_menu.png';
 import { Props } from '../types';
 
 export default function MenuIcon({ changePage }: Props) {
-  // // bring in global context
-  // const globject = useModContext();
 
   // bring in global context
   const globalObj = useModContext();

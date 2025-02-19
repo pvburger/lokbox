@@ -7,19 +7,15 @@ import Slider from '@react-native-community/slider';
 import { genPin } from '../util/crypto';
 import { setUsrSettings } from '../util/database';
 import { Props } from '../types';
-import { getPinFromUser } from '../util/general';
 
 export default function Pingen({ userControl, widget }: Props) {
   // bring in global context; pinSettings state variable is predicated on globalObj.data.settings
   const globalObj = useModContext();
   const scrH = globalObj.data.dimensions.scr_H;
-  const bkgColor = globalObj.data.settings.color;
   const pinDigits = globalObj.data.settings.pin_charNum;
+
   const upd8Settings = globalObj.setAllContext;
-
-  // generate pinSettings instance
-  const usrPinSettings = getPinFromUser(globalObj.data.settings);
-
+  
   const [pinSettings, setPinSettings] = useState(pinDigits);
 
   // wrapper to update user's settings
@@ -36,7 +32,10 @@ export default function Pingen({ userControl, widget }: Props) {
       await setUsrSettings(newSettingsTemplate, userControl!.get(), widget!);
       Alert.alert(`Success`, `User settings were successfully updated`);
     } catch (err) {
-      Alert.alert(`There was a problem updating user settings: ${err}`);
+      Alert.alert(
+        'Error',
+        `There was a problem updating user settings: ${err}`
+      );
     }
   };
 
@@ -49,7 +48,7 @@ export default function Pingen({ userControl, widget }: Props) {
       const pin = await genPin(currPinSettings);
       Alert.alert('Success', `Created a new pin: \n${pin}`);
     } catch (err) {
-      Alert.alert('Error', `${err}`);
+      Alert.alert('Error', `There was a problem generating a pin: ${err}`);
     }
   };
 

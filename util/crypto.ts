@@ -6,11 +6,9 @@ https://stackoverflow.com/questions/17201450/salt-and-hash-password-in-nodejs-w-
 /*
 requests to the Node 'crypto' module are resolved to 'react-native-quick-crypto'
 requests to the Node 'buffer' module are resolved to ''@craftzdog/react-native-buffer'
-see index.ts for implementation and react-native-quick-crypto docs
+see babel.config.cjs for implementation and react-native-quick-crypto docs
 */
 
-// import QuickCrypto from 'react-native-quick-crypto';
-// const { randomBytes, pbkdf2, createCipheriv, createDecipheriv } = QuickCrypto;
 import {
   randomBytes,
   randomInt,
@@ -156,10 +154,9 @@ export const nCrypt = async (
     let secretBuff = cipher.update(input, inpEncoding);
     secretBuff = Buffer.concat([secretBuff, cipher.final()]);
 
-    // return as base64 encoded string with iVec prepended separated by '$'
+    // return as base64 encoded string with iVec prepended, separated by '$'
     // based on https://www.geeksforgeeks.org/node-js-crypto-createcipheriv-method/
     return `$${iVec}$${secretBuff.toString(encoding)}`;
-    // encrypt message
   } catch (err) {
     throw new Error(`There was a problem during encryption: ${err}`);
   }
@@ -174,7 +171,6 @@ export const dCrypt = async (
     // parse database input
     const dbArray = input.split('$');
     const iVecBuff = Buffer.from(dbArray[1], encoding);
-    // const secretBuff = Buffer.from(dbArray[2], encoding);
 
     // added during development
     // console.log(`iVec: ${dbArray[1]}`);

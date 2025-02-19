@@ -5,8 +5,6 @@ import { useModContext } from '../context/global';
 import { Props } from '../types';
 
 export default function StatusIcon({ userControl }: Props) {
-  // // bring in global context
-  // const globject = useModContext();
 
   // bring in global context
   const globalObj = useModContext();

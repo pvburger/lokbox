@@ -2,7 +2,7 @@ import { StyleSheet, Text, View, FlatList, Alert } from 'react-native';
 import React, { useState, useEffect } from 'react';
 import { ThinButton } from '../elements/buttons';
 import { getSingleData, getDBEntry } from '../util/database';
-import { DBEntryColObj, FListEntry, Props } from '../types';
+import { FListEntry, Props } from '../types';
 import { useModContext } from '../context/global';
 
 export default function UpdateList({
@@ -12,7 +12,6 @@ export default function UpdateList({
   entryControl,
 }: Props) {
   const [orgList, setOrgList] = useState<FListEntry[]>([]);
-  // const [orgObjArr, setOrgObjArr] = useState<DBEntryColObj[]>([]);
   const [isLoading, setIsLoading] = useState(true);
 
   // bring in global context
@@ -73,10 +72,9 @@ export default function UpdateList({
       }
 
       setIsLoading(true);
-      // setOrgObjArr(usrOrgObjArr);
       setOrgList(resultArr);
     } catch (err) {
-      Alert.alert('Error', `${err}`);
+      Alert.alert('Error', `There was an error retrieving org list: ${err}`);
       changePage!(3);
     }
   };
@@ -84,10 +82,6 @@ export default function UpdateList({
   const getData = async (dataOrg: string): Promise<void> => {
     try {
       const result = await getDBEntry(userControl!.get(), widget!, dataOrg);
-      // Alert.alert(
-      //   'Success',
-      //   `Successfully retrieved database entry for ${dataOrg}`
-      // );
       entryControl!.set(result);
       changePage!(12);
     } catch (err) {
@@ -100,9 +94,6 @@ export default function UpdateList({
   };
 
   useEffect(() => {
-    // added for development
-    // console.log('useEffect invoked...');
-
     // ***** THIS IS AN IIFE (IMMEDIATELY INVOKED FUNCTION) *****
     // it is used, in this case, to allow async/await syntax inside of useEffect
     // the other option is to use promise chaining
@@ -165,7 +156,6 @@ const styles = StyleSheet.create({
     width: '100%',
   },
   listEntryContainer: {
-    // flexDirection: 'row',
     alignItems: 'center',
     // added for development
     // borderColor: 'blue',
@@ -173,7 +163,6 @@ const styles = StyleSheet.create({
   },
   textHeaderContainer: {
     width: '100%',
-    // flexDirection: 'row',
     alignItems: 'center',
     // added for development
     // borderColor: 'blue',

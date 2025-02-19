@@ -2,7 +2,7 @@ import { StyleSheet, View, TextInput, Alert, Keyboard } from 'react-native';
 import React, { useState, useEffect, useRef } from 'react';
 import { RoundButton } from '../elements/buttons';
 import { inputBox } from '../styles';
-import { addData, upD8Data } from '../util/database';
+import { upD8Data } from '../util/database';
 import { EntryForm, EntryFormKey, DBEntry, Props, LookupTable } from '../types';
 import { useModContext } from '../context/global';
 import { genPass, genPin } from '../util/crypto';
@@ -54,31 +54,11 @@ export default function UpdateForm({
     setUserInfo({ ...userInfo, [kind]: inp });
   };
 
-  // setter and getter for userInfo state representing data entries
-  const getSetData = {
-    get: () => {
-      return userInfo;
-    },
-    set: (input: EntryForm) => {
-      setUserInfo(input);
-    },
-  };
-
   // add user data to database
   const upD8Entry = async (): Promise<void> => {
-    const userID = userControl!.get();
     try {
-      // added for development
-      // console.log(`userID: ${userID}`);
-      // for (const [key, val] of Object.entries(userInfo)) {
-      //   console.log(`key: ${key}, value: ${val}`);
-      // }
-      await upD8Data(
-        userInfo,
-        widget!,
-        entryControl!.get()
-      );
-      Alert.alert('Success!', `${userInfo.org} entry has been updated`);
+      await upD8Data(userInfo, widget!, entryControl!.get());
+      Alert.alert('Success', `${userInfo.org} entry has been updated`);
       changePage!(3);
     } catch (err) {
       Alert.alert(
@@ -134,6 +114,7 @@ export default function UpdateForm({
     return timeOutSwitch ? inp : currVal;
   };
 
+  // used to toggle TextInput prompt every 1500 ms
   useEffect(() => {
     const killSwitch = setInterval(() => {
       // functional state update to ensure setTimeOutSwitch always has latest value

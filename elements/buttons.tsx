@@ -1,8 +1,9 @@
 import { StyleSheet, Text, View, Pressable } from 'react-native';
 import { useModContext } from '../context/global';
+import { Props } from '../types';
 
 // TODO: ADD TYPE FOR BUTTON PROPS OR ADD PROPERTIES TO 'PROPS' TYPE
-export function RegButton({ onPressFunc, label }) {
+export function RegButton({ onPressFunc, label }: Props) {
   // bring in global context
   const globalObj = useModContext();
   const scrH = globalObj.data.dimensions.scr_H;
@@ -23,10 +24,16 @@ export function RegButton({ onPressFunc, label }) {
   });
   const staticSty = styles;
 
+  const funcWrap = () => {
+    if (onPressFunc !== undefined) {
+      onPressFunc();
+    }
+  };
+
   return (
     <Pressable
       style={[dynamicSty.regButton, staticSty.regButton]}
-      onPress={() => onPressFunc()}
+      onPress={() => funcWrap()}
     >
       <Text style={[dynamicSty.regButtonTxt, staticSty.regButtonTxt]}>
         {label}
@@ -35,7 +42,7 @@ export function RegButton({ onPressFunc, label }) {
   );
 }
 
-export function ThinButton({ onPressFunc, label }) {
+export function ThinButton({ onPressFunc, label }: Props) {
   // bring in global context
   const globalObj = useModContext();
   const scrH = globalObj.data.dimensions.scr_H;
@@ -56,10 +63,16 @@ export function ThinButton({ onPressFunc, label }) {
   });
   const staticSty = styles;
 
+  const funcWrap = () => {
+    if (onPressFunc !== undefined) {
+      onPressFunc();
+    }
+  };
+
   return (
     <Pressable
       style={[dynamicSty.thinButton, staticSty.regButton]}
-      onPress={() => onPressFunc()}
+      onPress={() => funcWrap()}
     >
       <Text style={[dynamicSty.thinButtonTxt, staticSty.regButtonTxt]}>
         {label}
@@ -68,7 +81,7 @@ export function ThinButton({ onPressFunc, label }) {
   );
 }
 
-export function RoundButton({ onPressFunc, label }) {
+export function RoundButton({ onPressFunc, label }: Props) {
   // bring in global context
   const globalObj = useModContext();
   const scrH = globalObj.data.dimensions.scr_H;
@@ -89,10 +102,17 @@ export function RoundButton({ onPressFunc, label }) {
   });
 
   const staticSty = styles;
+
+  const funcWrap = () => {
+    if (onPressFunc !== undefined) {
+      onPressFunc();
+    }
+  };
+
   return (
     <Pressable
       style={[dynamicSty.roundButton, staticSty.roundButton]}
-      onPress={() => onPressFunc()}
+      onPress={() => funcWrap()}
     >
       <Text style={[dynamicSty.roundButtonTxt, staticSty.roundButtonTxt]}>
         {label}
@@ -114,36 +134,10 @@ const styles = StyleSheet.create({
   roundButton: {
     alignItems: 'center',
     justifyContent: 'center',
-    // width: 100,
-    // height: 100,
-    // borderRadius: 50,
-    // margin: 25,
     borderColor: 'black',
-    // borderWidth: 4,
     backgroundColor: 'white',
-    // elevation: 5,
   },
   roundButtonTxt: {
     color: 'black',
-    // fontSize: 25,
   },
-  /*
-  roundButtonSm: {
-    alignItems: 'center',
-    justifyContent: 'center',
-    // width: 50,
-    // height: 50,
-    // borderRadius: 25,
-    // margin: 25,
-    borderColor: 'black',
-    // borderWidth: 4,
-    backgroundColor: 'white',
-    // elevation: 5,
-  },
-  roundButtonSmTxt: {
-    color: 'black',
-    // fontSize: 30,
-    fontWeight: 'bold',
-  },
-  */
 });

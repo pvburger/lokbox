@@ -1,21 +1,31 @@
 import { StyleSheet, View, Alert } from 'react-native';
-import React, { useEffect } from 'react';
+import React from 'react';
 import { RoundButton } from '../elements/buttons';
 import { nuke, backup, restore } from '../util/database';
 import { reSet } from '../util/common';
 import { Props } from '../types';
-import { useModContext } from '../context/global';
 
-export default function Admin({ changePage, userControl, setWidget }: Props) {
-  // // bring in global context
-  // const globalObj = useModContext();
-
+// This component is only accessible by creating and logging into 'admin' account
+export default function Admin({ changePage }: Props) {
   // wrapper for reSet function
   const cleanDB = async (): Promise<void> => {
-    try {
+    const runNuke = async () => {
       await nuke();
-      await reSet(changePage);
       Alert.alert('Success', 'Database has been deleted');
+      await reSet(changePage);
+    };
+
+    try {
+      Alert.alert(
+        '!!! Warning !!!',
+        'Selecting "OK" will result in all lokbox data being deleted from device',
+        [
+          { text: 'OK', onPress: () => runNuke() },
+          {
+            text: 'Cancel',
+          },
+        ]
+      );
     } catch (err) {
       Alert.alert('Error', `There was a problem deleting the database: ${err}`);
     }
@@ -36,9 +46,21 @@ export default function Admin({ changePage, userControl, setWidget }: Props) {
 
   // wrapper for restore function
   const restoreDB = async (): Promise<void> => {
-    try {
+    const runRestore = async () => {
       await restore();
       Alert.alert('Success', 'Database has been restored');
+    };
+    try {
+      Alert.alert(
+        '!!! Warning !!!',
+        'Selecting "OK" will result in any pre-existing lokbox data being deleted from device',
+        [
+          { text: 'OK', onPress: () => runRestore() },
+          {
+            text: 'Cancel',
+          },
+        ]
+      );
     } catch (err) {
       Alert.alert(
         'Error',
@@ -49,7 +71,7 @@ export default function Admin({ changePage, userControl, setWidget }: Props) {
 
   return (
     <View style={styles.container}>
-      <RoundButton onPressFunc={() => cleanDB()} label={'drop'} />
+      <RoundButton onPressFunc={() => cleanDB()} label={'delete'} />
       <RoundButton onPressFunc={() => backupDB()} label={'backup'} />
       <RoundButton onPressFunc={() => restoreDB()} label={'restore'} />
     </View>
