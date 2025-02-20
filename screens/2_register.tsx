@@ -63,7 +63,7 @@ export default function Register({
       upd8UserSettings(newSettings);
 
       Alert.alert(
-        'Success!',
+        'Success',
         `${user} account has been created.\nContinue to login.`
       );
       changePage!(0);

@@ -44,7 +44,7 @@ export default function AddInfo({ changePage, userControl, widget }: Props) {
       //   console.log(`key: ${key}, value: ${val}`);
       // }
       await addData(userInfo, userControl!.get(), widget!);
-      Alert.alert('Success!', `${userInfo.org} added to database`);
+      Alert.alert('Success', `${userInfo.org} added to database`);
       changePage!(3);
     } catch (err) {
       Alert.alert(

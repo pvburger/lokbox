@@ -1,18 +1,32 @@
 import { StyleSheet, View, Alert } from 'react-native';
 import React from 'react';
 import { RoundButton } from '../elements/buttons';
-import { nuke, backup, restore } from '../util/database';
+import { nuke, backup, restore, printTables } from '../util/database';
 import { reSet } from '../util/common';
 import { Props } from '../types';
 
 // This component is only accessible by creating and logging into 'admin' account
 export default function Admin({ changePage }: Props) {
+  // if set to true, will log select information from database tables to console
+  const logTables = false;
+
+  // if logTables, then printTables
+  logTables && printTables();
+
   // wrapper for reSet function
   const cleanDB = async (): Promise<void> => {
     const runNuke = async () => {
-      await nuke();
-      Alert.alert('Success', 'Database has been deleted');
-      await reSet(changePage);
+      try {
+        await nuke();
+        Alert.alert('Success', 'Database has been deleted');
+        // force logout as current 'admin' account no longer exists
+        await reSet(changePage);
+      } catch (err) {
+        Alert.alert(
+          'Error',
+          `There was a problem deleting the database: ${err}`
+        );
+      }
     };
 
     try {
@@ -27,6 +41,7 @@ export default function Admin({ changePage }: Props) {
         ]
       );
     } catch (err) {
+      // this is likely unnecessary; onPress function will not return error to calling function
       Alert.alert('Error', `There was a problem deleting the database: ${err}`);
     }
   };
@@ -47,8 +62,23 @@ export default function Admin({ changePage }: Props) {
   // wrapper for restore function
   const restoreDB = async (): Promise<void> => {
     const runRestore = async () => {
-      await restore();
-      Alert.alert('Success', 'Database has been restored');
+      try {
+        await restore();
+        Alert.alert('Success', 'Database has been restored');
+      } catch (err) {
+        Alert.alert(
+          'Error',
+          `There was a problem restoring the database: ${err}`
+        );
+      } finally {
+        /*
+        force logout as either a) current 'admin' account no longer exists (if restore was successful), 
+        b) timer in restore function expired before getting user file selection indicating device has
+        become inactive for an extended period, or c) lokbox application is in the background/inactive
+        and admin account should be logged out
+        */
+        await reSet(changePage);
+      }
     };
     try {
       Alert.alert(
@@ -62,6 +92,7 @@ export default function Admin({ changePage }: Props) {
         ]
       );
     } catch (err) {
+      // this is likely unnecessary; onPress function will not return error to calling function
       Alert.alert(
         'Error',
         `There was a problem restoring the database: ${err}`

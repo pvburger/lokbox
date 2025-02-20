@@ -825,7 +825,7 @@ export const getAllDataAsString = async (
   }
 };
 
-// no longer accessible
+// prints select information from database tables
 export const printTables = async (): Promise<void> => {
   try {
     // connect to database
@@ -839,15 +839,25 @@ export const printTables = async (): Promise<void> => {
     );
 
     console.log(`Table: ${table1}`);
+    console.log(`------------------------------`);
     for (let user of table_users) {
-      console.log(user);
+      console.log(
+        `usr_id: ${user.usr_id}, usr_login: ${user.usr_login}, usr_password: ${user.usr_password}, usr_email: ${user.usr_email}, usr_created: ${user.usr_created}`
+      );
     }
+    console.log('\n\n');
 
     console.log(`Table: ${table2}`);
+    console.log(`------------------------------`);
     for (let user of table_data) {
-      console.log(user);
+      console.log(
+        `data_id: ${user.data_id}, usr_id: ${user.usr_id}, data_org: ${user.data_org}`
+      );
     }
-  } catch (err) {}
+    console.log('\n\n');
+  } catch (err) {
+    throw err;
+  }
 };
 
 export const removeData = async (entryArr: DBEntryColObj[]): Promise<void> => {
@@ -906,8 +916,28 @@ TODO: CHECK THAT SELECTED FILE IS VALID DB FILE
 */
 export const restore = async (): Promise<void> => {
   try {
-    // get path to backup file
-    const fileUri = (await pickSingle()).uri;
+    // helper to get file path
+    const getFileURI = async (): Promise<string> => {
+      try {
+        // get path to backup file
+        const uri = (await pickSingle()).uri;
+        return uri;
+      } catch (err) {
+        throw new Error(
+          `There was a problem selecting the backup file: ${err}`
+        );
+      }
+    };
+
+    // helper timer
+    // has a promise return type of <never> because promise can only reject with an error, not resolve a value
+    const timer = new Promise<never>((res, rej) => {
+      setTimeout(() => rej(new Error('Operation timed out')), 10000);
+    });
+
+    // race getFileURI and timer
+    // this is a safety feature to prevent document picker from remaining open indefinitely
+    const fileUri = await Promise.race([timer, getFileURI()]);
 
     // added for development
     // console.log(`fileUri: ${fileUri}`);
@@ -932,6 +962,11 @@ export const restore = async (): Promise<void> => {
     if (!dbExists) {
       throw new Error(`Selected database could not be restored`);
     }
+
+    // connect to database
+    const db = await SQLiteDB.connectDB();
+    // delete admin account (applied from .backup file) so administrator can establish new account
+    await db.runAsync(`DELETE FROM ${table1} WHERE usr_login = ?`, ['admin']);
   } catch (err) {
     throw err;
   }
@@ -1147,7 +1182,7 @@ export const data2ZIP = async (
     await FileSystem.writeFile(`${tempPath}/${fName}.csv`, csvString, 'utf8');
 
     // create zip file from csv
-    // currently, there's a bug passing encryption type string to zipWithPassword in 'react-native-zip-archive' 
+    // currently, there's a bug passing encryption type string to zipWithPassword in 'react-native-zip-archive'
     // library, hence reliance on forked repo
     await zipWithPassword(
       [`${tempPath}/${fName}.csv`],

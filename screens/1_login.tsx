@@ -56,7 +56,7 @@ export default function Login({
 
       upd8UserSettings(newSettings);
 
-      Alert.alert('Success!', `${user} has successfully logged in.`);
+      Alert.alert('Success', `${user} has successfully logged in.`);
       // if user is 'admin', redirect to admin page
       if (user.toLowerCase() === 'admin') {
         await SQLiteDB.disconnectDB();
