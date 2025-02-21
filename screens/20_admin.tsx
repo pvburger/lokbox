@@ -8,7 +8,7 @@ import { Props } from '../types';
 // This component is only accessible by creating and logging into 'admin' account
 export default function Admin({ changePage }: Props) {
   // if set to true, will log select information from database tables to console
-  const logTables = false;
+  const logTables = true;
 
   // if logTables, then printTables
   logTables && printTables();
@@ -102,6 +102,7 @@ export default function Admin({ changePage }: Props) {
 
   return (
     <View style={styles.container}>
+      <RoundButton onPressFunc={() => changePage!(21)} label={'users'} />
       <RoundButton onPressFunc={() => cleanDB()} label={'delete'} />
       <RoundButton onPressFunc={() => backupDB()} label={'backup'} />
       <RoundButton onPressFunc={() => restoreDB()} label={'restore'} />

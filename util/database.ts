@@ -838,6 +838,7 @@ export const printTables = async (): Promise<void> => {
       `SELECT * FROM ${table2}`
     );
 
+    // logs table 1 (users table)
     console.log(`Table: ${table1}`);
     console.log(`------------------------------`);
     for (let user of table_users) {
@@ -847,6 +848,8 @@ export const printTables = async (): Promise<void> => {
     }
     console.log('\n\n');
 
+    // logs table 2 (data table)
+    /*
     console.log(`Table: ${table2}`);
     console.log(`------------------------------`);
     for (let user of table_data) {
@@ -855,6 +858,7 @@ export const printTables = async (): Promise<void> => {
       );
     }
     console.log('\n\n');
+    */
   } catch (err) {
     throw err;
   }
@@ -1201,6 +1205,48 @@ export const data2ZIP = async (
     // delete csv and zip in application directory
     await FileSystem.unlink(`${Dirs.DocumentDir}/TEMP/${fName}.csv`);
     await FileSystem.unlink(`${Dirs.DocumentDir}/TEMP/${fName}.zip`);
+  } catch (err) {
+    throw err;
+  }
+};
+
+// functionality to remove users from database
+export const removeUsers = async (users: string[]): Promise<void> => {
+  try {
+    // connect to database
+    const db = await SQLiteDB.connectDB();
+
+    // remove users from database
+    for (let usr of users) {
+      await db.runAsync(`DELETE FROM ${table1} WHERE usr_login = ?`, [usr]);
+      // added for development
+      // console.log(`User ${usr} was removed...`);
+    }
+  } catch (err) {
+    throw err;
+  }
+};
+
+// functionality to get users from database
+export const getUsers = async (): Promise<string[]> => {
+  try {
+    // connect to database
+    const db = await SQLiteDB.connectDB();
+
+    // retrieve data
+    const allRows: { usr_login: string }[] | null = await db.getAllAsync(
+      `SELECT usr_login FROM ${table1}`
+    );
+
+    // check for null (should never be null)
+    if (allRows === null) {
+      throw new Error(`User database is empty`);
+    }
+
+    // convert to normal string array
+    const allUsers = allRows.map((el) => el.usr_login);
+
+    return allUsers;
   } catch (err) {
     throw err;
   }

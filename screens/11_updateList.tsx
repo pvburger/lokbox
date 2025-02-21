@@ -65,8 +65,8 @@ export default function UpdateList({
         // data_val will never be a number in this case, but TS can't determine that, hence the type coersion
         // additionaly, React-Native expects the key value as a string
         resultArr.push({
-          orgName: entry.data_val.toString(),
-          key: counter.toString(),
+          info: entry.data_val.toString(),
+          key: 'UL_' + counter.toString(),
         });
         counter++;
       }
@@ -123,9 +123,9 @@ export default function UpdateList({
             <View style={styles.listEntryContainer}>
               <ThinButton
                 onPressFunc={() => {
-                  getData(item.orgName);
+                  getData(item.info);
                 }}
-                label={shorten(item.orgName)}
+                label={shorten(item.info)}
               />
             </View>
           )}

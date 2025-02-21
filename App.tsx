@@ -28,6 +28,7 @@ import Pingen from './screens/10_pingen';
 import UpdateList from './screens/11_updateList';
 import UpdateForm from './screens/12_updateForm';
 import Upload from './screens/13_upload';
+import DelUsers from './screens/21_users';
 import { reSet } from './util/common';
 import { GlobalContext } from './context/global';
 import { UserSettings, DataObj, DBEntry } from './types';
@@ -261,6 +262,7 @@ export default function App() {
               pickControl={pickControl}
             />
           )}
+          {page === 21 && <DelUsers changePage={pageControl.set} />}
         </View>
         {!keeboard && (
           <View style={styles.footer}>

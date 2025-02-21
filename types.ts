@@ -182,10 +182,10 @@ export type DBEntryColObj = {
 export type CSVEntry = Omit<DBEntry, 'data_id' | 'usr_id'>;
 
 export class FListEntry {
-  orgName: string;
+  info: string;
   key: string;
   constructor() {
-    this.orgName = '';
+    this.info = '';
     this.key = '';
   }
 }

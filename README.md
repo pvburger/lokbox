@@ -41,7 +41,7 @@ Features which will be implemented in the near term include:
 
 Long term goals include:
 
-- iOS compatibility; the lead developer currently lacks an iOS device for development
+- iOS compatibility
 - Deployment on Google Play and the App Store  
   <br>
 

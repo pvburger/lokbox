@@ -8,14 +8,14 @@ import {
 } from 'react-native';
 import React, { useState, useEffect } from 'react';
 import { RoundButton } from '../elements/buttons';
-import { removeData, getSingleData } from '../util/database';
-import { DBEntryColObj, FListEntry, Props } from '../types';
+import { removeUsers, getUsers } from '../util/database';
+import { FListEntry, Props } from '../types';
 import { useModContext } from '../context/global';
+import { reSet } from '../util/common';
 
-export default function Remove({ changePage, userControl, widget }: Props) {
-  const [orgList, setOrgList] = useState<FListEntry[]>([]);
-  const [selections, setSelections] = useState<DBEntryColObj[]>([]);
-  const [orgObjArr, setOrgObjArr] = useState<DBEntryColObj[]>([]);
+export default function DelUsers({ changePage }: Props) {
+  const [usrList, setUsrList] = useState<FListEntry[]>([]);
+  const [selections, setSelections] = useState<string[]>([]);
   const [isLoading, setIsLoading] = useState(true);
 
   // bring in global context
@@ -54,7 +54,7 @@ export default function Remove({ changePage, userControl, widget }: Props) {
   });
   const staticSty = styles;
 
-  // shorten org name if greater than 13 characters
+  // shorten user name if greater than 13 characters
   const shorten = (inp: string): string => {
     if (inp.length > 16) {
       return inp.slice(0, 16) + '...';
@@ -63,12 +63,11 @@ export default function Remove({ changePage, userControl, widget }: Props) {
     }
   };
 
-  // check if orgName occurs within an object in selections
-  // returns index of entry if selections state variable contains entry with specified orgName
-  // or -1 if there is no such entry
-  const checkForOrg = (orgName: string): number => {
+  // check if user occurs in selections
+  // returns index of corresponding array entry or -1 if there is no such entry
+  const checkForUsr = (usrName: string): number => {
     for (let i = 0; i < selections.length; i++) {
-      if (selections[i].data_val === orgName) {
+      if (selections[i] === usrName) {
         return i;
       }
     }
@@ -76,106 +75,81 @@ export default function Remove({ changePage, userControl, widget }: Props) {
   };
 
   // modify button on select and add/remove entry to/from 'selections' state variable
-  const reverse = (orgName: string): void => {
-    try {
-      const orgNameIdx = checkForOrg(orgName);
+  const reverse = (usrName: string): void => {
+    const usrNameIdx = checkForUsr(usrName);
 
-      if (orgNameIdx !== -1) {
-        // remove entry from selections
-        setSelections([
-          ...selections.slice(0, orgNameIdx),
-          ...selections.slice(orgNameIdx + 1),
-        ]);
-      } else {
-        // add entry to selections
-        const tempArr: DBEntryColObj[] = [...selections];
-
-        // get associated entry from orgObjArr
-        // there should only be one object that meets the criteria, hence the [0] index
-        const orgObj = orgObjArr.filter((el) => {
-          if (el.data_val === orgName) {
-            return el;
-          }
-        })[0];
-
-        tempArr.push({
-          data_id: orgObj.data_id,
-          data_val: orgObj.data_val,
-        });
-
-        setSelections(tempArr);
-      }
-    } catch (err) {
-      throw new Error(`There was a problem changing selection: ${err}`);
+    if (usrNameIdx !== -1) {
+      // remove entry from selections
+      setSelections([
+        ...selections.slice(0, usrNameIdx),
+        ...selections.slice(usrNameIdx + 1),
+      ]);
+    } else {
+      // add entry to selections
+      const tempArr: string[] = [...selections];
+      tempArr.push(usrName);
+      setSelections(tempArr);
     }
   };
 
   const deleteEntries = async (): Promise<void> => {
     try {
-      await removeData(selections);
-      Alert.alert('Success', 'Selected entries removed from database');
-      setSelections([]);
+      await removeUsers(selections);
+      Alert.alert(
+        'Success',
+        `Users (${selections.join(', ')}) removed from database`
+      );
+      // reset application in case admin removed
+      await reSet(changePage);
     } catch (err) {
-      Alert.alert(`There was a problem deleting database entries: ${err}`);
-      // CLEANUP - HOW TO HANDLE
-      changePage!(3);
+      Alert.alert(
+        `There was a problem removing users from the database: ${err}`
+      );
     }
   };
 
-  // populates orgList (to populate Flat List) and orgObjArr
-  const genOrgs = async (): Promise<void> => {
+  // populates usrList (to populate Flat List)
+  const genUsers = async (): Promise<void> => {
     try {
-      // get array of objects w/ data_id and data_org for user from database
-      const usrOrgObjArr = await getSingleData(
-        userControl!.get(),
-        'data_org',
-        widget!
-      );
+      setIsLoading(true);
 
-      // throw error if there is no data in the database
-      if (usrOrgObjArr.length === 0) {
-        throw new Error(`User has no data to delete`);
+      // get array of database users from database
+      const usrNameArr = await getUsers();
+
+      // user list should never be empty as admin account is required to run this component
+      if (usrNameArr.length === 0) {
+        throw new Error('User database is empty');
       }
 
       const resultArr: FListEntry[] = [];
       let counter = 1;
 
-      for (let entry of usrOrgObjArr) {
-        // data_val will never be a number in this case, but TS can't determine that, hence the type coersion
-        // additionaly, React-Native expects the key value as a string
-        resultArr.push({
-          info: entry.data_val.toString(),
-          key: 'R_' + counter.toString(),
-        });
+      for (let entry of usrNameArr) {
+        const newEntry = new FListEntry();
+        newEntry.info = entry;
+        newEntry.key = 'DU_' + counter.toString();
+        resultArr.push(newEntry);
         counter++;
       }
-
-      setIsLoading(true);
-      setOrgObjArr(usrOrgObjArr);
-      setOrgList(resultArr);
+      setUsrList(resultArr);
     } catch (err) {
-      Alert.alert('Error', `${err}`);
-      changePage!(3);
+      Alert.alert(
+        'Error',
+        `There was a problem generating the user list: ${err}`
+      );
     }
   };
 
+  // no need to rerender list as we navigate away from this component on successful deletion
   useEffect(() => {
-
-    // ***** THIS IS AN IIFE (IMMEDIATELY INVOKED FUNCTION) *****
-    // it is used, in this case, to allow async/await syntax inside of useEffect
-    // the other option is to use promise chaining
+    // IIFE
     (async () => {
-      await genOrgs();
+      await genUsers();
       setIsLoading(false);
     })();
-  }, [selections]);
+  }, []);
 
-  /*
-  don't render until loading is finished
-  in addition to ensuring UI doesn't render until all state is assinged, this prevents 
-  deleteEntries from being invoked for a second time before the first instance has
-  concluded
-  */
+  // don't render until loading is finished
   if (isLoading) {
     return null;
   }
@@ -185,11 +159,11 @@ export default function Remove({ changePage, userControl, widget }: Props) {
       <View style={[dynamicSty.fListContainer, staticSty.fListContainer]}>
         <View style={styles.textHeaderContainer}>
           <Text style={[dynamicSty.textHeader, staticSty.textHeader]}>
-            SELECT ENTRIES FOR REMOVAL
+            SELECT USERS FOR REMOVAL
           </Text>
         </View>
         <FlatList
-          data={orgList}
+          data={usrList}
           style={styles.fList}
           renderItem={({ item }) => (
             <View style={styles.listEntryContainer}>
@@ -202,7 +176,7 @@ export default function Remove({ changePage, userControl, widget }: Props) {
                   staticSty.smButton,
                   {
                     backgroundColor:
-                      checkForOrg(item.info) === -1 ? 'white' : 'black',
+                      checkForUsr(item.info) === -1 ? 'white' : 'black',
                   },
                 ]}
               >
