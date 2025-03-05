@@ -54,7 +54,7 @@ export default function Remove({ changePage, userControl, widget }: Props) {
   });
   const staticSty = styles;
 
-  // shorten org name if greater than 13 characters
+  // shorten org name if greater than 16 characters
   const shorten = (inp: string): string => {
     if (inp.length > 16) {
       return inp.slice(0, 16) + '...';
@@ -116,8 +116,10 @@ export default function Remove({ changePage, userControl, widget }: Props) {
       Alert.alert('Success', 'Selected entries removed from database');
       setSelections([]);
     } catch (err) {
-      Alert.alert(`There was a problem deleting database entries: ${err}`);
-      // CLEANUP - HOW TO HANDLE
+      Alert.alert(
+        'Error',
+        `There was a problem deleting database entries: ${err}`
+      );
       changePage!(3);
     }
   };
@@ -131,11 +133,6 @@ export default function Remove({ changePage, userControl, widget }: Props) {
         'data_org',
         widget!
       );
-
-      // throw error if there is no data in the database
-      if (usrOrgObjArr.length === 0) {
-        throw new Error(`User has no data to delete`);
-      }
 
       const resultArr: FListEntry[] = [];
       let counter = 1;
@@ -160,7 +157,6 @@ export default function Remove({ changePage, userControl, widget }: Props) {
   };
 
   useEffect(() => {
-
     // ***** THIS IS AN IIFE (IMMEDIATELY INVOKED FUNCTION) *****
     // it is used, in this case, to allow async/await syntax inside of useEffect
     // the other option is to use promise chaining

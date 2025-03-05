@@ -32,7 +32,6 @@ export default function Upload({
   });
   const staticSty = styles;
 
-  // function to handle submit click
   const onClickHandler = () => {
     if (keeboard) {
       Keyboard.dismiss();
@@ -77,9 +76,15 @@ export default function Upload({
       (async () => {
         try {
           await unZipCopy(pass, pathVars, userControl!.get(), widget!);
-          Alert.alert('Success', `CSV unzipped to application TEMP directory`);
+          Alert.alert(
+            'Success',
+            `New data successfully imported into database`
+          );
         } catch (err) {
-          Alert.alert('Error', `There was an error unzipping CSV: ${err}`);
+          Alert.alert(
+            'Error',
+            `There was a problem importing the new data: ${err}`
+          );
         } finally {
           changePage!(3);
         }

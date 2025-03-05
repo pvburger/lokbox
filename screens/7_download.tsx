@@ -33,7 +33,6 @@ export default function Download({
 
   const getZIP = async (): Promise<void> => {
     try {
-      // verify user
       await verifyUser(userControl!.get(), pass);
 
       // download encrypted zip
@@ -43,7 +42,7 @@ export default function Download({
     } catch (err) {
       Alert.alert(
         'Error',
-        `There was an error downloading zipped CSV file: ${err}`
+        `There was a problem downloading zipped CSV file: ${err}`
       );
     } finally {
       setIsClicked(false);
@@ -51,7 +50,6 @@ export default function Download({
     }
   };
 
-  // function to handle submit click
   const onClickHandler = () => {
     if (keeboard) {
       Keyboard.dismiss();

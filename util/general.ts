@@ -42,7 +42,7 @@ export const getTimeString = (): string => {
   );
 };
 
-// conver time string to timestamp for filenames
+// convert time string to timestamp for filenames
 // format: YYYY + MM + DD + '_' + HH + MM + SS + MS
 export const getTimeStamp = (input: string): string => {
   const year = input.slice(0, 4);

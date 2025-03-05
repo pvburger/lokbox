@@ -70,7 +70,7 @@ export default function Register({
     } catch (error) {
       Alert.alert(
         'Error',
-        `There was an error adding ${user} to the database: ${error}`
+        `There was a problem adding ${user} to the database: ${error}`
       );
     } finally {
       setIsClicked(false);
@@ -78,7 +78,6 @@ export default function Register({
     }
   };
 
-  // function to handle submit click
   const onClickHandler = () => {
     if (keeboard) {
       Keyboard.dismiss();

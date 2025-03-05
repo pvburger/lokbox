@@ -2,7 +2,6 @@ import { StyleSheet, Text, View, Pressable } from 'react-native';
 import { useModContext } from '../context/global';
 import { Props } from '../types';
 
-// TODO: ADD TYPE FOR BUTTON PROPS OR ADD PROPERTIES TO 'PROPS' TYPE
 export function RegButton({ onPressFunc, label }: Props) {
   // bring in global context
   const globalObj = useModContext();

@@ -54,7 +54,7 @@ export default function DelUsers({ changePage }: Props) {
   });
   const staticSty = styles;
 
-  // shorten user name if greater than 13 characters
+  // shorten user name if greater than 16 characters
   const shorten = (inp: string): string => {
     if (inp.length > 16) {
       return inp.slice(0, 16) + '...';
@@ -103,6 +103,7 @@ export default function DelUsers({ changePage }: Props) {
       await reSet(changePage);
     } catch (err) {
       Alert.alert(
+        'Error',
         `There was a problem removing users from the database: ${err}`
       );
     }

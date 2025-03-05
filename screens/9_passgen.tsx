@@ -6,7 +6,7 @@ import {
   Alert,
   ScrollView,
 } from 'react-native';
-import React, { useState, useEffect } from 'react';
+import React, { useState } from 'react';
 import { RoundButton } from '../elements/buttons';
 import { PassSettings } from '../types';
 import { useModContext } from '../context/global';
@@ -184,9 +184,6 @@ export default function Passgen({ userControl, widget }: Props) {
     }
     return result;
   };
-
-  // force rerender whenever passSettings changes
-  useEffect(() => {}, [passSettings]);
 
   return (
     <View style={styles.container}>

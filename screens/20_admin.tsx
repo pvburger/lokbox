@@ -8,12 +8,10 @@ import { Props } from '../types';
 // This component is only accessible by creating and logging into 'admin' account
 export default function Admin({ changePage }: Props) {
   // if set to true, will log select information from database tables to console
-  const logTables = true;
+  const logTables = false;
 
-  // if logTables, then printTables
   logTables && printTables();
 
-  // wrapper for reSet function
   const cleanDB = async (): Promise<void> => {
     const runNuke = async () => {
       try {

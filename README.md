@@ -2,32 +2,33 @@
 
 # lokbox password manager
 
-<br>
+<br />
 
 ## Summary
 
-Lokbox is a free password management application for mobile devices, implemented in React-Native using TypeScript. Lokbox is distinguished by:
+Lokbox is a free password management application for mobile devices, implemented in React Native using TypeScript. Lokbox is distinguished by:
 
 - Fully local implementation; no internet connection required
-- User password hashing with salt, utilizing bcryptJS
-- Robust encryption key derivation using PBKDF2 algorithm
+- Primary password hashing (incorporating a random salt), utilizing bcrypt.js
+- Robust 32-byte encryption key derivation using PBKDF2
 - Random number generation and encryption (AES-256) via react-native-quick-crypto library
-- Encrypted storage in ACID-compliant SQLite database
+- Encrypted storage in a sandboxed, local, ACID-compliant SQLite database
 - Backup and restore functionality via zipped and encrypted CSV file  
-  <br>
+  <br />
 
 ## Implemented Features
 
-Lokbox is under development. Implemented features include:
+Lokbox is under active development. Implemented features include:
 
 - User account creation
 - Functionality to add, remove, and update database entries
-- Password generator to create cryptographically-secure passwords and PINs for the user, based on a set of customizable constraints (i.e., character pools)
+- Special 'admin' menu
+- Password generator to create cryptographically secure passwords and PINs for the user, based on a set of customizable constraints (i.e., character pools)
 - Ability to view all database entries, either as ciphertext or as plaintext
 - Login status indicator
 - Option to download data to and update data from a CSV file (zipped and password-protected with AES-256)
 - Android compatibility  
-  <br>
+  <br />
 
 ## Upcoming Features
 
@@ -35,7 +36,7 @@ Features which will be implemented in the near term include:
 
 - Search for single database entry
 - Improvements in UI  
-  <br>
+  <br />
 
 ## Future Goals
 
@@ -43,46 +44,46 @@ Long term goals include:
 
 - iOS compatibility
 - Deployment on Google Play and the App Store  
-  <br>
+  <br />
 
 ## Install
 
-The instructions below reflect the Android workflow, as this is currently the only supported platform. To run the application, you will need to have Android Studio running an Android emulator, and you will need to run a custom development build. To load the application, clone the git repository, then run the following commands in the terminal (in the project directory):
+The instructions below reflect the Android workflow, as this is currently the only supported platform. To run the application, you will need to have Android Studio running an Android emulator, and you will need to run a custom development build. Alternatively, one can build an APK file using the eas build tool, and sideload it to their Android device.
 
-1. Switch to the 'dev' branch  
-   `~/.../lokbox$ git checkout dev`
-2. Install dependencies  
+To load the application, clone the git repository, then run the following commands in the terminal (in the project directory):
+
+1. Install dependencies  
    `~/.../lokbox$ npm install`
-3. Create a prebuild  
+2. Create a prebuild  
    `~/.../lokbox$ npx expo prebuild --clean`
-4. Update gradle  
+3. Update gradle  
    `~/.../lokbox$ cd android`  
    `~/.../lokbox/android$ ./gradlew clean`  
    `~/.../lokbox/android$ cd ..`
-5. Option A: Run the build in the emulator  
-    `~/.../lokbox$ npx expo prebuild && npx expo run:android`  
-    ** OR **  
-    Option B: Build an APK, and sideload it onto your android device  
-    `~/.../lokbox$ npx expo prebuild && eas build --local --platform android --profile preview`  
-   <br>
+4. Option A: Run the build in the emulator  
+   `~/.../lokbox$ npx expo prebuild && npx expo run:android`  
+   ** OR **  
+   Option B: Build an APK, and sideload it onto your Android device  
+   `~/.../lokbox$ npx expo prebuild && eas build --local --platform android --profile preview`  
+   <br />
 
 ## Instructions - Basic
 
 #### Login Screen
 
-From the login screen, the user can elect to 'login' or to 'register' a new account. Both options are self-explanatory. After creating a new account, the user will be logged out and must log in again to access their account. One may notice that logging in or registering can take several seconds. This is because the bcrypt algorithm, used to create password hashes, is a computationally-expensive algorithm intended to deter brute-force attacks. Bcrypt hashing is used during registration, login, and data export.
+From the login screen, the user can elect to 'login' or to 'register' a new account. Both options are self-explanatory. After creating a new account, the user will be logged out and must log in again to access their account. One may notice that logging in or registering can take several seconds. This is because the bcrypt, used to create and confirm password hashes, is a computationally-expensive algorithm intended to deter brute-force attacks. Bcrypt hashing is used during registration, login, and data export.
 
 #### Main Menu - Data or Tools
 
-From the main menu, the user has two options: 'data' and 'tools.' The 'data' menu organizes basic database functionality, and includes components to 'check' their data, 'add' new data entries, 'remove' data entries and 'update' data entries. The 'tools' menu complements the database functionality and includes standalone components to generate passwords/PINs ('passgen' and 'pingen', respectively), for exporting and importing data ('backup' and 'restore'), and 'color' to change the preferred background color.
+From the main menu, the user has two options: 'data' and 'tools.' The 'data' menu organizes basic database functionality and includes components allowing users to 'check' their data, 'add' new data entries, 'remove' data entries, and 'update' data entries. The 'tools' menu complements the database functionality and includes standalone components to generate passwords/PINs ('passgen' and 'pingen', respectively), for exporting and importing data ('backup' and 'restore'), and 'color' to change the preferred background color.
 
 #### check
 
-The 'check' component can be used to quickly scan all of a user's data. While all of a user's information is encrypted within the database, user information is displayed in plaintext on the 'check' screen. The user also has the option to see how the information is stored within the database using the toggle view icons at the bottom of the screen.
+The 'check' component can be used to quickly scan all of a user's data. While personal data is encrypted within the database, user information is displayed in plaintext on the 'check' screen. The user also has the option to see how the information is stored within the database using the Plaintext/Ciphertext toggle icons at the bottom of the screen.
 
 #### add
 
-The 'add' component is used to add additional entries to the database. All fields are optional except for 'organization.' Think of an 'organization' more as an 'entity,' rather than a 'corporation.' For example, if one wants to store their login credentials for their PC, one might make the 'organization' entry 'Dell Laptop' or something similar. All organization entries must be unique, so if one has several accounts with the same organization, they will have to be distinguished in some manner (i.e., Google-1, Google-2, etc.). The '!' button will automatically generate a cryptographically-secure random password (or PIN) if the user chooses to use it. The default settings for the password and PIN generators can be set in the 'passgen' and 'pingen' tools, respectively.
+The 'add' component is used to add additional entries to the database. All fields are optional except for 'organization.' Think of an 'organization' more like an 'entity,' rather than a 'corporation.' For example, if one wants to store their login credentials for their PC, one might make the 'organization' entry 'Dell Laptop' or something similar. All organization entries must be unique, so if one has several accounts with the same organization, they will have to be distinguished in some manner (i.e., Google-1, Google-2, etc.). The '!' button will automatically generate a cryptographically-secure random password (or PIN) if the user chooses to use it. The default settings for the password and PIN generators can be set in the 'passgen' and 'pingen' tools, respectively.
 
 #### remove
 
@@ -111,7 +112,7 @@ The 'import' tool allows the user to add (or import) data to their account from 
 #### color
 
 The 'color' tool is used to modify the background color for the lokbox application. Each user can select their own, bespoke color. After clicking 'color', the user can manipulate the color triangle until they've arrived at the perfect color. To ensure that the color persists to future sessions, make sure to click 'save' before returning to the main menu.  
-<br>
+<br />
 
 ## Instructions - Advanced
 
@@ -119,24 +120,26 @@ The 'color' tool is used to modify the background color for the lokbox applicati
 
 Users may find it easier to enter large amounts of data into the database by editing a CSV file on their PC instead of adding entries, individually, through the lokbox interface.
 
-To get started, use the 'export' tool in the 'tools' menu to generate a password-protected, zipped CSV file. The user will be prompted to enter their login password. A ZIP file will be created in the Downloads folder of the user's Android device; copy this file to your computer. Bear in mind that, while the file is password-protected using the AES-256 algorithm, the encryption is not as robust as the encryption within the database itself, which uses the user password and PBKDF2 to derive a much more secure key to encrypt the data. Use caution when transferring the file; physically transferring the file between the Android device and the PC using a USB device is likely the most secure approach.
+To get started, use the 'export' tool in the 'tools' menu to generate a password-protected, zipped CSV file. The user will be prompted to enter their login password. A ZIP file will be created in the Downloads folder of the user's Android device; copy this file to your computer. Bear in mind that, while the file is password-protected using the AES-256 algorithm, the encryption is not as robust as the encryption within the database itself, which uses the user password and PBKDF2 to derive a much more secure key to encrypt the data. Use caution when transferring the file; physically transferring the file between the Android device and the PC using a USB or microSD device is likely the most secure approach.
 
 Once on the PC, extract the CSV from the ZIP archive using the user's login password. Use your favorite spreadsheet software to edit the CSV file. First, delete any pre-existing information from the CSV, but DO NOT edit or remove the column headers. Next, add new entries to the CSV. Be sure that each entry has a unique, non-blank 'data_org' (the 'organization' entry), otherwise file upload will fail. The 'data_created' and 'data_modified' columns are irrelevant; these will be populated by lokbox on upload. Save the CSV file (with a .csv extension). Next, zip the CSV file into a new ZIP archive. The ZIP archive MUST have the same name as the CSV file (with a .zip extension instead of .csv), and MUST be password-protected. The password does not have to be the same as the user's login password. Transfer this file back to the Android device, observing the same precautions as earlier. The file should be copied to the device's Downloads directory.
 
 Finally, in the 'tools' menu, select 'import'. Select the relevant ZIP file from the Downloads directory. Next, enter the password used to encrypt the ZIP file on the PC. Assuming the aforementioned protocol was followed, new information from the CSV file should be applied to the user's lokbox database. This approach will append new data to the user's local lokbox database, leaving existing data intact.
 
-#### Backup and Restore: Batch processing application data (all user data)
+#### Backup and Restore: Batch processing using the Admin Menu
 
 The 'import' and 'export' tools allow individual users to add data to or copy data from their respective accounts. The Android device administrator ('admin'; i.e., the owner) also has the ability to create a backup copy of the entire database, and to restore from that backup copy. In order to do so, one must enable the 'admin' menu.
 
-To get started, create an 'admin' account, just as you would a standard account. Make sure to store the credentials for this account safely. Next, login to the 'admin' account. The user will be redirected to a special 'admin' menu.
+To get started, create an 'admin' account (i.e., using 'admin' as the login name) just as you would a standard account. Make sure to store the credentials for this account safely. Next, login to the 'admin' account. The user will be redirected to a special 'admin' menu.
+
+Within the 'admin' menu, the 'users' tool can be used to remove selected users (and their data) from the database. 
 
 The 'delete' button can be used to clear the entire lokbox database on the device. Unless one has a .backup file to restore from, all data will be lost. Use with extreme caution. Note that the 'admin' account is deleted as well.
 
 Clicking the 'backup' button will create a .backup file in the user's Downloads folder. The backup file is a mirror of the information within the database itself. That is to say, any sensitive information remains encrypted and cannot be seen in plaintext by the administrator.
 
 To restore information from a backup file, click the 'restore' button. After doing so, the user will be prompted to select a .backup file from the Downloads directory. Again, use this tool with extreme caution! The 'restore' option replaces the entire lokbox database on the device with the contents of the .backup file; it does NOT simply append new data. Note that this process intentionally deletes the 'admin' account from the device; it will need to be re-established before the 'admin' menu can be accessed again.  
-<br>
+<br />
 
 ## Buttons and Icons
 
@@ -166,16 +169,16 @@ To restore information from a backup file, click the 'restore' button. After doi
 <td style="vertical-align: middle;">Ciphertext button</td>
 </tr>
 </table>  
-<br>
+<br />
 
 ## Useful Tips
 
-- Users can set default conditions for password and PIN generation within the 'passgen' and 'pingen' tools. These settings will be used by the 'add' component if the users elects to automatically generate a PIN or password.
+- Users can set default constraints for password and PIN generation within the 'passgen' and 'pingen' tools. These settings will be used by the 'add' component if the users elects to automatically generate a PIN or password.
 
-- There is a login status indicator in the lower right corner of the screen. If it is illuminated in green, the user is logged in, while red indicates no one is currently logged in. Security precautions have been implemented so that in the event that the application becomes inactive, the current user is automatically logged out. Similarly, on file selection screens (e.g., when selecting a file to restore data), a timeout mechanism automatically logs out the user after 10 seconds if a file hasn't been selected.
+- There is a login status indicator in the lower right corner of the screen. If it is illuminated in green, the user is logged in, while red indicates no one is currently logged in. Security precautions have been implemented so that in the event that the application becomes inactive, the current user is automatically logged out. Similarly, on file selection screens (i.e, when selecting a file to restore data), a timeout mechanism automatically logs out the user after 10 seconds if a file hasn't been selected.
 
 - After successfully restoring data from a .backup file through the 'admin' menu, the 'admin' user account is automatically deleted. This is so the administrator can establish a new 'admin' account (post restoration) without having to know the password for the 'admin' account in the .backup file.  
-  <br>
+  <br />
 
 ## License
 

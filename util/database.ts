@@ -24,7 +24,6 @@ import {
   PathSettings,
 } from '../types';
 
-// ***** IS IT APPROPIATE TO HAVE THESE INITIALIZED HERE ? *****
 const targetDB = 'testing';
 const table1 = 'pass_users';
 const table2 = 'pass_data';
@@ -72,7 +71,7 @@ export class SQLiteDB {
         console.log(`${targetDB} database connection configured`);
       } catch (err) {
         throw new Error(
-          `There was an error loading the ${targetDB} database: ${err}`
+          `There was a problem loading the ${targetDB} database: ${err}`
         );
       }
     }
@@ -97,8 +96,6 @@ export class SQLiteDB {
 }
 
 // login user
-/* known issues:
- */
 export const loginUser = async (
   username: string,
   password: string
@@ -138,9 +135,7 @@ export const loginUser = async (
   }
 };
 
-// login user
-/* known issues:
- */
+// verify user
 export const verifyUser = async (
   usr_id: number,
   password: string
@@ -258,9 +253,6 @@ export const setUsrSettings = async (
 };
 
 // add user
-/* known issues:
-   1. requires comprehensive username password rules
-*/
 export const addUser = async (
   username: string,
   passwordA: string,
@@ -589,7 +581,7 @@ const dCryptObject = async (
     return result;
   } catch (err) {
     throw new Error(
-      `There was an error creating unencrypted database entry: ${err}`
+      `There was a problem creating unencrypted database entry: ${err}`
     );
   }
 };
@@ -599,7 +591,7 @@ const dCryptSingle = async (input: string, widget: string): Promise<string> => {
   try {
     return await dCrypt(input, widget);
   } catch (err) {
-    throw new Error(`There was an error unencrypting database value: ${err}`);
+    throw new Error(`There was a problem unencrypting database value: ${err}`);
   }
 };
 
@@ -635,7 +627,7 @@ export const getAllData = async (
 
     return allRows;
   } catch (err) {
-    throw `There was an error retrieving data from database: ${err}`;
+    throw `There was a problem retrieving data from database: ${err}`;
   }
 };
 
@@ -685,7 +677,7 @@ export const getSingleData = async (
 
     return result;
   } catch (err) {
-    throw `There was an error retrieving data from database: ${err}`;
+    throw `There was a problem error retrieving data from database: ${err}`;
   }
 };
 
@@ -753,7 +745,7 @@ export const getAllDataAsString = async (
     // parse data into string
     const parse2String = (): string => {
       // string formatting function
-      // splits string into length of 25 characters, adds new line and then 15 characters of white space
+      // splits string into length of 20 characters, adds new line and then 15 characters of white space
       const formString = (inp: string | null): string => {
         let result = '';
         let stringBuff = inp;
@@ -821,7 +813,7 @@ export const getAllDataAsString = async (
 
     return parse2String();
   } catch (err) {
-    throw `There was an error while parsing database data: ${err}`;
+    throw `There was a problem while parsing database data: ${err}`;
   }
 };
 
@@ -867,11 +859,12 @@ export const printTables = async (): Promise<void> => {
 export const removeData = async (entryArr: DBEntryColObj[]): Promise<void> => {
   try {
     // added for development
-    for (let item of entryArr) {
-      console.log(
-        `Item to remove w/ data_id: ${item.data_id} and value: ${item.data_val}`
-      );
-    }
+    // for (let item of entryArr) {
+    //   console.log(
+    //     `Item to remove w/ data_id: ${item.data_id} and value: ${item.data_val}`
+    //   );
+    // }
+
     // connect to database
     const db = await SQLiteDB.connectDB();
 
@@ -915,9 +908,6 @@ export const backup = async (): Promise<void> => {
 };
 
 // functionality to restore saved database to device
-/*
-TODO: CHECK THAT SELECTED FILE IS VALID DB FILE
-*/
 export const restore = async (): Promise<void> => {
   try {
     // helper to get file path
@@ -925,6 +915,18 @@ export const restore = async (): Promise<void> => {
       try {
         // get path to backup file
         const uri = (await pickSingle()).uri;
+
+        // get filename
+        // according to react-native-file-access documentation, most method should work on (content://) Android resource uris
+        const fName = (await FileSystem.stat(uri)).filename;
+
+        // check filename to ensure valid backup file
+        if (fName.length < 7 || fName.slice(-7).toLowerCase() !== '.backup') {
+          throw new Error(
+            `${fName} does not appear appear to be a valid backup file`
+          );
+        }
+
         return uri;
       } catch (err) {
         throw new Error(
@@ -1187,7 +1189,7 @@ export const data2ZIP = async (
 
     // create zip file from csv
     // currently, there's a bug passing encryption type string to zipWithPassword in 'react-native-zip-archive'
-    // library, hence reliance on forked repo
+    // library, hence reliance on forked repo; repo owner has merged my commit
     await zipWithPassword(
       [`${tempPath}/${fName}.csv`],
       `${tempPath}/${fName}.zip`,

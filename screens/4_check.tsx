@@ -54,9 +54,7 @@ export default function Check({
         widget!,
         visControl!.get()
       );
-      if (data === '') {
-        throw new Error(`User has no data stored in the database`);
-      }
+
       setText(data);
       setIsLoading(true);
     } catch (err) {

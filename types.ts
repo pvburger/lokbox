@@ -104,8 +104,6 @@ export class PassSettings {
 }
 
 export class PathSettings {
-  // temp?: string;
-  // fileURI?: string;
   [key: string]: string;
 }
 
@@ -170,8 +168,6 @@ export class DBEntry {
   constructor() {}
 }
 export type DBEntryKey = keyof DBEntry;
-// export type DBEntrySub = Partial<Omit<DBEntry, 'data_id' | 'usr_id'>>;
-// export type DBEntrySubKey = keyof DBEntrySub;
 
 export type DBEntryColObj = {
   data_id: number;

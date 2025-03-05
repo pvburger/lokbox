@@ -75,7 +75,6 @@ export default function Login({
     }
   };
 
-  // function to handle submit click
   const onClickHandler = () => {
     if (keeboard) {
       Keyboard.dismiss();

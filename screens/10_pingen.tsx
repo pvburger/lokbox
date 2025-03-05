@@ -1,5 +1,5 @@
 import { StyleSheet, Text, View, Alert, ScrollView } from 'react-native';
-import React, { useState, useEffect } from 'react';
+import React, { useState } from 'react';
 import { RoundButton } from '../elements/buttons';
 import { PinSettings } from '../types';
 import { useModContext } from '../context/global';
@@ -15,7 +15,7 @@ export default function Pingen({ userControl, widget }: Props) {
   const pinDigits = globalObj.data.settings.pin_charNum;
 
   const upd8Settings = globalObj.setAllContext;
-  
+
   const [pinSettings, setPinSettings] = useState(pinDigits);
 
   // wrapper to update user's settings
@@ -48,7 +48,7 @@ export default function Pingen({ userControl, widget }: Props) {
       const pin = await genPin(currPinSettings);
       Alert.alert('Success', `Created a new pin: \n${pin}`);
     } catch (err) {
-      Alert.alert('Error', `There was a problem generating a pin: ${err}`);
+      Alert.alert('Error', `There was a problem generating a PIN: ${err}`);
     }
   };
 
@@ -88,9 +88,6 @@ export default function Pingen({ userControl, widget }: Props) {
     },
   });
   const staticSty = styles;
-
-  // force rerender whenever pinSettings changes
-  useEffect(() => {}, [pinSettings]);
 
   return (
     <View style={styles.container}>

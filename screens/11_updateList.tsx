@@ -34,7 +34,7 @@ export default function UpdateList({
   });
   const staticSty = styles;
 
-  // shorten org name if greater than 13 characters
+  // shorten org name if greater than 16 characters
   const shorten = (inp: string): string => {
     if (inp.length > 16) {
       return inp.slice(0, 16) + '...';
@@ -53,11 +53,6 @@ export default function UpdateList({
         widget!
       );
 
-      // throw error if there is no data in the database
-      if (usrOrgObjArr.length === 0) {
-        throw new Error(`User has no data to update`);
-      }
-
       const resultArr: FListEntry[] = [];
       let counter = 1;
 
@@ -74,7 +69,7 @@ export default function UpdateList({
       setIsLoading(true);
       setOrgList(resultArr);
     } catch (err) {
-      Alert.alert('Error', `There was an error retrieving org list: ${err}`);
+      Alert.alert('Error', `There was a problem retrieving org list: ${err}`);
       changePage!(3);
     }
   };
@@ -87,7 +82,7 @@ export default function UpdateList({
     } catch (err) {
       Alert.alert(
         'Error',
-        `There was an error retrieving database entry: ${err}`
+        `There was a problem retrieving database entry: ${err}`
       );
       throw err;
     }

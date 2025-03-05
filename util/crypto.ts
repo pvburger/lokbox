@@ -130,9 +130,7 @@ export const makeKey = async (
     pbkdf2(passBuff, saltBuff, cycles, len_key, digest, (err, derivedKey) => {
       if (err) {
         reject(
-          new Error(
-            `There was a problems generating the encryption key: ${err}`
-          )
+          new Error(`There was a problem generating the encryption key: ${err}`)
         );
       } else {
         resolve(derivedKey.toString(encoding));
@@ -162,7 +160,6 @@ export const nCrypt = async (
   }
 };
 
-// TODO: REMOVE ASYNC
 export const dCrypt = async (
   input: string,
   widget: string
@@ -257,6 +254,6 @@ export const genPin = async (inp: PinSettings): Promise<string> => {
     }
     return result;
   } catch (err) {
-    throw `There was a problem generating a random pin: ${err}`;
+    throw `There was a problem generating a random PIN: ${err}`;
   }
 };

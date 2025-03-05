@@ -28,15 +28,29 @@ export default function ColorPicker({ userControl, widget }: Props) {
 
   // function to handle submit click
   const onClickHandler = async () => {
+    // manual color entry; red = #ff0000
+    const useManColor = false;
+    const manColor = '#ff0000';
+
     // update database entry
     const newSettings = { ...currSettings, color: color };
+
+    // if true, apply manColor from above, rather than picked color
+    // logs hex value for previous saved color when enabled
+    if (useManColor) {
+      console.log(`oldColor: ${currSettings.color}`);
+      newSettings.color = manColor;
+    }
 
     // save to database
     try {
       await setUsrSettings(newSettings, userControl!.get(), widget!);
       Alert.alert(`Success`, `User settings were successfully updated`);
     } catch (err) {
-      Alert.alert(`There was a problem updating user settings: ${err}`);
+      Alert.alert(
+        'Error',
+        `There was a problem updating user settings: ${err}`
+      );
     }
   };
 

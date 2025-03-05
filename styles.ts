@@ -1,5 +1,3 @@
-import { StyleSheet } from 'react-native';
-
 export const inputBox = (scrH: number) => {
   return {
     inpBox: {
