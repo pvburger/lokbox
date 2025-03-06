@@ -44,6 +44,8 @@ Long term goals include:
 
 - iOS compatibility
 - Deployment on Google Play and the App Store  
+- Ongoing security improvements  
+- Comprehensive security testing and auditing  
   <br />
 
 ## Install
@@ -178,8 +180,12 @@ To restore information from a backup file, click the 'restore' button. After doi
 - There is a login status indicator in the lower right corner of the screen. If it is illuminated in green, the user is logged in, while red indicates no one is currently logged in. Security precautions have been implemented so that in the event that the application becomes inactive, the current user is automatically logged out. Similarly, on file selection screens (i.e, when selecting a file to restore data), a timeout mechanism automatically logs out the user after 10 seconds if a file hasn't been selected.
 
 - After successfully restoring data from a .backup file through the 'admin' menu, the 'admin' user account is automatically deleted. This is so the administrator can establish a new 'admin' account (post restoration) without having to know the password for the 'admin' account in the .backup file.  
-  <br />
+  <br />  
+
+## Disclaimer    
+
+Lokbox is under active development and is currently in the 'Alpha' stage. The software is provided "AS IS", without warranty of any kind. Lokbox should not be relied upon to safeguard sensitive and/or valuable data. While efforts have been made to ensure security, Lokbox has not been comprehensively tested or audited. Users assume all risk and liability arising from their use of this software, as outlined in the MIT License. The developers shall not be held liable for any damages or data loss resulting from the use of this software.  
 
 ## License
 
-Lokbox is licensed under MIT
+This project is licensed under the terms of the MIT license.

@@ -1189,7 +1189,8 @@ export const data2ZIP = async (
 
     // create zip file from csv
     // currently, there's a bug passing encryption type string to zipWithPassword in 'react-native-zip-archive'
-    // library, hence reliance on forked repo; repo owner has merged my commit
+    // library, hence the reliance on forked repo.
+    // Repo owner has merged my pull request, but a new version has not yet been released.
     await zipWithPassword(
       [`${tempPath}/${fName}.csv`],
       `${tempPath}/${fName}.zip`,
