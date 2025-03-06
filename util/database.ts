@@ -1,6 +1,6 @@
 import * as SQLite from 'expo-sqlite';
 import { Dirs, FileSystem } from 'react-native-file-access';
-import { pickSingle, types } from 'react-native-document-picker';
+import { pick, types } from '@react-native-documents/picker';
 import Papa from 'papaparse';
 import { zipWithPassword, unzipWithPassword } from 'react-native-zip-archive';
 
@@ -914,7 +914,22 @@ export const restore = async (): Promise<void> => {
     const getFileURI = async (): Promise<string> => {
       try {
         // get path to backup file
-        const uri = (await pickSingle()).uri;
+        const resultObj = await pick();
+        const uri = resultObj[0].uri;
+
+        // added for development
+        /*
+        for (let i = 0; i < result.length; i++) {
+          let itemProps = Object.entries(result[i]);
+          for (let j = 0; j < itemProps.length; j++) {
+            console.log(
+              `result[${i}]: key = ${itemProps[j][0]}, val = ${itemProps[j][1]}`
+            );
+          }
+          console.log('\n');
+        }
+        console.log(`result[0].uri: ${result[0].uri}`);
+        */
 
         // get filename
         // according to react-native-file-access documentation, most method should work on (content://) Android resource uris
@@ -982,9 +997,9 @@ export const restore = async (): Promise<void> => {
 export const getPaths2Upload = async (): Promise<PathSettings> => {
   const newPaths = new PathSettings();
   try {
-    const resultObj = await pickSingle({ type: types.zip });
+    const resultObj = await pick({ type: [types.zip] });
     // get path to backup file (percent encoded)
-    newPaths.fileURI = resultObj.uri;
+    newPaths.fileURI = resultObj[0].uri;
 
     // get filename
     // according to react-native-file-access documentation, most method should work on (content://) Android resource uris
