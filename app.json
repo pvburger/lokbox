@@ -1,0 +1,36 @@
+{
+  "expo": {
+    "name": "lokbox",
+    "slug": "lokbox",
+    "version": "1.0.0",
+    "orientation": "portrait",
+    "icon": "./assets/images/icon.png",
+    "userInterfaceStyle": "light",
+    "newArchEnabled": true,
+    "splash": {
+      "image": "./assets/images/splash-icon.png",
+      "resizeMode": "contain",
+      "backgroundColor": "#d3d3d3"
+    },
+    "ios": {
+      "supportsTablet": true,
+      "bundleIdentifier": "com.pvburger.lokbox"
+    },
+    "android": {
+      "adaptiveIcon": {
+        "foregroundImage": "./assets/images/adaptive-icon.png",
+        "backgroundColor": "#d3d3d3"
+      },
+      "package": "com.pvburger.lokbox"
+    },
+    "web": {
+      "favicon": "./assets/favicon.png"
+    },
+    "plugins": ["expo-sqlite"],
+    "extra": {
+      "eas": {
+        "projectId": "15e47396-788f-4e5f-b787-a875db00d027"
+      }
+    }
+  }
+}
