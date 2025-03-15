@@ -11,6 +11,7 @@ import { RoundButton } from '../elements/buttons';
 import { removeData, getSingleData } from '../util/database';
 import { DBEntryColObj, FListEntry, Props } from '../types';
 import { useModContext } from '../context/global';
+import { modUtf16Sort } from '../util/general';
 
 export default function Remove({ changePage, userControl, widget }: Props) {
   const [orgList, setOrgList] = useState<FListEntry[]>([]);
@@ -134,14 +135,18 @@ export default function Remove({ changePage, userControl, widget }: Props) {
         widget!
       );
 
+      // map usrOrgObjArr to simple orgNameArr for sorting
+      let orgNameArr = usrOrgObjArr.map((el) => el.data_val.toString());
+      orgNameArr = modUtf16Sort(orgNameArr);
+
       const resultArr: FListEntry[] = [];
       let counter = 1;
 
-      for (let entry of usrOrgObjArr) {
+      for (let entry of orgNameArr) {
         // data_val will never be a number in this case, but TS can't determine that, hence the type coersion
         // additionaly, React-Native expects the key value as a string
         resultArr.push({
-          info: entry.data_val.toString(),
+          info: entry,
           key: 'R_' + counter.toString(),
         });
         counter++;
