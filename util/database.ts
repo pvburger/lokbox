@@ -3,6 +3,7 @@ import { Dirs, FileSystem } from 'react-native-file-access';
 import { pick, types } from '@react-native-documents/picker';
 import Papa from 'papaparse';
 import { zipWithPassword, unzipWithPassword } from 'react-native-zip-archive';
+import { modUtf16Sort } from './general';
 
 import {
   getHashEntry,
@@ -624,6 +625,9 @@ export const getAllData = async (
         );
       }
     }
+
+    // sort data
+    allRows = modUtf16Sort(allRows);
 
     return allRows;
   } catch (err) {
