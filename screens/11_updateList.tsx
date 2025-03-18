@@ -4,6 +4,7 @@ import { ThinButton } from '../elements/buttons';
 import { getSingleData, getDBEntry } from '../util/database';
 import { FListEntry, Props } from '../types';
 import { useModContext } from '../context/global';
+import { modUtf16SortIt } from '../util/general';
 
 export default function UpdateList({
   changePage,
@@ -53,14 +54,16 @@ export default function UpdateList({
         widget!
       );
 
+      // data_org is always a string
+      let usrOrgArr = usrOrgObjArr.map((el) => el.data_val as string);
+      usrOrgArr = modUtf16SortIt(usrOrgArr);
+
       const resultArr: FListEntry[] = [];
       let counter = 1;
 
-      for (let entry of usrOrgObjArr) {
-        // data_val will never be a number in this case, but TS can't determine that, hence the type coersion
-        // additionaly, React-Native expects the key value as a string
+      for (let entry of usrOrgArr) {
         resultArr.push({
-          info: entry.data_val.toString(),
+          info: entry,
           key: 'UL_' + counter.toString(),
         });
         counter++;

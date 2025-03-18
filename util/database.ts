@@ -3,6 +3,7 @@ import { Dirs, FileSystem } from 'react-native-file-access';
 import { pick, types } from '@react-native-documents/picker';
 import Papa from 'papaparse';
 import { zipWithPassword, unzipWithPassword } from 'react-native-zip-archive';
+import { modUtf16SortIt } from './general';
 
 import {
   getHashEntry,
@@ -605,6 +606,7 @@ export const getAllData = async (
     const db = await SQLiteDB.connectDB();
 
     // retrieve data
+    // data can't be sorted by SQLite because it is encrypted on the database
     let allRows: DBEntry[] = await db.getAllAsync(
       `SELECT * FROM ${table2} WHERE usr_id = ?`,
       [id]
@@ -624,6 +626,9 @@ export const getAllData = async (
         );
       }
     }
+
+    // sort data
+    allRows = modUtf16SortIt(allRows);
 
     return allRows;
   } catch (err) {
